@@ -24,7 +24,7 @@ class HomeController extends Controller
         $customer = Customer::count();
         $supplier = Supplier::count();
         $product = Product::count();
-
+        
         $startOfWeek = Carbon::now()->startOfWeek(Carbon::SUNDAY);
         $endOfWeek = Carbon::now()->endOfWeek(Carbon::SATURDAY);
 
@@ -39,14 +39,14 @@ class HomeController extends Controller
     {
         // Mendapatkan tanggal hari ini
         $today = Carbon::now();
-
+        
         // Mengambil data transaksi dalam bulan ini
         $transactions = Transaction::whereMonth('transaction_date', $today->month)
-                                    ->whereYear('transaction_date', $today->year)
-                                    ->get()
-                                    ->groupBy(function($date) {
-                                        return Carbon::parse($date->transaction_date)->startOfWeek(Carbon::SUNDAY)->format('Y-m-d');
-                                    });
+                                   ->whereYear('transaction_date', $today->year)
+                                   ->get()
+                                   ->groupBy(function($date) {
+                                       return Carbon::parse($date->transaction_date)->startOfWeek(Carbon::SUNDAY)->format('Y-m-d');
+                                   });
         // Menyiapkan data untuk chart
         $chartData = [];
         foreach ($transactions as $week => $weekTransactions) {
@@ -67,7 +67,7 @@ class HomeController extends Controller
             ->join('branches','branches.id','transactions.branch_id')
             ->select('transactions.*', 'users.name', 'customers.name as name_customer','branches.name as name_branch')
             ->paginate(10);
-
+       
         return view('pages.report', compact('data'));
     }
 
@@ -78,7 +78,7 @@ class HomeController extends Controller
             ->join('branches','branches.id','transactions.branch_id')
             ->select('transactions.*', 'users.name', 'customers.name as name_customer','branches.name as name_branch')
             ->where('transactions.id', $id)->first();
-        $detail = TransactionItem::join('products','products.id','product_id')->select('transaction_items.*','products.name')->where('transaction_id', $id)->get();
+       $detail = TransactionItem::join('products','products.id','product_id')->select('transaction_items.*','products.name')->where('transaction_id', $id)->get();
 
         return view('pages.detail_transaction', compact('data','detail'));
     }

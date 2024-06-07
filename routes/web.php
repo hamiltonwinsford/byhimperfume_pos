@@ -41,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/chart', function () {
         return view('chart');
     });
+    Route::get('/detail-stock/{id}', [StockController::class, 'detail']);
 
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
@@ -56,12 +57,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('promotionBundle', PromotionBundleController::class);
     Route::resource('first_stock', FirstStockController::class);
     Route::resource('opname', OpnameController::class);
-
-    // Rute khusus untuk memfilter produk berdasarkan cabang
-    //Route::get('/products/branch/{branch_id}', [ProductController::class, 'indexByBranch'])->name('products.indexByBranch');
-    //Route::get('/products/branch/{branch_id}', [ProductController::class, 'indexByBranch'])->name('products.indexByBranch');
-    // routes/web.php
-    Route::get('products/branch/{branch}', [ProductController::class, 'productsByBranch'])->name('products.byBranch');
 
 
     // Route::get('/users', function () {

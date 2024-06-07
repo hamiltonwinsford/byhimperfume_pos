@@ -15,26 +15,13 @@ class ProductController extends Controller
     // index
     public function index(Request $request)
     {
-        $branchId = $request->input('branch_id');
-
         // Get all products with pagination and search functionality
         $products = Product::when($request->input('name'), function ($query, $name) {
             $query->where('name', 'like', '%' . $name . '%');
-        })
-        ->when($branchId, function ($query) use ($branchId) {
-            $query->where('branch_id', $branchId);
-        })
-        ->paginate(10);
+        })->paginate(10);
 
         return view('pages.products.index', compact('products'));
     }
-
-public function productsByBranch($branchId)
-{
-    $products = Product::where('branch_id', $branchId)->get();
-    $branches = Branch::all();
-    return view('products.index', compact('products', 'branches'));
-}
 
 
     // create
@@ -161,7 +148,6 @@ public function productsByBranch($branchId)
             ]);
 
             if ($validator->fails()) {
-                dd(1);
                 return redirect()->back()
                     ->withErrors($validator)
                     ->withInput();
@@ -180,7 +166,6 @@ public function productsByBranch($branchId)
                 ]);
 
                 if ($validator->fails()) {
-                    dd(2);
                     return redirect()->back()
                         ->withErrors($validator)
                         ->withInput();
@@ -210,7 +195,6 @@ public function productsByBranch($branchId)
                     ]);
 
                     if ($fragranceValidator->fails()) {
-                        dd(4);
                         return redirect()->back()
                             ->withErrors($fragranceValidator)
                             ->withInput();

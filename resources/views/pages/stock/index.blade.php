@@ -33,57 +33,30 @@
                             <h4>All Stock</h4>
                         </div>
                         <div class="card-body">
-
-                            <div class="float-right">
-                                <form method="GET" action="{{ route('bottle.index') }}">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Search" name="name">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-
                             <div class="clearfix mb-3"></div>
 
                             <div class="table-responsive">
-                                <table class="table-striped table">
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>First</th>
-                                        <th>Stock IN</th>
-                                        <th>Stock Out</th>
-                                        <th>CALC (G)</th>
-                                        <th>CALC (ML)</th>
-                                        <th>Real (G)</th>
-                                        <th>Real (ML)</th>
-                                        <th>Difference (G)</th>
-                                        <th>Difference (ML)</th>
-                                        <th>Stock Opname Date</th>
-                                    </tr>
-                                    @foreach ($data as $value)
-                                    <tr>
+                                <table id="myTable" class="table-striped table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Current Stock</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($data as $value)
+                                        <tr>
 
-                                        <td>{{ $value->name }}</td>
-                                        <td>{{ $value->total_weight }}</td>
-                                        <td>{{ $value->stock_in }}</td>
-                                        <td>{{ $value->stock_out }}</td>
-                                        <td>{{ $value->calc_g }}</td>
-                                        <td>{{ $value->calc_ml }}</td>
-                                        <td>{{ $value->real_g }}</td>
-                                        <td>{{ $value->real_ml }}</td>
-                                        <td>{{ $value->difference_g }}</td>
-                                        <td>{{ $value->difference_ml }}</td>
-                                        <td>{{ $value->stock_opname_date }}</td>
-                                    </tr>
-                                    @endforeach
-
-
+                                            <td>{{ $value->name }}</td>
+                                            <td>{{ $value->current_stock }}</td>
+                                            <td>
+                                                <a href="{{ URL::to('detail-stock/'.$value->product_id) }}" class="btn btn-primary">Detail</a>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
                                 </table>
-                            </div>
-                            <div class="float-right">
-                                {{ $data->withQueryString()->links() }}
                             </div>
                         </div>
                     </div>

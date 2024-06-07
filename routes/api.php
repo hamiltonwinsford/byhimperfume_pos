@@ -26,6 +26,7 @@ Route::get('/get-product', [ApiController::class, 'getProduct'])->name('get-prod
 Route::get('/get-category', [ApiController::class, 'getCategory'])->name('get-category');
 Route::get('/get-bottle', [ApiController::class, 'getBottle'])->name('get-bottle');
 Route::get('/get-other-product', [ApiController::class, 'getOtherProduct'])->name('get-other-product');
+Route::get('/get-current-stock', [ApiController::class, 'getCurrentStock'])->name('get-current-stock');
 Route::post('/search-product', [ApiController::class, 'searchProduct'])->name('search-product');
 Route::post('/search-bottle', [ApiController::class, 'searchBottle'])->name('search-bottle');
 Route::post('/search-bottle-size', [ApiController::class, 'searchBottleSize'])->name('search-bottle-size');

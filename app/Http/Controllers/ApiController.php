@@ -242,7 +242,8 @@ class ApiController extends Controller
     public function getCart(Request $request)
     {
         $cart = Cart::join('products', 'cart.product_id', 'products.id')
-            ->select('cart.*', 'products.name', 'products.price','products.id as prod_id')
+            ->select('cart.*', 'products.name', 'products.price','products.id as prod_id', 'harga_ml', 'variant')
+            ->leftJoin('bottle', 'bottle.id', '=', 'cart.bottle_id')
             ->where('user_id', $request->user_id)
             ->get()->all();
 
@@ -253,17 +254,38 @@ class ApiController extends Controller
     {
         $bottle = Bottle::where('bottle_size', $request->bottle_size)
                         ->where('variant', $request->variant)
+                        ->select('id','harga_ml', 'variant')
                         ->first();
+                        
+        // Cek apakah bottle ditemukan
+        if (!$bottle) {
+            return returnAPI(404, 'Bottle not found', null);
+        }
+        
         $cart = new Cart;
         $cart->product_id   = $request->product_id;
         $cart->branch_id    = $request->branch_id;
         $cart->user_id      = $request->user_id;
-        $cart->bottle_id    = $bottle->id;
         //$cart->qty          = $request->qty;
+        $cart->bottle_id    = $bottle->id;
         //$cart->variant      = $request->variant;
         $cart->save();
 
-        return returnAPI(200, 'Success', $cart);
+        $data = [
+            'product_id' => $cart->product_id,
+            'branch_id' => $cart->branch_id,
+            'user_id' => $cart->user_id,
+            'harga_ml' => $bottle->harga_ml,
+            'variant'=> $bottle->variant,
+            'bottle_id' => $bottle->id,
+            'updated_at' => $cart->updated_at,
+            'created_at' => $cart->created_at,
+            'id' => $cart->id
+        ];
+            
+
+        // return returnAPI(200, 'Success', $cart);
+        return returnAPI(200, 'Success', $data);
     }
 
     public function updateCart(Request $request)
@@ -294,68 +316,78 @@ class ApiController extends Controller
 
     public function checkout(Request $request)
     {
-        $cekCart = Cart::where('user_id', $request->user_id)->get()->all();
-        $branch = Branch::join('users','users.branch_id','branches.id')->select('branches.*')->where('users.id', $request->user_id)->first();
-        if(!empty($request->discount)){
-            $discount = $request->discount;
-        }else{
-            $discount = 0;
+        //Log::info('Checkout request received', $request->all());
+    
+        try {
+            $cekCart = Cart::where('user_id', $request->user_id)->get()->all();
+            $branch = Branch::join('users','users.branch_id','branches.id')->select('branches.*')->where('users.id', $request->user_id)->first();
+            
+            if(!empty($request->discount)){
+                $discount = $request->discount;
+            } else {
+                $discount = 0;
+            }
+    
+            $tr = new Transaction;
+            $tr->user_id = $request->user_id;
+            $tr->transaction_number = "INV/".date('Ymd')."/".rand(000,999);
+            $tr->transaction_date = date('Y-m-d');
+            $tr->branch_id = $branch->id;
+            $tr->discount = $discount;
+            $tr->save();
+    
+            $jml_qty = 0;
+            $tot_price = 0;
+            foreach($cekCart as $key => $value){
+    
+                $cekPrduct = Product::where('id', $value->product_id)->first();
+                $bottle = Bottle::where('id', $value->bottle_id)->first();
+    
+                $dt = new TransactionItem;
+                $dt->transaction_id = $tr->id;
+                $dt->product_id = $value->product_id;
+                $dt->quantity = $bottle->bottle_size;
+                $dt->price = $cekPrduct->price*$bottle->bottle_size;
+                $dt->subtotal = $bottle->harga_ml;
+                $dt->save();
+                
+                $tot_price += $bottle->harga_ml;
+                $currentStock = CurrentStock::where('product_id', $value->product_id)->first();
+                $currentStock->current_stock = $currentStock->current_stock - $value->qty;
+                //debugCode($currentStock);
+                $currentStock->save();
+            }
+            
+            $tot_price = $tot_price-($tot_price*($discount/100));
+    
+            $cekCus = Customer::where('phone_number', $request->phone_number)->first();
+            if(empty($cekCus)){
+                $cus = new Customer;
+                $cus->name = $request->name_customer;
+                $cus->phone_number = $request->phone_number;
+                $cus->save();
+                $customer_id = $cus->id;
+            } else {
+                $customer_id = $cekCus->id;
+            }
+            
+            // Log::info('Customer ID: '.$customer_id);
+            // Log::info('Total Price: '.$tot_price);
+    
+            $cekTr = Transaction::where('id', $tr->id)->first();
+            $cekTr->total_amount = $tot_price;
+            $cekTr->customer_id = $customer_id;
+            $cekTr->save();
+    
+            // Log::info('Transaction updated: ', ['transaction_id' => $tr->id, 'customer_id' => $customer_id, 'total_amount' => $tot_price]);
+    
+            Cart::where('user_id', $request->user_id)->delete();
+    
+            return returnAPI(200, 'Success', $tr);
+        } catch (Exception $e) {
+            Log::error('Error in checkout: '.$e->getMessage());
+            return returnAPI(500, 'Error', $e->getMessage());
         }
-
-        $tr = new Transaction;
-        $tr->user_id = $request->user_id;
-        $tr->transaction_number = "INV/".date('Ymd')."/".rand(000,999);
-        $tr->transaction_date = date('Y-m-d');
-        $tr->branch_id = $branch->id;
-        $tr->discount = $discount;
-        //$tr->payment_method = $request->payment_method;
-        $tr->save();
-
-        $jml_qty = 0;
-        $tot_price = 0;
-        foreach($cekCart as $key => $value){
-
-            $cekPrduct = Product::where('id', $value->product_id)->first();
-            $bottle = Bottle::where('id', $value->bottle_id)->first();
-
-            $dt = new TransactionItem;
-            $dt->transaction_id = $tr->id;
-            $dt->product_id = $value->product_id;
-            $dt->quantity = $value->qty;
-            $dt->price = $cekPrduct->price;
-            $dt->subtotal = $value->qty * $cekPrduct->price;
-            $dt->save();
-
-            $jml_qty += $value->qty;
-            $tot_price += ($value->qty * $cekPrduct->price) - $discount;
-
-            $currentStock = CurrentStock::where('product_id', $value->product_id)->first();
-            $currentStock->current_stock = $currentStock->current_stock - $value->qty;
-            //debugCode($currentStock);
-            $currentStock->save();
-
-        }
-
-        $cekCus = Customer::where('phone_number', $request->phone_number)->first();
-        if(empty($cekCus)){
-            $cus = new Customer;
-            $cus->name = $request->name_customer;
-            $cus->phone_number = $request->phone_number;
-            $cus->save();
-
-            $customer_id = $cus->id;
-        }else{
-            $customer_id = $cekCus->id;
-        }
-
-        $cekTr = Transaction::where('id', $tr->id)->first();
-        //$cekTr->total_qty = $jml_qty;
-        $cekTr->total_amount = $tot_price;
-        $cekTr->customer_id = $customer_id;
-        $cekTr->save();
-
-        $data = Cart::where('user_id', $request->user_id)->delete();
-
-        return returnAPI(200, 'Success', $tr);
     }
+
 }
