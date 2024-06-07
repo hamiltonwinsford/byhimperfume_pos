@@ -1,0 +1,361 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Bottle;
+use App\Models\OtherProduct;
+use App\Models\Cart;
+use App\Models\CurrentStock;
+use App\Models\Customer;
+use App\Models\Branch;
+use App\Models\Transaction;
+use App\Models\TransactionItem;
+use App\Models\FirstStock;
+use App\Models\Opname;
+use App\Models\StockCard;
+use App\Models\Promotion;
+use App\Models\PromotionBundle;
+use Illuminate\Support\Facades\DB; //tambahan
+
+class ApiController extends Controller
+{
+
+    public function login(Request $request)
+    {
+        $data = User::where('email', $request->email)->where('role', 'user')->first();
+        if (!empty($data)) {
+            if (Hash::check($request->password, $data->password)) {
+                return returnAPI(200, 'Success', $data);
+            }else{
+                return returnAPI(201, 'The password you entered is incorrect.!');
+            }
+        }else{
+            return returnAPI(201, 'Email not registered.!');
+        }
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $data = User::where('id', $request->id)->first();
+        $data->password = Hash::make($request->password);
+        $data->save();
+
+        return returnAPI(200, 'Update password successfuly.!');
+    }
+
+    public function getProfile(Request $request)
+    {
+        $id = $request->get('id');
+        $data   = User::where('id', $request->id)->first();
+
+        return returnAPI(200, 'Success', $data);
+    }
+
+    public function getPromotion(Request $request)
+    {
+        $data   = Promotion::where('start_date', '<=', date('Y-m-d'))->where('end_date', '>=', date('Y-m-d'))->get();
+
+        return returnAPI(200, 'Success', $data);
+    }
+
+    public function getPromotionBundle(Request $request)
+    {
+        DB::enableQueryLog();
+        $data   = PromotionBundle::where('from_date', '<=', date('Y-m-d'))->where('to_date', '>=', date('Y-m-d'))->get();
+        $query = DB::getQueryLog();
+
+        return returnAPI(200, 'Success', $data);
+    }
+
+    public function addCustomer(Request $request)
+    {
+        $cek = Customer::where('phone_number', $request->phone_number)->first();
+        if(empty($cek)){
+            $data = new Customer;
+            $data->name = $request->name;
+            $data->phone_number = $request->phone_number;
+            $data->save();
+        }else{
+            $data = $cek;
+        }
+
+        return returnAPI(200, 'Success', $data);
+    }
+
+    public function searchCustomer(Request $request)
+    {
+        $phone_number = $request->phone_number;
+
+        $data = Customer::where('phone_number', $phone_number)->get();
+
+        return returnAPI(200, 'Success', $data);
+    }
+
+    public static function autonumber(){
+        $q=DB::table('issue')->select(DB::raw('MAX(RIGHT("no_ticket",5)) as kd_max'));
+        $prx=date('dmY');
+        if($q->count()>0)
+        {
+            foreach($q->get() as $k)
+            {
+                $tmp = ((int)$k->kd_max)+1;
+                $kd = $prx.sprintf("%06s", $tmp);
+            }
+        }
+        else
+        {
+            $kd = $prx."000001";
+        }
+
+        return $kd;
+    }
+
+    public function getProduct(Request $request)
+    {
+        $branch_id = $request->get('branch_id');
+        $data   = Product::where('branch_id', $request->branch_id)->get();
+        foreach ($data as $key => $value) {
+            $foto = asset('upload/image/'.$value->image);
+            $data[$key]->foto_path = $foto;
+        }
+        return returnAPI(200, 'Success', $data);
+    }
+
+    public function getCategory(Request $request)
+    {
+        $data   = Category::get();
+        return returnAPI(200, 'Success', $data);
+    }
+
+    public function getBottle(Request $request)
+    {
+        $data   = Bottle::get();
+        return returnAPI(200, 'Success', $data);
+    }
+
+    public function getOtherProduct(Request $request)
+    {
+        $data   = OtherProduct::get();
+
+        foreach ($data as $key => $value) {
+            $foto = asset('upload/image/'.$value->image);
+            $data[$key]->foto_path = $foto;
+        }
+
+        return returnAPI(200, 'Success', $data);
+    }
+
+    public function searchProduct(Request $request)
+    {
+        $name = $request->name;
+
+        $data = Product::where('name', 'like', "%$name%")->get();
+        foreach ($data as $key => $value) {
+            $foto = asset('upload/image/'.$value->image);
+            $data[$key]->foto_path = $foto;
+        }
+
+        return returnAPI(200, 'Success', $data);
+    }
+
+    public function searchBottle(Request $request)
+    {
+        $name = $request->name;
+
+        $data = Bottle::where('bottle_name', 'like', "%$name%")->get();
+
+        return returnAPI(200, 'Success', $data);
+    }
+
+    public function searchBottleSize(Request $request)
+    {
+        $size = $request->size;
+
+        $data = Bottle::where('bottle_size', $size)->get();
+
+        return returnAPI(200, 'Success', $data);
+    }
+
+    public function productByCategory(Request $request)
+    {
+        $categoryId = $request->category_id;
+
+        $data = Product::where('category_id', $categoryId)->get();
+        foreach ($data as $key => $value) {
+            $foto = asset('upload/image/'.$value->image);
+            $data[$key]->foto_path = $foto;
+        }
+
+        return returnAPI(200, 'Success', $data);
+    }
+
+    public function addStockOpname(Request $request)
+    {
+        $opname = Opname::where('product_id', $request->product_id)->first();
+        $awal = FirstStock::where('product_id', $request->product_id)->first();
+        $branch = TransactionItem::join('transactions as t','t.id', 'transaction_id')->where('product_id', $request->product_id)->first();
+        $current = CurrentStock::where('product_id', $request->product_id)->first();
+        $in = $request->total_weight;
+        $month = date('m');
+        $out = TransactionItem::where('product_id', $request->product_id)->whereMonth('created_at', $month)->sum('quantity');
+        $calc_g = ($awal->stock +  $in) - ($out * $opname->ml_to_g);
+        $calc_ml = $calc_g * $opname->ml_to_g;
+        $real_g = $awal->stock;
+        $real_ml = $real_g * $opname->ml_to_g;
+        $data = array(
+            'awal'  => $awal->stock,
+            'in'    => $in,
+            'out'   => $out,
+            'calc_g' => $calc_g,
+            'calc_ml' => $calc_ml,
+            'real_g' => $current->current_stock + $real_g,
+            'real_ml' => $real_ml,
+            'stock_opname_date' => date('Y-m-d'),
+        );
+
+        $us = new StockCard;
+        $us->product_id = $request->product_id;
+        $us->branch_id = $branch->branch_id;
+        $us->stock_in = $in;
+        $us->stock_out = $out;
+        $us->calc_g = $calc_g;
+        $us->calc_ml = $calc_ml;
+        $us->real_g = $real_g;
+        $us->real_ml = $current->current_stock + $real_ml;
+        $us->stock_opname_date = date('Y-m-d');
+        $us->save();
+
+
+        $current->current_stock = $current->current_stock + $real_ml;
+        $current->save();
+
+        return returnAPI(200, 'Success', $data);
+    }
+
+    /*============================ POS =========================*/
+
+    public function getCart(Request $request)
+    {
+        $cart = Cart::join('products', 'cart.product_id', 'products.id')
+            ->select('cart.*', 'products.name', 'products.price','products.id as prod_id')
+            ->where('user_id', $request->user_id)
+            ->get()->all();
+
+        return returnAPI(200, 'Success', $cart);
+    }
+
+    public function addToCart(Request $request)
+    {
+        $bottle = Bottle::where('bottle_size', $request->bottle_size)
+                        ->where('variant', $request->variant)
+                        ->first();
+        $cart = new Cart;
+        $cart->product_id   = $request->product_id;
+        $cart->branch_id    = $request->branch_id;
+        $cart->user_id      = $request->user_id;
+        $cart->bottle_id    = $bottle->id;
+        //$cart->qty          = $request->qty;
+        //$cart->variant      = $request->variant;
+        $cart->save();
+
+        return returnAPI(200, 'Success', $cart);
+    }
+
+    public function updateCart(Request $request)
+    {
+        $cart = Cart::where('id', $request->cart_id)->first();
+        $cart->qty = $request->qty;
+        $cart->save();
+
+        return returnAPI(200, 'Success', $cart);
+    }
+
+    public function deleteCart(Request $request)
+    {
+        $data = Cart::where('id', $request->id)->delete();
+
+        return returnAPI(200, 'Success', $data);
+    }
+
+    public function checkHarga(Request $request)
+    {
+
+        $data = Product::where('id', $request->product_id)->first();
+
+        $harga = $data->price * $request->qty;
+
+        return returnAPI(200, 'Success', $harga);
+    }
+
+    public function checkout(Request $request)
+    {
+        $cekCart = Cart::where('user_id', $request->user_id)->get()->all();
+        $branch = Branch::join('users','users.branch_id','branches.id')->select('branches.*')->where('users.id', $request->user_id)->first();
+        if(!empty($request->discount)){
+            $discount = $request->discount;
+        }else{
+            $discount = 0;
+        }
+
+        $tr = new Transaction;
+        $tr->user_id = $request->user_id;
+        $tr->transaction_number = "INV/".date('Ymd')."/".rand(000,999);
+        $tr->transaction_date = date('Y-m-d');
+        $tr->branch_id = $branch->id;
+        $tr->discount = $discount;
+        //$tr->payment_method = $request->payment_method;
+        $tr->save();
+
+        $jml_qty = 0;
+        $tot_price = 0;
+        foreach($cekCart as $key => $value){
+
+            $cekPrduct = Product::where('id', $value->product_id)->first();
+            $bottle = Bottle::where('id', $value->bottle_id)->first();
+
+            $dt = new TransactionItem;
+            $dt->transaction_id = $tr->id;
+            $dt->product_id = $value->product_id;
+            $dt->quantity = $value->qty;
+            $dt->price = $cekPrduct->price;
+            $dt->subtotal = $value->qty * $cekPrduct->price;
+            $dt->save();
+
+            $jml_qty += $value->qty;
+            $tot_price += ($value->qty * $cekPrduct->price) - $discount;
+
+            $currentStock = CurrentStock::where('product_id', $value->product_id)->first();
+            $currentStock->current_stock = $currentStock->current_stock - $value->qty;
+            //debugCode($currentStock);
+            $currentStock->save();
+
+        }
+
+        $cekCus = Customer::where('phone_number', $request->phone_number)->first();
+        if(empty($cekCus)){
+            $cus = new Customer;
+            $cus->name = $request->name_customer;
+            $cus->phone_number = $request->phone_number;
+            $cus->save();
+
+            $customer_id = $cus->id;
+        }else{
+            $customer_id = $cekCus->id;
+        }
+
+        $cekTr = Transaction::where('id', $tr->id)->first();
+        //$cekTr->total_qty = $jml_qty;
+        $cekTr->total_amount = $tot_price;
+        $cekTr->customer_id = $customer_id;
+        $cekTr->save();
+
+        $data = Cart::where('user_id', $request->user_id)->delete();
+
+        return returnAPI(200, 'Success', $tr);
+    }
+}

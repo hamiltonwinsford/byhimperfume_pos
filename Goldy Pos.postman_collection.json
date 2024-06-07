@@ -1,0 +1,656 @@
+{
+	"info": {
+		"_postman_id": "78ec6c72-5df7-404f-b257-a884d726630c",
+		"name": "Goldy Pos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/get-profile?id=2",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"get-profile"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/update-password",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"update-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "bambang@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/login",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pos",
+			"item": [
+				{
+					"name": "Checkout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "2",
+									"description": "Ambil dari id kasir",
+									"type": "text"
+								},
+								{
+									"key": "discount",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "name_customer",
+									"value": "Kamal",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "08123456789",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/checkout",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"checkout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add To Cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "product_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "branch_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "2",
+									"description": "Ambil dari id kasir login",
+									"type": "text"
+								},
+								{
+									"key": "qty",
+									"value": "50",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/add-to-cart",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"add-to-cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/get-cart?user_id=1",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"get-cart"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "cart_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "qty",
+									"value": "12",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/update-cart",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"update-cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/delete-cart?id=1",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"delete-cart"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Data Product",
+			"item": [
+				{
+					"name": "Other Product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bottle",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/get-bottle",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"get-bottle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/get-category",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"get-category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/get-product?branch_id=1",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"get-product"
+							],
+							"query": [
+								{
+									"key": "branch_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "BM31",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/search-product",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"search-product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product By Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/product-by-category?category_id=1",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"product-by-category"
+							],
+							"query": [
+								{
+									"key": "category_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Harga",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "product_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "qty",
+									"value": "50",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/check-harga",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"check-harga"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Bottle",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Bottle A",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/search-bottle",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"search-bottle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Bottle Size",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "size",
+									"value": "4",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/search-bottle-size",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"search-bottle-size"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stock Opname",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "product_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "total_weight",
+									"value": "145",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/add-stock-opname",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"add-stock-opname"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer",
+			"item": [
+				{
+					"name": "Add Customer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Agus",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "08127345345435",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/add-customer",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"add-customer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Customer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "phone_number",
+									"value": "08127345345435",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/search-customer",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"search-customer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Promotion",
+			"item": [
+				{
+					"name": "Promotions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/get-promotion",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"get-promotion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Promotions Bundle",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local_url}}/goldy_pos/api/get-promotion-bundle",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"goldy_pos",
+								"api",
+								"get-promotion-bundle"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
