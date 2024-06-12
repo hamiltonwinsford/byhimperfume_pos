@@ -30,4 +30,9 @@ class Product extends Model
     {
         return $this->hasOne(Fragrance::class, 'product_id');
     }
+    
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class); 
+    }
 }

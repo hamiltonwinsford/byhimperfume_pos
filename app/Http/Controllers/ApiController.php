@@ -182,16 +182,41 @@ class ApiController extends Controller
     }
 
     public function productByCategory(Request $request)
-    {
+    {   
         $categoryId = $request->category_id;
 
-        $data = Product::where('category_id', $categoryId)->get();
+        $data = Product::where('category_id', $categoryId)->where('branch_id', $request->branch_id)->get();
         foreach ($data as $key => $value) {
             $foto = asset('upload/image/'.$value->image);
             $data[$key]->foto_path = $foto;
         }
 
         return returnAPI(200, 'Success', $data);
+    }
+    
+    public function getCurrentStock(Request $request)
+    {   
+        $data   = CurrentStock::join('products as p','p.id','product_id')->select('current_stock.*','p.name')->get();
+        return returnAPI(200, 'Success', $data);
+    }
+    
+    public function getCurrentStockByBranch(Request $request)
+    {
+        try {
+            $branch = $request->branch_id;
+            $data = CurrentStock::join('products as p', 'p.id', '=', 'current_stock.product_id')
+                ->where('p.branch_id', $branch)
+                ->select('current_stock.*', 'p.name')
+                ->get();
+    
+            if ($data->isEmpty()) {
+                return returnAPI(404, 'No current stock found for the given branch', $data);
+            }
+    
+            return returnAPI(200, 'Success', $data);
+        } catch (\Exception $e) {
+            return returnAPI(500, 'An error occurred while fetching the current stock', ['error' => $e->getMessage()]);
+        }
     }
 
     public function addStockOpname(Request $request)
@@ -353,7 +378,19 @@ class ApiController extends Controller
                 
                 $tot_price += $bottle->harga_ml;
                 $currentStock = CurrentStock::where('product_id', $value->product_id)->first();
-                $currentStock->current_stock = $currentStock->current_stock - $value->qty;
+                if($bottle->variant === "edt"){
+                    $qty = $bottle->bottle_size * 0.7;
+                }
+                elseif($bottle->variant === "edp"){
+                    $qty = $bottle->bottle_size * 0.5;
+                }
+                elseif($bottle->variant === "perfume"){
+                    $qty = $bottle->bottle_size * 0.3;
+                }
+                if($bottle->variant === "full_perfume"){
+                    $qty = $bottle->bottle_size;
+                }
+                $currentStock->current_stock = $currentStock->current_stock - $qty;
                 //debugCode($currentStock);
                 $currentStock->save();
             }
@@ -385,9 +422,15 @@ class ApiController extends Controller
     
             return returnAPI(200, 'Success', $tr);
         } catch (Exception $e) {
-            Log::error('Error in checkout: '.$e->getMessage());
-            return returnAPI(500, 'Error', $e->getMessage());
+            Log::error('Error in checkout: ' . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
+    }
+    
+    public function getHistoryTransactions(Request $request)
+    {   
+        $data   = Transaction::select('transactions.*','customers.name as name_customer')->leftJoin('customers','customers.id', 'customer_id')->where('branch_id', $request->branch_id)->get();
+        return returnAPI(200, 'Success', $data);
     }
 
 }

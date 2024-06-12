@@ -38,6 +38,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/report', [HomeController::class, 'report']);
     Route::get('/detail-transactions/{id}', [HomeController::class, 'detail']);
     Route::get('/weekly-transactions', [HomeController::class, 'getWeeklyTransactions']);
+    Route::get('/daily-transactions', [HomeController::class, 'getDailyTransactions']);
     Route::get('/chart', function () {
         return view('chart');
     });

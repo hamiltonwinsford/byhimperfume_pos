@@ -59,6 +59,33 @@ class HomeController extends Controller
 
         return response()->json($chartData);
     }
+    
+    public function getDailyTransactions()
+    {
+        // Mendapatkan tanggal hari ini
+        $today = Carbon::now();
+        
+        // Mengambil data transaksi dalam bulan ini
+        $transactions = Transaction::whereMonth('transaction_date', $today->month)
+                                   ->whereYear('transaction_date', $today->year)
+                                   ->get()
+                                   ->groupBy(function($date) {
+                                       return Carbon::parse($date->transaction_date)->format('Y-m-d');
+                                   });
+        
+        // Menyiapkan data untuk chart
+        $chartData = [];
+        foreach ($transactions as $day => $dayTransactions) {
+            $dayTotal = $dayTransactions->sum('total_amount');
+            $chartData[] = [
+                'day' => $day,
+                'total' => $dayTotal
+            ];
+        }
+    
+        return response()->json($chartData);
+    }
+
 
     public function report(Request $request)
     {

@@ -54,7 +54,8 @@
                                 <table class="table-striped table">
                                     <tr>
                                         <th>Product Name</th>
-                                        <th>Product Price</th>
+                                        <th>Base Price</th>
+                                        <th>Sale Price</th>
                                         <th>Product Description</th>
                                         <th>Image</th>
                                         <th>Action</th>
@@ -63,7 +64,8 @@
                                     <tr>
 
                                         <td>{{ $value->product_name }}</td>
-                                        <td>{{ $value->product_price }}</td>
+                                        <td>{{ $value->base_price }}</td>
+                                        <td>{{ $value->sale_price }}</td>
                                         <td>{{ $value->product_description }}</td>
                                         <td>
                                             <img src="{{ asset('upload/image/'.$value->image) }}" style="width:100px;">
@@ -86,8 +88,6 @@
                                         </td>
                                     </tr>
                                     @endforeach
-
-
                                 </table>
                             </div>
                             <div class="float-right">

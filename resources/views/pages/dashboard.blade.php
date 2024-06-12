@@ -130,19 +130,23 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            fetch('/goldy_pos/weekly-transactions')
+            fetch('/daily-transactions')
                 .then(response => response.json())
                 .then(data => {
-                    const labels = data.map(item => item.week_start);
+                    const labels = data.map(item => item.day);
                     const totals = data.map(item => item.total);
-
+    
+                    const formatRupiah = (number) => {
+                        return 'Rp. ' + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    }
+    
                     const ctx = document.getElementById('transactionsChart').getContext('2d');
                     const chart = new Chart(ctx, {
                         type: 'line',
                         data: {
                             labels: labels,
                             datasets: [{
-                                label: 'Total Transactions every Week',
+                                label: 'Total Transactions every Day',
                                 data: totals,
                                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                                 borderColor: 'rgba(75, 192, 192, 1)',
@@ -152,7 +156,19 @@
                         options: {
                             scales: {
                                 y: {
-                                    beginAtZero: true
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value, index, values) {
+                                            return formatRupiah(value);
+                                        }
+                                    }
+                                }
+                            },
+                            tooltips: {
+                                callbacks: {
+                                    label: function(tooltipItem, data) {
+                                        return formatRupiah(tooltipItem.yLabel);
+                                    }
                                 }
                             }
                         }

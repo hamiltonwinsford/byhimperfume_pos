@@ -34,7 +34,7 @@ class OtherProductController extends Controller
             //validate the request...
             $validator = Validator::make($request->all(), [
                 'product_name' => 'required',
-                'product_price' => 'required',
+                'base_price' => 'required',
             ]);
 
             if ($validator->fails()) {
@@ -46,7 +46,8 @@ class OtherProductController extends Controller
             //store the request...
             $data = new OtherProduct();
             $data->product_name = $request->product_name;
-            $data->product_price = $request->product_price;
+            $data->base_price = $request->base_price;
+            $data->sale_price = $request->sale_price;
             $data->product_description = $request->product_description;
 
             $l_file = '';
@@ -92,7 +93,8 @@ class OtherProductController extends Controller
         // update the request...
         $data = OtherProduct::find($id);
         $data->product_name = $request->product_name;
-        $data->product_price = $request->product_price;
+        $data->base_price = $request->base_price;
+        $data->sale_price = $request->sale_price;
         $data->product_description = $request->product_description;
 
         $l_file = '';

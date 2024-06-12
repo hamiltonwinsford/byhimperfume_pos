@@ -52,11 +52,22 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label>Product Price</label>
-                            <input type="text" value="{{old('product_price')}}" class="form-control @error('product_price')
+                            <label>Base Price</label>
+                            <input type="text" value="{{ old('base_price') }}" class="form-control @error('base_price')
                                 is-invalid
-                            @enderror" name="product_price">
-                            @error('product_price')
+                            @enderror" name="base_price">
+                            @error('base_price')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label>Sale Price</label>
+                            <input type="text" value="{{ old('sale_price') }}" class="form-control @error('sale_price')
+                                is-invalid
+                            @enderror" name="sale_price">
+                            @error('sale_price')
                             <div class="invalid-feedback">
                                 {{ $message }}
                             </div>

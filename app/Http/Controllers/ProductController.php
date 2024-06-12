@@ -14,15 +14,16 @@ class ProductController extends Controller
 {
     // index
     public function index(Request $request)
-    {
-        // Get all products with pagination and search functionality
-        $products = Product::when($request->input('name'), function ($query, $name) {
-            $query->where('name', 'like', '%' . $name . '%');
-        })->paginate(10);
+    {   
+        if(empty($request->branch_id)){
+            $products = Product::get();
 
-        return view('pages.products.index', compact('products'));
+        }else{
+            $products = Product::where('branch_id', $request->branch_id)->get();
+        }
+        $branches = Branch::all();
+        return view('pages.products.index', compact('products','branches'));
     }
-
 
     // create
     public function create()
@@ -175,9 +176,12 @@ class ProductController extends Controller
             }
 
             if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $imagePath = $image->storeAs('public/products', $product->id . '.' . $image->getClientOriginalExtension());
-                $product->image = 'storage/' . $imagePath;
+                $s_file = $request->file('image');
+                $extension = $s_file->getClientOriginalExtension();
+                $l_file = $request->user_id . "_" . date('YmdHis') . '.' . $extension;
+                $s_file->move(public_path('upload/image'), $l_file);
+    
+                $product->image = 'upload/image/' . $l_file;
             }
 
             $product->save();
@@ -186,12 +190,8 @@ class ProductController extends Controller
             if ($fragrance) {
                 if ($product->category->fragrances_status == Category::STATUS_FRAGRANCE) {
                     $fragranceValidator = Validator::make($request->all(), [
-                        //'fragrances_name' => 'required',
-                        //'concentration' => 'required',
-                        //'gram' => 'required',
-                        //'milliliter' => 'required',
-                        //'pump_weight' => 'required',
-                        //'bottle_weight' => 'required',
+                        'fragrances_name' => 'required',
+                        'total_weight' => 'required',
                     ]);
 
                     if ($fragranceValidator->fails()) {
@@ -233,6 +233,11 @@ class ProductController extends Controller
             DB::rollBack();
             return redirect()->back()->with('error', $e->getMessage());
         }
+    }
+    
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     // destroy

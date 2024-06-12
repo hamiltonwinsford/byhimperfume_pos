@@ -27,82 +27,86 @@
                         @include('layouts.alert')
                     </div>
                 </div>
-
-
                 <div class="row mt-4">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4>All Posts</h4>
+                                <div class="col-5">
+                                    <h4>All Posts</h4>
+                                </div>
+                                <div class="col-6">
+                                    <form method="get" action="{{ route('products.index') }}">
+                                        @csrf
+                                            <select class="form-control selectric" name="branch_id" required>
+                                                <option value="" selected disabled>-- Select Branch --</option> 
+                                                @foreach ($branches as $branch)
+                                                <option value="{{ $branch->id }}">{{ $branch->name }} - {{$branch->address}}</option>
+                                                @endforeach
+                                            </select>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                </div>
+
+                                    </form>
                             </div>
                             <div class="card-body">
-
-                                <div class="float-right">
-                                    <form method="GET" action="{{ route('products.index') }}">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="Search" name="name">
-                                            <div class="input-group-append">
-                                                <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
 
                                 <div class="clearfix mb-3"></div>
 
                                 <div class="table-responsive">
-                                    <table class="table-striped table">
-                                        <tr>
-
-                                            <th>Name</th>
-                                            <th>Category</th>
-                                            <th>Price</th>
-                                            <th>Status</th>
-                                            <th>Create At</th>
-                                            <th>Action</th>
-                                        </tr>
-                                        @foreach ($products as $product)
+                                    <table id="myTable" class="table-striped table">
+                                        <thead>
                                             <tr>
-
-                                                <td>{{ $product->name }}
-                                                </td>
-                                                <td>
-                                                    {{ $product->category->name }}
-                                                </td>
-                                                <td>
-                                                    Rp. {{ number_format($product->price, 0, ',', '.') }}
-                                                </td>
-                                                <td>
-                                                    {{ $product->status == 1 ? 'Active' : 'Inactive' }}
-                                                </td>
-                                                <td>{{ $product->created_at }}</td>
-                                                <td>
-                                                    <div class="d-flex justify-content-center">
-                                                        <a href='{{ route('products.edit', $product->id) }}'
-                                                            class="btn btn-sm btn-info btn-icon">
-                                                            <i class="fas fa-edit"></i>
-                                                            Edit
-                                                        </a>
-
-                                                        <form action="{{ route('products.destroy', $product->id) }}"
-                                                            method="POST" class="ml-2">
-                                                            <input type="hidden" name="_method" value="DELETE" />
-                                                            <input type="hidden" name="_token"
-                                                                value="{{ csrf_token() }}" />
-                                                            <button class="btn btn-sm btn-danger btn-icon confirm-delete">
-                                                                <i class="fas fa-times"></i> Delete
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </td>
+                                                <th>Name</th>
+                                                <th>Category</th>
+                                                <th>Price</th>
+                                                <th>Status</th>
+                                                <th>Create At</th>
+                                                <th>Action</th>
                                             </tr>
-                                        @endforeach
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($products as $product)
+                                                <tr>
 
+                                                    <td>{{ $product->name }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $product->category->name }}
+                                                    </td>
+                                                    <td>
+                                                        Rp. {{ number_format($product->price, 0, ',', '.') }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $product->status == 1 ? 'Active' : 'Inactive' }}
+                                                    </td>
+                                                    <td>{{ $product->created_at }}</td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <a href='{{ route('products.edit', $product->id) }}'
+                                                                class="btn btn-sm btn-info btn-icon">
+                                                                <i class="fas fa-edit"></i>
+                                                                Edit
+                                                            </a>
 
+                                                            <form action="{{ route('products.destroy', $product->id) }}"
+                                                                method="POST" class="ml-2">
+                                                                <input type="hidden" name="_method" value="DELETE" />
+                                                                <input type="hidden" name="_token"
+                                                                    value="{{ csrf_token() }}" />
+                                                                <button class="btn btn-sm btn-danger btn-icon confirm-delete">
+                                                                    <i class="fas fa-times"></i> Delete
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                            @endforeach
+                                        </tbody>
                                     </table>
-                                </div>
-                                <div class="float-right">
-                                    {{ $products->withQueryString()->links() }}
                                 </div>
                             </div>
                         </div>

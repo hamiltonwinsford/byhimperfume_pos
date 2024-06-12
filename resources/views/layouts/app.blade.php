@@ -10,6 +10,7 @@
     <!-- General CSS Files -->
     <link rel="stylesheet"
         href="{{ asset('library/bootstrap/dist/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
         integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
@@ -66,6 +67,27 @@
     <script src="{{ asset('library/jquery.nicescroll/dist/jquery.nicescroll.min.js') }}"></script>
     <script src="{{ asset('library/moment/min/moment.min.js') }}"></script>
     <script src="{{ asset('js/stisla.js') }}"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready( function () {
+            $('#myTable').DataTable();
+        } );
+        $(document).ready( function () {
+            $('#myTable-1').DataTable();
+        } );
+        $(document).ready( function () {
+            $('#myTable-2').DataTable();
+        } );
+        $(document).ready( function () {
+            $('#myTable-3').DataTable();
+        } );
+        $(document).ready( function () {
+            $('#myTable-4').DataTable();
+        } );
+        $(document).ready( function () {
+            $('#myTable-5').DataTable();
+        } );
+    </script>
 
     @stack('scripts')
 

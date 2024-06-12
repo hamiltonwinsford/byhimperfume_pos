@@ -81,7 +81,7 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label>Price</label>
+                            <label>Base Price per ml</label>
                             <input type="number" class="form-control @error('price')
                                 is-invalid
                             @enderror" name="price" value="{{ $product->price }}">

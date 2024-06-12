@@ -32,6 +32,7 @@ Route::post('/search-bottle', [ApiController::class, 'searchBottle'])->name('sea
 Route::post('/search-bottle-size', [ApiController::class, 'searchBottleSize'])->name('search-bottle-size');
 Route::get('/product-by-category', [ApiController::class, 'productByCategory'])->name('product-by-category');
 
+Route::get('/get-current-stock-by-branch', [ApiController::class, 'getCurrentStockByBranch']);
 Route::post('/add-stock-opname', [ApiController::class, 'addStockOpname'])->name('add-stock-opname');
 
 Route::get('/get-promotion', [ApiController::class, 'getPromotion'])->name('get-promotion');
@@ -45,5 +46,6 @@ Route::post('/add-to-cart', [ApiController::class, 'addToCart'])->name('add-to-c
 Route::post('/update-cart', [ApiController::class, 'updateCart'])->name('update-cart');
 Route::get('/delete-cart', [ApiController::class, 'deleteCart'])->name('delete-cart');
 Route::post('/checkout', [ApiController::class, 'checkout'])->name('checkout');
+Route::get('/get-history-transactions', [ApiController::class, 'getHistoryTransactions'])->name('get-history-transactions');
 
 

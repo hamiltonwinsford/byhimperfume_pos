@@ -14,4 +14,13 @@ class OtherProduct extends Model
     protected $guarded = ['id'];
     protected $primaryKey = 'id';
     protected $table   = "other_product";
+
+    protected $fillable = [
+        'product_name',
+        'base_price',
+        'sale_price',
+        'product_description',
+        'image',
+    ];
+
 }
