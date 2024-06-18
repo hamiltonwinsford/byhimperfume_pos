@@ -124,7 +124,7 @@ class ProductController extends Controller
     // show
     public function show($id)
     {
-        return view('pages.products.show');
+        //return view('pages.products.show');
     }
 
     // edit
