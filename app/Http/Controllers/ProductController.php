@@ -120,10 +120,10 @@ class ProductController extends Controller
 
 
     // show
-    public function show($id)
-    {
-        return view('pages.products.show');
-    }
+    // public function show($id)
+    // {
+    //     return view('pages.products.show');
+    // }
 
     // edit
     public function edit($id)
