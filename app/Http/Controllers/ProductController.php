@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ProductImport;
 
 class ProductController extends Controller
 {
@@ -239,6 +241,17 @@ class ProductController extends Controller
     public function import()
     {
         return view('pages.products.import');
+    }
+
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xls,xlsx'
+        ]);
+
+        Excel::import(new ProductImport, $request->file('file'));
+
+        return redirect()->route('products.index')->with('success', 'Products imported successfully.');
     }
 
     public function branch()

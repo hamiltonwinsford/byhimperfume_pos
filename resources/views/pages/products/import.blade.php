@@ -31,25 +31,22 @@
                 </div>
             </div>
             <h2 class="section-title">Import Product</h2>
-
-
-            <div class="card">
-                <form action="" method="POST" enctype="multipart/form-data">
-                    @csrf
-                        <div class="form-group">
-                            <label class="form-label">Import Excel File</label>
-
-                            <input type="file" class="form-control" name="image" @error('image') is-invalid @enderror>
-                            @error('image')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                        </div>
-                    </div>
-                </form>
+                @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
-
+            <form action="{{ route('products.import.excel') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="form-group">
+                    <label for="file">Choose Excel File</label>
+                    <input type="file" name="file" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Import</button>
+        @endif
         </div>
     </section>
 </div>
