@@ -130,7 +130,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('products.import.excel') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
