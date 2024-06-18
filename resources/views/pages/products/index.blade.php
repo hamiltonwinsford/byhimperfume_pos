@@ -15,6 +15,9 @@
                 <div class="section-header-button">
                     <a href="{{ route('products.create') }}" class="btn btn-primary">Add New</a>
                 </div>
+                <div class="section-header-button">
+                    <a href="{{ route('products.create') }}" class="btn btn-primary">Add New</a>
+                </div>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
                     <div class="breadcrumb-item"><a href="#">Products</a></div>
@@ -38,7 +41,7 @@
                                     <form method="get" action="{{ route('products.index') }}">
                                         @csrf
                                             <select class="form-control selectric" name="branch_id" required>
-                                                <option value="" selected disabled>-- Select Branch --</option> 
+                                                <option value="" selected disabled>-- Select Branch --</option>
                                                 @foreach ($branches as $branch)
                                                 <option value="{{ $branch->id }}">{{ $branch->name }} - {{$branch->address}}</option>
                                                 @endforeach
