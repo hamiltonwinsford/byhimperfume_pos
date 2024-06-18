@@ -14,7 +14,7 @@ class ProductController extends Controller
 {
     // index
     public function index(Request $request)
-    {   
+    {
         if(empty($request->branch_id)){
             $products = Product::get();
 
@@ -180,7 +180,7 @@ class ProductController extends Controller
                 $extension = $s_file->getClientOriginalExtension();
                 $l_file = $request->user_id . "_" . date('YmdHis') . '.' . $extension;
                 $s_file->move(public_path('upload/image'), $l_file);
-    
+
                 $product->image = 'upload/image/' . $l_file;
             }
 
@@ -234,7 +234,13 @@ class ProductController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
-    
+
+    // import products
+    public function import(Request $request)
+    {
+        return view('pages.products.import');
+    }
+
     public function branch()
     {
         return $this->belongsTo(Branch::class);
