@@ -236,7 +236,7 @@ class ProductController extends Controller
     }
 
     // import products
-    public function import(Request $request)
+    public function import()
     {
         return view('pages.products.import');
     }
