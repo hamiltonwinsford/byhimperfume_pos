@@ -432,5 +432,16 @@ class ApiController extends Controller
         $data   = Transaction::select('transactions.*','customers.name as name_customer')->leftJoin('customers','customers.id', 'customer_id')->where('branch_id', $request->branch_id)->get();
         return returnAPI(200, 'Success', $data);
     }
+    
+    public function getHistoryTransactionsByDate(Request $request)
+    {   
+        $data   = Transaction::select('transactions.*','customers.name as name_customer')
+            ->leftJoin('customers','customers.id', 'customer_id')
+            ->where('branch_id', $request->branch_id)
+            ->where('transaction_date', '>=', $request->start_date)
+            ->where('transaction_date', '<=', $request->end_date)
+            ->get();
+        return returnAPI(200, 'Success', $data);
+    }
 
 }
