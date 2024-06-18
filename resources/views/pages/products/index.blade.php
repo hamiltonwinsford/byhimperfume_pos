@@ -16,7 +16,7 @@
                     <a href="{{ route('products.create') }}" class="btn btn-primary">Add New</a>
                 </div>
                 <div class="section-header-button">
-                    <a href="{{ route('products.create') }}" class="btn btn-primary">Add New</a>
+                    <a href="{{ route('products.import') }}" class="btn btn-primary">Import</a>
                 </div>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
