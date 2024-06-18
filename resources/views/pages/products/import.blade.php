@@ -34,27 +34,8 @@
 
 
             <div class="card">
-                <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="card-header">
-                        <h4>Input Text</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label class="form-label">Branch</label>
-                            <select class="form-control selectric @error('branch_id') is-invalid @enderror" name="branch_id" id="branch_id">
-                                <option value="">Choose Branch</option>
-                                @foreach ($branches as $branch)
-                                <option value="{{ $branch->id }}" @if(old('branch_id')==$branch->id) selected @endif>{{ $branch->name }} - {{$branch->address}}</option>
-                                @endforeach
-                            </select>
-                            @error('branch_id')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                        </div>
-
                         <div class="form-group">
                             <label class="form-label">Import Excel File</label>
 
