@@ -31,14 +31,15 @@
                 </div>
             </div>
             <h2 class="section-title">Import Product</h2>
-                @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <form action="{{ route('products.import.excel') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
@@ -46,57 +47,9 @@
                     <input type="file" name="file" class="form-control" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Import</button>
-        @endif
+            </form>
         </div>
     </section>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-    $(document).ready(function(){
-        $('#total_weight, #pump_weight, #bottle_weight, #concentration').on('keyup', function(){
-            var total_weight = parseFloat($('#total_weight').val());
-            var pump_weight = parseFloat($('#pump_weight').val());
-            var bottle_weight = parseFloat($('#bottle_weight').val());
-            var concentration = parseFloat($('#concentration').val());
-            var gram = total_weight - (pump_weight + bottle_weight);
-            var milliliter = gram * concentration;
-
-            if(!isNaN(gram)) {
-                $('#gram').val(gram);
-                $('#milliliter').val(milliliter);
-            }
-        });
-    });
-</script>
-
-
 @endsection
-
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const categorySelect = document.getElementById('category_id');
-        const stockContainer = document.getElementById('stockContainer');
-        const literContainer = document.getElementById('literContainer');
-
-        categorySelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const fragrancesStatus = selectedOption.getAttribute('data-fragrances');
-
-            if (this.value === '') {
-                stockContainer.style.display = 'none';
-                literContainer.style.display = 'none';
-            } else if (fragrancesStatus === '1') {
-                stockContainer.style.display = 'none';
-                literContainer.style.display = 'block';
-            } else {
-                stockContainer.style.display = 'block';
-                literContainer.style.display = 'none';
-            }
-        });
-
-        // Trigger change event on page load (if an option is pre-selected)
-        categorySelect.dispatchEvent(new Event('change'));
-    });
-</script>
-@endpush
