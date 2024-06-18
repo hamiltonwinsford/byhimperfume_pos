@@ -238,20 +238,23 @@ class ProductController extends Controller
     }
 
     // import products
-    public function import()
+    public function importForm()
     {
-        return view('pages.products.import');
+        return view('products.import');
     }
 
-    public function importExcel(Request $request)
+    public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xls,xlsx'
+            'file' => 'required|mimes:xlsx',
         ]);
 
-        Excel::import(new ProductImport, $request->file('file'));
-
-        return redirect()->route('products.index')->with('success', 'Products imported successfully.');
+        try {
+            Excel::import(new ProductImport, $request->file('file'));
+            return redirect()->route('products.index')->with('success', 'Products imported successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error importing products: ' . $e->getMessage());
+        }
     }
 
     public function branch()
