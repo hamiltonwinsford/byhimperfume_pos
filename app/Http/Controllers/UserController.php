@@ -27,7 +27,7 @@ class UserController extends Controller
 
     //create
     public function create()
-    {   
+    {
         $branch = Branch::get();
         return view('pages.users.create', compact('branch'));
     }
@@ -40,6 +40,7 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
+            'branch' => 'required',
             'role' => 'required|in:admin,user',
         ]);
 

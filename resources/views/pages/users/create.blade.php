@@ -98,7 +98,7 @@
 
                                 </div>
                             </div>
-                            <div class="form-group" id="someOtherInput" style="display:none;">
+                            <div class="form-group" id="someOtherInput" style="">
                                 <select class="form-control" name="branch_id">
                                     <option value="" selected disabled>-- Select Branch --</option>
                                     @foreach($branch as $key => $value)
