@@ -14,8 +14,7 @@
             <h1>Stock</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="#">Stock</a></div>
-                <div class="breadcrumb-item">All Stock</div>
+                <div class="breadcrumb-item"><a href="{{ route('stock.index') }}">Stock</a></div>
             </div>
         </div>
         <div class="section-body">
