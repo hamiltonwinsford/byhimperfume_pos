@@ -158,9 +158,19 @@
                                 </div>
 
                                 <div class="form-group col-6">
-                                    <label class="form-label">Concentration</label>
-                                    <input type="text" class="form-control @error('concentration') is-invalid @enderror" name="concentration" value="{{ old('concentration') }}" id="concentration">
-                                    @error('concentration')
+                                    <label class="form-label">Gram to Mililiter</label>
+                                    <input type="text" class="form-control @error('gram_to_ml') is-invalid @enderror" name="gram_to_ml" value="{{ old('gram_to_ml', $product->fragrance->gram_to_ml ?? '') }}" id="gram_to_ml">
+                                    @error('gram_to_ml')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group col-6">
+                                    <label class="form-label">Mililiter to Gram</label>
+                                    <input type="text" class="form-control @error('ml_to_gram') is-invalid @enderror" name="ml_to_gram" value="{{ old('ml_to_gram', $product->fragrance->ml_to_gram ?? '') }}" id="ml_to_gram">
+                                    @error('ml_to_gram')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>

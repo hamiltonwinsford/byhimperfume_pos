@@ -103,11 +103,12 @@ class ProductController extends Controller
                 $fragrance = new Fragrance();
                 $fragrance->name = $request->fragrances_name;
                 $fragrance->total_weight = $request->total_weight;
-                /*$fragrance->concentration = $request->concentration;
+                $fragrance->gram_to_ml = $request->gram_to_ml;
+                $fragrance->ml_to_gram = $request->ml_to_gram;
                 $fragrance->gram = $request->gram;
                 $fragrance->mililiter = $request->milliliter;
                 $fragrance->pump_weight = $request->pump_weight;
-                $fragrance->bottle_weight = $request->bottle_weight;*/
+                $fragrance->bottle_weight = $request->bottle_weight;
                 $fragrance->product_id = $product->id;
                 $fragrance->save();
             }
