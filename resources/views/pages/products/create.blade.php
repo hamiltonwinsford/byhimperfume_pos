@@ -179,7 +179,7 @@
 
                                 <div class="form-group col-6">
                                     <label class="form-label">Gram</label>
-                                    <input type="number" class="form-control @error('gram') is-invalid @enderror" name="gram" value="{{ old('gram') }}" id="gram">
+                                    <input type="number" class="form-control @error('gram') is-invalid @enderror" name="gram" value="{{ old('gram') }}" id="gram" readonly>
                                     @error('gram')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -189,7 +189,7 @@
 
                                 <div class="form-group col-6">
                                     <label class="form-label">Milliliter</label>
-                                    <input type="number" class="form-control @error('milliliter') is-invalid @enderror" name="milliliter" value="{{ old('milliliter') }}" id="milliliter">
+                                    <input type="number" class="form-control @error('milliliter') is-invalid @enderror" name="milliliter" value="{{ old('milliliter') }}" id="milliliter" readonly>
                                     @error('milliliter')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -199,8 +199,6 @@
 
                             </div>
                         </div>
-
-
 
                         <div class="form-group">
                             <label class="form-label">Photo Product</label>
