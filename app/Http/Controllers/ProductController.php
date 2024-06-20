@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Branch;
 use App\Models\Category;
 use App\Models\Fragrance;
+use App\Models\StockCard;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
@@ -60,22 +61,6 @@ class ProductController extends Controller
             $product = new Product;
             $product->fill($request->only(['name', 'description', 'price', 'category_id', 'status', 'is_favorite', 'branch_id']));
 
-            // if ($product->category->fragrances_status == Category::STATUS_FRAGRANCE) {
-            //     $product->stock = 1;
-            // } else {
-            //     $validator = Validator::make($request->all(), [
-            //         'stock' => 'required|numeric',
-            //     ]);
-
-            //     if ($validator->fails()) {
-            //         return redirect()->back()
-            //             ->withErrors($validator)
-            //             ->withInput();
-            //     }
-
-            //     $product->stock = $request->stock;
-            // }
-
             $l_file = '';
             if (isset($request->image)) {
                 $s_file    = $request->file('image');
@@ -111,6 +96,14 @@ class ProductController extends Controller
                 $fragrance->bottle_weight = $request->bottle_weight;
                 $fragrance->product_id = $product->id;
                 $fragrance->save();
+
+                // Insert into StockCard table
+                $stockCard = new StockCard;
+                $stockCard->product_id = $product->id;
+                $stockCard->branch_id = $request->branch_id;
+                $stockCard->fragrance_id = $fragrance->id;
+                $stockCard->opening_stock_gram = $request->gram;
+                $stockCard->save();
             }
             DB::commit();
 
@@ -214,6 +207,14 @@ class ProductController extends Controller
                     $fragrance->product_id = $product->id;
                     $fragrance->save();
 
+                    // Insert into StockCard table
+                    $stockCard = new StockCard;
+                    $stockCard->product_id = $product->id;
+                    $stockCard->branch_id = $request->branch_id;
+                    $stockCard->fragrance_id = $fragrance->id;
+                    $stockCard->opening_stock_gram = $request->gram;
+                    $stockCard->save();
+
                 } else {
                     $fragrance->delete();
                 }
@@ -229,6 +230,14 @@ class ProductController extends Controller
                 $fragrance->bottle_weight = $request->bottle_weight;
                 $fragrance->product_id = $product->id;
                 $fragrance->save();
+
+                // Insert into StockCard table
+                $stockCard = new StockCard;
+                $stockCard->product_id = $product->id;
+                $stockCard->branch_id = $request->branch_id;
+                $stockCard->fragrance_id = $fragrance->id;
+                $stockCard->opening_stock_gram = $request->gram;
+                $stockCard->save();
             }
 
             DB::commit();

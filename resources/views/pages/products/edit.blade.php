@@ -179,7 +179,7 @@
 
                                 <div class="form-group col-6">
                                     <label class="form-label">Gram</label>
-                                    <input type="number" class="form-control @error('gram') is-invalid @enderror" name="gram" value="{{ old('gram', $product->fragrance->gram ?? '') }}" id="gram">
+                                    <input type="number" class="form-control @error('gram') is-invalid @enderror" name="gram" value="{{ old('gram', $product->fragrance->gram ?? '') }}" id="gram" readonly>
                                     @error('gram')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -189,7 +189,7 @@
 
                                 <div class="form-group col-6">
                                     <label class="form-label">Milliliter</label>
-                                    <input type="number" class="form-control @error('milliliter') is-invalid @enderror" name="milliliter" value="{{ old('milliliter', $product->fragrance->mililiter ?? '') }}" id="milliliter">
+                                    <input type="number" class="form-control @error('milliliter') is-invalid @enderror" name="milliliter" value="{{ old('milliliter', $product->fragrance->mililiter ?? '') }}" id="milliliter" readonly>
                                     @error('milliliter')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -250,25 +250,26 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function(){
-        $('#total_weight, #pump_weight, #bottle_weight, #concentration').on('keyup', function(){
+        function calculateWeights() {
             var total_weight = parseFloat($('#total_weight').val());
             var pump_weight = parseFloat($('#pump_weight').val());
             var bottle_weight = parseFloat($('#bottle_weight').val());
-            var concentration = parseFloat($('#concentration').val());
-            var gram = total_weight - (pump_weight + bottle_weight);
-            var milliliter = gram * concentration;
+            var gram_to_ml = parseFloat($('#gram_to_ml').val());
 
-            if(!isNaN(gram)) {
+            if (!isNaN(total_weight) && !isNaN(pump_weight) && !isNaN(bottle_weight) && !isNaN(gram_to_ml)) {
+                var gram = total_weight - (pump_weight + bottle_weight);
+                var milliliter = gram * gram_to_ml;
+
                 $('#gram').val(gram);
                 $('#milliliter').val(milliliter);
             }
+        }
+
+        $('#total_weight, #pump_weight, #bottle_weight, #gram_to_ml').on('keyup', function(){
+            calculateWeights();
         });
     });
-</script>
-@endsection
 
-@push('scripts')
-<script>
     document.addEventListener('DOMContentLoaded', function() {
         const categorySelect = document.getElementById('category_id');
         const stockContainer = document.getElementById('stockContainer');
@@ -294,4 +295,6 @@
         categorySelect.dispatchEvent(new Event('change'));
     });
 </script>
+@endsection
+@push('scripts')
 @endpush
