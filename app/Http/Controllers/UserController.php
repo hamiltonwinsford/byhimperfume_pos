@@ -53,7 +53,6 @@ class UserController extends Controller
         if(!empty($request->branch_id)){
             $user->branch_id = $request->branch_id;
         }
-        dd($user);
         $user->save();
         return redirect()->route('users.index')->with('success', 'User created successfully');
     }
