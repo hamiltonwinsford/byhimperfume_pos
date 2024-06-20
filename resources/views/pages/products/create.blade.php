@@ -301,4 +301,6 @@
         categorySelect.dispatchEvent(new Event('change'));
     });
 </script>
+@endsection
+@push('scripts')
 @endpush
