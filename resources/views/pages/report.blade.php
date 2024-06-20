@@ -34,47 +34,38 @@
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table id="myTable" class="table-striped table">
-                                        <tr>
-
-                                            <th>Transactions Number</th>
-                                            <th>Transactions Date</th>
-                                            <th>Cashier</th>
-                                            <th>Customers</th>
-                                            <th>Branch</th>
-                                            <th>Total Amount</th>
-                                            <th>Action</th>
-                                        </tr>
-                                        @foreach ($data as $value)
+                                        <thead>
                                             <tr>
-                                                <td>{{ $value->transaction_number }}</td>
-                                                <td>{{ $value->transaction_date }}</td>
-                                                <td>{{ $value->name }}</td>
-                                                <td>{{ $value->name_customer }}</td>
-                                                <td>{{ $value->name_branch }}</td>
-                                                <td>{{ $value->total_amount }}</td>
-                                                <td>
-                                                    <div class="d-flex">
-                                                        <a href="{{ URL::to('detail-transactions/'.$value->id) }}"
-                                                            class="btn btn-sm btn-info btn-icon">
-                                                            <i class="fas fa-edit"></i>
-                                                            Detail
-                                                        </a>
-
-                                                        {{-- <form action="{{ route('users.destroy', $value->id) }}"
-                                                            method="POST" class="ml-2">
-                                                            <input type="hidden" name="_method" value="DELETE" />
-                                                            <input type="hidden" name="_token"
-                                                                value="{{ csrf_token() }}" />
-                                                            <button class="btn btn-sm btn-danger btn-icon confirm-delete">
-                                                                <i class="fas fa-times"></i> Delete
-                                                            </button>
-                                                        </form> --}}
-                                                    </div>
-                                                </td>
+                                                <th>Transactions Number</th>
+                                                <th>Transactions Date</th>
+                                                <th>Cashier</th>
+                                                <th>Customers</th>
+                                                <th>Branch</th>
+                                                <th>Total Amount</th>
+                                                <th>Action</th>
                                             </tr>
-                                        @endforeach
-
-
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($data as $value)
+                                                <tr>
+                                                    <td>{{ $value->transaction_number }}</td>
+                                                    <td>{{ $value->transaction_date }}</td>
+                                                    <td>{{ $value->name }}</td>
+                                                    <td>{{ $value->name_customer }}</td>
+                                                    <td>{{ $value->name_branch }}</td>
+                                                    <td>{{ $value->total_amount }}</td>
+                                                    <td>
+                                                        <div class="d-flex">
+                                                            <a href="{{ URL::to('detail-transactions/'.$value->id) }}"
+                                                                class="btn btn-sm btn-info btn-icon">
+                                                                <i class="fas fa-edit"></i>
+                                                                Detail
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
                                     </table>
                                 </div>
                                 <div class="float-right">

@@ -182,7 +182,7 @@ class ApiController extends Controller
     }
 
     public function productByCategory(Request $request)
-    {   
+    {
         $categoryId = $request->category_id;
 
         $data = Product::where('category_id', $categoryId)->where('branch_id', $request->branch_id)->get();
@@ -193,13 +193,13 @@ class ApiController extends Controller
 
         return returnAPI(200, 'Success', $data);
     }
-    
+
     public function getCurrentStock(Request $request)
-    {   
+    {
         $data   = CurrentStock::join('products as p','p.id','product_id')->select('current_stock.*','p.name')->get();
         return returnAPI(200, 'Success', $data);
     }
-    
+
     public function getCurrentStockByBranch(Request $request)
     {
         try {
@@ -208,11 +208,11 @@ class ApiController extends Controller
                 ->where('p.branch_id', $branch)
                 ->select('current_stock.*', 'p.name')
                 ->get();
-    
+
             if ($data->isEmpty()) {
                 return returnAPI(404, 'No current stock found for the given branch', $data);
             }
-    
+
             return returnAPI(200, 'Success', $data);
         } catch (\Exception $e) {
             return returnAPI(500, 'An error occurred while fetching the current stock', ['error' => $e->getMessage()]);
@@ -281,12 +281,12 @@ class ApiController extends Controller
                         ->where('variant', $request->variant)
                         ->select('id','harga_ml', 'variant')
                         ->first();
-                        
+
         // Cek apakah bottle ditemukan
         if (!$bottle) {
             return returnAPI(404, 'Bottle not found', null);
         }
-        
+
         $cart = new Cart;
         $cart->product_id   = $request->product_id;
         $cart->branch_id    = $request->branch_id;
@@ -307,7 +307,7 @@ class ApiController extends Controller
             'created_at' => $cart->created_at,
             'id' => $cart->id
         ];
-            
+
 
         // return returnAPI(200, 'Success', $cart);
         return returnAPI(200, 'Success', $data);
@@ -342,17 +342,17 @@ class ApiController extends Controller
     public function checkout(Request $request)
     {
         //Log::info('Checkout request received', $request->all());
-    
+
         try {
             $cekCart = Cart::where('user_id', $request->user_id)->get()->all();
             $branch = Branch::join('users','users.branch_id','branches.id')->select('branches.*')->where('users.id', $request->user_id)->first();
-            
+
             if(!empty($request->discount)){
                 $discount = $request->discount;
             } else {
                 $discount = 0;
             }
-    
+
             $tr = new Transaction;
             $tr->user_id = $request->user_id;
             $tr->transaction_number = "INV/".date('Ymd')."/".rand(000,999);
@@ -360,14 +360,14 @@ class ApiController extends Controller
             $tr->branch_id = $branch->id;
             $tr->discount = $discount;
             $tr->save();
-    
+
             $jml_qty = 0;
             $tot_price = 0;
             foreach($cekCart as $key => $value){
-    
+
                 $cekPrduct = Product::where('id', $value->product_id)->first();
                 $bottle = Bottle::where('id', $value->bottle_id)->first();
-    
+
                 $dt = new TransactionItem;
                 $dt->transaction_id = $tr->id;
                 $dt->product_id = $value->product_id;
@@ -375,7 +375,7 @@ class ApiController extends Controller
                 $dt->price = $cekPrduct->price*$bottle->bottle_size;
                 $dt->subtotal = $bottle->harga_ml;
                 $dt->save();
-                
+
                 $tot_price += $bottle->harga_ml;
                 $currentStock = CurrentStock::where('product_id', $value->product_id)->first();
                 if($bottle->variant === "edt"){
@@ -391,12 +391,11 @@ class ApiController extends Controller
                     $qty = $bottle->bottle_size;
                 }
                 $currentStock->current_stock = $currentStock->current_stock - $qty;
-                //debugCode($currentStock);
                 $currentStock->save();
             }
-            
+
             $tot_price = $tot_price-($tot_price*($discount/100));
-    
+
             $cekCus = Customer::where('phone_number', $request->phone_number)->first();
             if(empty($cekCus)){
                 $cus = new Customer;
@@ -407,34 +406,29 @@ class ApiController extends Controller
             } else {
                 $customer_id = $cekCus->id;
             }
-            
-            // Log::info('Customer ID: '.$customer_id);
-            // Log::info('Total Price: '.$tot_price);
-    
+
             $cekTr = Transaction::where('id', $tr->id)->first();
             $cekTr->total_amount = $tot_price;
             $cekTr->customer_id = $customer_id;
             $cekTr->save();
-    
-            // Log::info('Transaction updated: ', ['transaction_id' => $tr->id, 'customer_id' => $customer_id, 'total_amount' => $tot_price]);
-    
+
             Cart::where('user_id', $request->user_id)->delete();
-    
+
             return returnAPI(200, 'Success', $tr);
         } catch (Exception $e) {
             Log::error('Error in checkout: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
-    
+
     public function getHistoryTransactions(Request $request)
-    {   
+    {
         $data   = Transaction::select('transactions.*','customers.name as name_customer')->leftJoin('customers','customers.id', 'customer_id')->where('branch_id', $request->branch_id)->get();
         return returnAPI(200, 'Success', $data);
     }
-    
+
     public function getHistoryTransactionsByDate(Request $request)
-    {   
+    {
         $data   = Transaction::select('transactions.*','customers.name as name_customer')
             ->leftJoin('customers','customers.id', 'customer_id')
             ->where('branch_id', $request->branch_id)
