@@ -34,7 +34,7 @@
                         <div class="card-body">
                             <div class="clearfix mb-3"></div>
                             <div class="table-responsive">
-                                <table id="myTable" class="table-striped table">
+                                <table id="myTable-1" class="table-striped table">
                                     <thead>
                                         <tr>
                                             <th>Product</th>

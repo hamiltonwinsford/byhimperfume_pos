@@ -32,6 +32,7 @@
                                 <h4>All Posts</h4>
                             </div>
                             <div class="card-body">
+                                <div class="clearfix mb-3"></div>
                                 <div class="table-responsive">
                                     <table id="myTable" class="table-striped table">
                                         <thead>
