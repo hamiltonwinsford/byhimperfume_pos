@@ -255,52 +255,27 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-<script>
     $(document).ready(function(){
-        $('#total_weight, #pump_weight, #bottle_weight, #gram_to_ml').on('keyup', function(){
+        function calculateWeights() {
+            var total_weight = parseFloat($('#total_weight').val());
+            var pump_weight = parseFloat($('#pump_weight').val());
+            var bottle_weight = parseFloat($('#bottle_weight').val());
+            var gram_to_ml = parseFloat($('#gram_to_ml').val());
 
-            // Ambil nilai input dan konversi ke angka
-            var total_weight = parseFloat($('#total_weight').val()) || 0; // Berikan nilai 0 jika input kosong
-            var pump_weight = parseFloat($('#pump_weight').val()) || 0;
-            var bottle_weight = parseFloat($('#bottle_weight').val()) || 0;
-            var gram_to_ml = parseFloat($('#gram_to_ml').val()) || 0;
-
-            // Hitung gram dan mililiter hanya jika semua input terisi
-            if (total_weight > 0 && pump_weight > 0 && bottle_weight > 0 && gram_to_ml > 0) {
+            if (!isNaN(total_weight) && !isNaN(pump_weight) && !isNaN(bottle_weight) && !isNaN(gram_to_ml)) {
                 var gram = total_weight - (pump_weight + bottle_weight);
                 var milliliter = gram * gram_to_ml;
 
-                $('#gram').val(gram.toFixed(2)); // Tampilkan gram dengan 2 angka di belakang koma
-                $('#milliliter').val(milliliter.toFixed(2)); // Tampilkan mililiter dengan 2 angka di belakang koma
-            } else {
-                $('#gram').val(''); // Kosongkan field gram dan mililiter jika ada input yang belum terisi
-                $('#milliliter').val('');
+                $('#gram').val(gram);
+                $('#milliliter').val(milliliter);
             }
-        });
+        }
 
-        // Sembunyikan input gram dan mililiter saat halaman dimuat
-        $('#gram').attr('readonly', true);
-        $('#milliliter').attr('readonly', true);
-
-        // Tampilkan input gram dan mililiter hanya jika semua input yang diperlukan sudah terisi
         $('#total_weight, #pump_weight, #bottle_weight, #gram_to_ml').on('keyup', function(){
-            if ($('#total_weight').val() != '' && $('#pump_weight').val() != '' && $('#bottle_weight').val() != '' && $('#gram_to_ml').val() != '') {
-                $('#gram, #milliliter').attr('readonly', false);
-            } else {
-                $('#gram, #milliliter').attr('readonly', true);
-            }
+            calculateWeights();
         });
     });
 
-</script>
-
-</script>
-
-
-@endsection
-
-@push('scripts')
-<script>
     document.addEventListener('DOMContentLoaded', function() {
         const categorySelect = document.getElementById('category_id');
         const stockContainer = document.getElementById('stockContainer');
