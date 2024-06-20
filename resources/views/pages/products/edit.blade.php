@@ -137,7 +137,7 @@
                                     </div>
                                     @enderror
                                 </div>
-                                {{-- <div class="form-group col-6">
+                                <div class="form-group col-6">
                                     <label class="form-label">Pump Weight</label>
                                     <input type="number" class="form-control @error('pump_weight') is-invalid @enderror" name="pump_weight" value="{{ old('pump_weight', $product->fragrance->pump_weight ?? '') }}" id="pump_weight">
                                     @error('pump_weight')
@@ -184,9 +184,8 @@
                                         {{ $message }}
                                     </div>
                                     @enderror
-                                </div> --}}
+                                </div>
 
-                                
                             </div>
                         </div>
 
@@ -247,7 +246,7 @@
             var concentration = parseFloat($('#concentration').val());
             var gram = total_weight - (pump_weight + bottle_weight);
             var milliliter = gram * concentration;
-            
+
             if(!isNaN(gram)) {
                 $('#gram').val(gram);
                 $('#milliliter').val(milliliter);
