@@ -40,7 +40,7 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
-            'branch' => 'required',
+            'branch_id' => 'required',
             'role' => 'required|in:admin,user',
         ]);
 
