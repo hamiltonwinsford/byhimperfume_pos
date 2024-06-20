@@ -68,9 +68,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="float-right">
-                                    {{ $data->withQueryString()->links() }}
-                                </div>
                             </div>
                         </div>
                     </div>

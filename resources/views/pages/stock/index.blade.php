@@ -33,7 +33,6 @@
                         </div>
                         <div class="card-body">
                             <div class="clearfix mb-3"></div>
-
                             <div class="table-responsive">
                                 <table id="myTable" class="table-striped table">
                                     <thead>
@@ -46,7 +45,6 @@
                                     <tbody>
                                         @foreach ($data as $value)
                                         <tr>
-
                                             <td>{{ $value->name }}</td>
                                             <td>{{ $value->current_stock }}</td>
                                             <td>
