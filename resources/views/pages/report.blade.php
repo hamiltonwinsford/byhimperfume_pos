@@ -33,7 +33,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table-striped table">
+                                    <table id="myTable" class="table-striped table">
                                         <tr>
 
                                             <th>Transactions Number</th>
