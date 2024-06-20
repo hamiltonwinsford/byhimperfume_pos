@@ -92,7 +92,9 @@ class HomeController extends Controller
         $data = Transaction::join('users','users.id','user_id')
             ->join('customers','customers.id','customer_id')
             ->join('branches','branches.id','transactions.branch_id')
-            ->select('transactions.*', 'users.name', 'customers.name as name_customer','branches.name as name_branch');
+            ->select('transactions.*', 'users.name', 'customers.name as name_customer','branches.name as name_branch')
+            ->orderBy('transactions.created_at','desc')
+            ->get();
             //->paginate(10);
 
         return view('pages.report', compact('data'));
