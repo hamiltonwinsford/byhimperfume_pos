@@ -15,13 +15,13 @@ class UserController extends Controller
     public function index(Request $request)
     {
         //get all users with pagination
-        $users = DB::table('users')
-        ->when($request -> input('name'), function($query, $name)
-        {
-            $query->where('name', 'like', '%'. $name .'%')
-            ->orWhere('email', 'like', '%'. $name .'%');
-        })
-        ->paginate(10);
+        $users = User::with('branch') // Memuat relasi
+            ->when($request->input('name'), function ($query, $name) {
+                $query->where('name', 'like', '%' . $name . '%')
+                    ->orWhere('email', 'like', '%' . $name . '%');
+            })
+            ->paginate(10);
+
         return view('pages.users.index', compact('users'));
     }
 

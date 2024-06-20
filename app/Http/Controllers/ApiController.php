@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -20,6 +20,7 @@ use App\Models\Opname;
 use App\Models\StockCard;
 use App\Models\Promotion;
 use App\Models\PromotionBundle;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB; //tambahan
 
 class ApiController extends Controller
@@ -291,9 +292,7 @@ class ApiController extends Controller
         $cart->product_id   = $request->product_id;
         $cart->branch_id    = $request->branch_id;
         $cart->user_id      = $request->user_id;
-        //$cart->qty          = $request->qty;
         $cart->bottle_id    = $bottle->id;
-        //$cart->variant      = $request->variant;
         $cart->save();
 
         $data = [
@@ -308,8 +307,6 @@ class ApiController extends Controller
             'id' => $cart->id
         ];
 
-
-        // return returnAPI(200, 'Success', $cart);
         return returnAPI(200, 'Success', $data);
     }
 
@@ -341,7 +338,6 @@ class ApiController extends Controller
 
     public function checkout(Request $request)
     {
-        //Log::info('Checkout request received', $request->all());
 
         try {
             $cekCart = Cart::where('user_id', $request->user_id)->get()->all();
@@ -437,5 +433,4 @@ class ApiController extends Controller
             ->get();
         return returnAPI(200, 'Success', $data);
     }
-
 }

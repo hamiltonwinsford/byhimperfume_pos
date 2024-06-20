@@ -64,38 +64,26 @@
                                 <div class="table-responsive">
                                     <table class="table-striped table">
                                         <tr>
-
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th>Rule</th>
-                                            <th>Created At</th>
+                                            <th>Role</th>
+                                            <th>Branch</th>
                                             <th>Action</th>
                                         </tr>
                                         @foreach ($users as $user)
                                             <tr>
-
-                                                <td>{{ $user->name }}
-                                                </td>
-                                                <td>
-                                                    {{ $user->email }}
-                                                </td>
-                                                <td>
-                                                    {{ $user->role }}
-                                                </td>
-                                                <td>{{ $user->created_at }}</td>
+                                                <td>{{ $user->name }}</td>
+                                                <td>{{ $user->email }}</td>
+                                                <td>{{ $user->role }}</td>
+                                                <td>{{ $user->branch ? $user->branch->name : 'No Branch' }}</td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <a href='{{ route('users.edit', $user->id) }}'
-                                                            class="btn btn-sm btn-info btn-icon">
-                                                            <i class="fas fa-edit"></i>
-                                                            Edit
+                                                        <a href='{{ route('users.edit', $user->id) }}' class="btn btn-sm btn-info btn-icon">
+                                                            <i class="fas fa-edit"></i> Edit
                                                         </a>
-
-                                                        <form action="{{ route('users.destroy', $user->id) }}"
-                                                            method="POST" class="ml-2">
+                                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="ml-2">
                                                             <input type="hidden" name="_method" value="DELETE" />
-                                                            <input type="hidden" name="_token"
-                                                                value="{{ csrf_token() }}" />
+                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                                             <button class="btn btn-sm btn-danger btn-icon confirm-delete">
                                                                 <i class="fas fa-times"></i> Delete
                                                             </button>
@@ -104,8 +92,6 @@
                                                 </td>
                                             </tr>
                                         @endforeach
-
-
                                     </table>
                                 </div>
                                 <div class="float-right">

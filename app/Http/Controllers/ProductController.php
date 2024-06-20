@@ -202,7 +202,6 @@ class ProductController extends Controller
                             ->withInput();
                     }
 
-
                     $fragrance->name = $request->fragrances_name;
                     $fragrance->concentration = $request->concentration;
                     $fragrance->gram = $request->gram;
@@ -212,10 +211,11 @@ class ProductController extends Controller
                     $fragrance->total_weight = $request->total_weight;
                     $fragrance->product_id = $product->id;
                     $fragrance->save();
+
                 } else {
                     $fragrance->delete();
                 }
-            }else{
+            } else {
                 $fragrance = new Fragrance();
                 $fragrance->name = $request->fragrances_name;
                 $fragrance->total_weight = $request->total_weight;
