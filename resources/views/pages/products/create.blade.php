@@ -255,48 +255,35 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+<script>
     $(document).ready(function(){
         $('#total_weight, #pump_weight, #bottle_weight, #gram_to_ml').on('keyup', function(){
 
-            // Inisialisasi variabel error dan pesan error
-            var hasError = false;
-            var errorMessage = "";
-
             // Ambil nilai input dan konversi ke angka
-            var total_weight = parseDouble($('#total_weight').val()) || 0;
-            var pump_weight = parseDouble($('#pump_weight').val()) || 0;
-            var bottle_weight = parseDouble($('#bottle_weight').val()) || 0;
-            var gram_to_ml = parseDouble($('#gram_to_ml').val()) || 0;
+            var total_weight = parseFloat($('#total_weight').val()) || 0; // Berikan nilai 0 jika input kosong
+            var pump_weight = parseFloat($('#pump_weight').val()) || 0;
+            var bottle_weight = parseFloat($('#bottle_weight').val()) || 0;
+            var gram_to_ml = parseFloat($('#gram_to_ml').val()) || 0;
 
-            // Validasi input
-            if (total_weight <= 0) {
-                hasError = true;
-                errorMessage = "Total Weight harus lebih besar dari 0.";
-            } else if (pump_weight <= 0) {
-                hasError = true;
-                errorMessage = "Pump Weight harus lebih besar dari 0.";
-            } else if (bottle_weight <= 0) {
-                hasError = true;
-                errorMessage = "Bottle Weight harus lebih besar dari 0.";
-            } else if (gram_to_ml <= 0) {
-                hasError = true;
-                errorMessage = "Gram to ML harus lebih besar dari 0.";
-            }
-
-            // Jika tidak ada error, lakukan perhitungan
-            if (!hasError) {
+            // Hitung gram dan mililiter hanya jika semua input terisi
+            if (total_weight > 0 && pump_weight > 0 && bottle_weight > 0 && gram_to_ml > 0) {
                 var gram = total_weight - (pump_weight + bottle_weight);
                 var milliliter = gram * gram_to_ml;
 
-                $('#gram').val(gram.toFixed(2));
-                $('#milliliter').val(milliliter.toFixed(2));
+                $('#gram').val(gram.toFixed(2)); // Tampilkan gram dengan 2 angka di belakang koma
+                $('#milliliter').val(milliliter.toFixed(2)); // Tampilkan mililiter dengan 2 angka di belakang koma
             } else {
-                $('#gram').val(''); // Kosongkan field gram dan mililiter jika ada error
+                $('#gram').val(''); // Kosongkan field gram dan mililiter jika ada input yang belum terisi
                 $('#milliliter').val('');
-                alert(errorMessage); // Tampilkan pesan error kepada pengguna
             }
+        });
 
-            // Logika untuk menampilkan/menyembunyikan input gram dan mililiter tetap sama
+        // Sembunyikan input gram dan mililiter saat halaman dimuat
+        $('#gram').attr('readonly', true);
+        $('#milliliter').attr('readonly', true);
+
+        // Tampilkan input gram dan mililiter hanya jika semua input yang diperlukan sudah terisi
+        $('#total_weight, #pump_weight, #bottle_weight, #gram_to_ml').on('keyup', function(){
             if ($('#total_weight').val() != '' && $('#pump_weight').val() != '' && $('#bottle_weight').val() != '' && $('#gram_to_ml').val() != '') {
                 $('#gram, #milliliter').attr('readonly', false);
             } else {
@@ -304,6 +291,8 @@
             }
         });
     });
+
+</script>
 
 </script>
 
