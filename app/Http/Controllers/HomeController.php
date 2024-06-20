@@ -24,7 +24,7 @@ class HomeController extends Controller
         $customer = Customer::count();
         $supplier = Supplier::count();
         $product = Product::count();
-        
+
         $startOfWeek = Carbon::now()->startOfWeek(Carbon::SUNDAY);
         $endOfWeek = Carbon::now()->endOfWeek(Carbon::SATURDAY);
 
@@ -39,7 +39,7 @@ class HomeController extends Controller
     {
         // Mendapatkan tanggal hari ini
         $today = Carbon::now();
-        
+
         // Mengambil data transaksi dalam bulan ini
         $transactions = Transaction::whereMonth('transaction_date', $today->month)
                                    ->whereYear('transaction_date', $today->year)
@@ -59,12 +59,12 @@ class HomeController extends Controller
 
         return response()->json($chartData);
     }
-    
+
     public function getDailyTransactions()
     {
         // Mendapatkan tanggal hari ini
         $today = Carbon::now();
-        
+
         // Mengambil data transaksi dalam bulan ini
         $transactions = Transaction::whereMonth('transaction_date', $today->month)
                                    ->whereYear('transaction_date', $today->year)
@@ -72,7 +72,7 @@ class HomeController extends Controller
                                    ->groupBy(function($date) {
                                        return Carbon::parse($date->transaction_date)->format('Y-m-d');
                                    });
-        
+
         // Menyiapkan data untuk chart
         $chartData = [];
         foreach ($transactions as $day => $dayTransactions) {
@@ -82,7 +82,7 @@ class HomeController extends Controller
                 'total' => $dayTotal
             ];
         }
-    
+
         return response()->json($chartData);
     }
 
@@ -92,9 +92,9 @@ class HomeController extends Controller
         $data = Transaction::join('users','users.id','user_id')
             ->join('customers','customers.id','customer_id')
             ->join('branches','branches.id','transactions.branch_id')
-            ->select('transactions.*', 'users.name', 'customers.name as name_customer','branches.name as name_branch')
-            ->paginate(10);
-       
+            ->select('transactions.*', 'users.name', 'customers.name as name_customer','branches.name as name_branch');
+            //->paginate(10);
+
         return view('pages.report', compact('data'));
     }
 
