@@ -60,21 +60,21 @@ class ProductController extends Controller
             $product = new Product;
             $product->fill($request->only(['name', 'description', 'price', 'category_id', 'status', 'is_favorite', 'branch_id']));
 
-            if ($product->category->fragrances_status == Category::STATUS_FRAGRANCE) {
-                $product->stock = 1;
-            } else {
-                $validator = Validator::make($request->all(), [
-                    'stock' => 'required|numeric',
-                ]);
+            // if ($product->category->fragrances_status == Category::STATUS_FRAGRANCE) {
+            //     $product->stock = 1;
+            // } else {
+            //     $validator = Validator::make($request->all(), [
+            //         'stock' => 'required|numeric',
+            //     ]);
 
-                if ($validator->fails()) {
-                    return redirect()->back()
-                        ->withErrors($validator)
-                        ->withInput();
-                }
+            //     if ($validator->fails()) {
+            //         return redirect()->back()
+            //             ->withErrors($validator)
+            //             ->withInput();
+            //     }
 
-                $product->stock = $request->stock;
-            }
+            //     $product->stock = $request->stock;
+            // }
 
             $l_file = '';
             if (isset($request->image)) {
@@ -204,7 +204,8 @@ class ProductController extends Controller
                     }
 
                     $fragrance->name = $request->fragrances_name;
-                    $fragrance->concentration = $request->concentration;
+                    $fragrance->gram_to_ml = $request->gram_to_ml;
+                    $fragrance->ml_to_gram = $request->ml_to_gram;
                     $fragrance->gram = $request->gram;
                     $fragrance->mililiter = $request->milliliter;
                     $fragrance->pump_weight = $request->pump_weight;
@@ -220,11 +221,12 @@ class ProductController extends Controller
                 $fragrance = new Fragrance();
                 $fragrance->name = $request->fragrances_name;
                 $fragrance->total_weight = $request->total_weight;
-                /*$fragrance->concentration = $request->concentration;
+                $fragrance->gram_to_ml = $request->gram_to_ml;
+                $fragrance->ml_to_gram = $request->ml_to_gram;
                 $fragrance->gram = $request->gram;
                 $fragrance->mililiter = $request->milliliter;
                 $fragrance->pump_weight = $request->pump_weight;
-                $fragrance->bottle_weight = $request->bottle_weight;*/
+                $fragrance->bottle_weight = $request->bottle_weight;
                 $fragrance->product_id = $product->id;
                 $fragrance->save();
             }
@@ -263,13 +265,22 @@ class ProductController extends Controller
         return $this->belongsTo(Branch::class);
     }
 
-    // destroy
     public function destroy($id)
     {
-        // delete the request...
+        // Cari produk berdasarkan id
         $product = Product::find($id);
-        $product->delete();
 
-        return redirect()->route('products.index')->with('success', 'Product deleted successfully');
+        if ($product) {
+            // Hapus semua baris terkait di tabel fragrances
+            DB::table('fragrances')->where('product_id', $id)->delete();
+
+            // Hapus produk
+            $product->delete();
+
+            return redirect()->route('products.index')->with('success', 'Product deleted successfully');
+        }
+
+        return redirect()->route('products.index')->with('error', 'Product not found');
     }
+
 }
