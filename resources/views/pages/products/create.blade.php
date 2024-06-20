@@ -257,10 +257,11 @@
 <script>
     $(document).ready(function(){
         $('#total_weight, #pump_weight, #bottle_weight, #concentration').on('keyup', function(){
-            var total_weight = parseFloat($('#total_weight').val());
-            var pump_weight = parseFloat($('#pump_weight').val());
-            var bottle_weight = parseFloat($('#bottle_weight').val());
-            var concentration = parseFloat($('#concentration').val());
+            var total_weight = parseDouble($('#total_weight').val());
+            var pump_weight = parseDouble($('#pump_weight').val());
+            var bottle_weight = parseDouble($('#bottle_weight').val());
+            var gram_to_ml = parseDouble($('#gram_to_ml').val());
+            var ml_to_gram = parseDouble($('#ml_to_gram').val());
             var gram = total_weight - (pump_weight + bottle_weight);
             var milliliter = gram * concentration;
 
