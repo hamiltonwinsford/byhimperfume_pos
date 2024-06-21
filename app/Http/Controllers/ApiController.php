@@ -225,13 +225,13 @@ class ApiController extends Controller
 
     public function restock(Request $request)
     {
-        $fragrance = Fragrance::where('product_id', $request->product_id)->first();
+        $fragrances = Fragrance::where('product_id', $request->product_id)->first();
         $current = CurrentStock::where('product_id', $request->product_id)->first();
 
-        $dispenser_weight = $fragrance->bottle_weight + $fragrance->pump_weight;
+        $dispenser_weight = $fragrances->bottle_weight + $fragrances->pump_weight;
         $in = $request->total_weight;
         $real_gram = $in - $dispenser_weight;
-        $real_ml = $real_gram * $fragrance->ml_to_g;
+        $real_ml = $real_gram * $fragrances->ml_to_g;
 
         $data = array(
             'in'    => $in,
@@ -242,7 +242,7 @@ class ApiController extends Controller
 
         $us = new Restock;
         $us->product_id = $request->product_id;
-        $us->fragrance_id = $fragrance->branch_id;
+        $us->fragrances_id = $fragrances->branch_id;
         $us->mililiters = $real_ml;
         $us->gram = $real_gram;
         $us->save();
