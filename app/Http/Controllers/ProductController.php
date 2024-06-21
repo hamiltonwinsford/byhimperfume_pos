@@ -220,10 +220,8 @@ class ProductController extends Controller
 
                     // Update the current stock with mililiter
                     $currentStock = CurrentStock::where('product_id', $product->id)->first();
-                    if ($currentStock) {
-                        $currentStock->current_stock = $request->milliliter;
-                        $currentStock->save();
-                    }
+                    $currentStock->current_stock = $request->milliliter;
+                    $currentStock->save();
 
                 } else { //Jika produk bukan fragrance
                     $fragrance->delete();
