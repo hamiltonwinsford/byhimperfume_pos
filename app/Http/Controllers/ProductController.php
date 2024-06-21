@@ -6,12 +6,14 @@ use App\Models\Branch;
 use App\Models\Category;
 use App\Models\Fragrance;
 use App\Models\StockCard;
+use App\Models\CurrentStock;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ProductImport;
+
 
 class ProductController extends Controller
 {
@@ -183,8 +185,9 @@ class ProductController extends Controller
             $product->save();
 
             $fragrance = Fragrance::where('product_id', $id)->first();
-            if ($fragrance) {
-                if ($product->category->fragrances_status == Category::STATUS_FRAGRANCE) {
+
+            if ($fragrance) { //Jika produk merupakan fragrance (bibit parfum)
+                if ($product->category->fragrances_status == Category::STATUS_FRAGRANCE) { //Jika produk masih fragrance
                     $fragranceValidator = Validator::make($request->all(), [
                         'fragrances_name' => 'required',
                         'total_weight' => 'required',
@@ -215,28 +218,36 @@ class ProductController extends Controller
                     $stockCard->opening_stock_gram = $request->gram;
                     $stockCard->save();
 
-                } else {
+                    // Update the current stock with mililiter
+                    $currentStock = CurrentStock::where('product_id', $product->id)->first();
+                    if ($currentStock) {
+                        $currentStock->current_stock = $request->milliliter;
+                        $currentStock->save();
+                    }
+
+                } else { //Jika produk bukan fragrance
                     $fragrance->delete();
                 }
-            } else {
-                $fragrance = new Fragrance();
-                $fragrance->name = $request->fragrances_name;
-                $fragrance->total_weight = $request->total_weight;
-                $fragrance->gram_to_ml = $request->gram_to_ml;
-                $fragrance->ml_to_gram = $request->ml_to_gram;
-                $fragrance->gram = $request->gram;
-                $fragrance->mililiter = $request->milliliter;
-                $fragrance->pump_weight = $request->pump_weight;
-                $fragrance->bottle_weight = $request->bottle_weight;
-                $fragrance->product_id = $product->id;
-                $fragrance->save();
+            } else { //Jika bukan produk fragrance (bibit parfum)
+
+                // $fragrance = new Fragrance();
+                // $fragrance->name = $request->fragrances_name;
+                // $fragrance->total_weight = $request->total_weight;
+                // $fragrance->gram_to_ml = $request->gram_to_ml;
+                // $fragrance->ml_to_gram = $request->ml_to_gram;
+                // $fragrance->gram = $request->gram;
+                // $fragrance->mililiter = $request->milliliter;
+                // $fragrance->pump_weight = $request->pump_weight;
+                // $fragrance->bottle_weight = $request->bottle_weight;
+                // $fragrance->product_id = $product->id;
+                // $fragrance->save();
 
                 // Insert into StockCard table
                 $stockCard = new StockCard;
                 $stockCard->product_id = $product->id;
-                $stockCard->branch_id = $request->branch_id;
-                $stockCard->fragrance_id = $fragrance->id;
-                $stockCard->opening_stock_gram = $request->gram;
+                //$stockCard->branch_id = $request->branch_id;
+                // $stockCard->fragrance_id = $fragrance->id;
+                $stockCard->opening_stock_gram = $request->stock;
                 $stockCard->save();
             }
 

@@ -11,7 +11,7 @@
             <li>
                 <a href="{{ URL::to('home') }}" class="nav-link"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
-            
+
             <li class="menu-header">Header</li>
             <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
                 <a href="{{ route('branches.index') }}" class="nav-link">Branch</a>
@@ -30,6 +30,9 @@
             </li>
             <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
                 <a href="{{ route('stock.index') }}" class="nav-link">Stock</a>
+            </li>
+            <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
+                <a href="{{ route('stockcard.index') }}" class="nav-link">Stock Card</a>
             </li>
             <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
                 <a href="{{ route('first_stock.index') }}" class="nav-link">First stock</a>

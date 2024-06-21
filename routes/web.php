@@ -16,6 +16,7 @@ use App\Http\Controllers\PromotionsController;
 use App\Http\Controllers\FirstStockController;
 use App\Http\Controllers\OpnameController;
 use App\Http\Controllers\PromotionBundleController;
+use App\Http\Controllers\StockCardController;
 use App\Models\Customer;
 
 /*
@@ -52,6 +53,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('customers', CustomerController::class);
     Route::resource('branches', BranchController::class);
     Route::resource('stock', StockController::class);
+    Route::resource('stockcard', StockCardController::class);
     Route::resource('seeds', SeedController::class);
     Route::resource('supplier', SupplierController::class);
     Route::resource('bottle', BottleController::class);
