@@ -249,7 +249,7 @@ class ApiController extends Controller
         // Hitung berat dispenser
         $dispenser_weight = $fragrance->bottle_weight + $fragrance->pump_weight;
         $in = $request->total_weight;
-        $real_gram = $in - $dispenser_weight;
+        $real_gram = $in - ($dispenser_weight + $current->current_stock);
         $real_ml = $real_gram * $fragrance->ml_to_gram;
 
         // Data untuk response
@@ -270,6 +270,7 @@ class ApiController extends Controller
 
         // Update atau buat entri current stock
         $current->current_stock += $real_ml;
+        $current->current_stock_gram += $real_gram;
         $current->save();
 
         return response()->json(['status' => 200, 'message' => 'success', 'data' => $data]);
