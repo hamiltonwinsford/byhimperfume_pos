@@ -106,6 +106,20 @@ class ProductController extends Controller
                 $stockCard->fragrance_id = $fragrance->id;
                 $stockCard->opening_stock_gram = $request->gram;
                 $stockCard->save();
+
+                // Check if product already exists in current_stock
+                $currentStock = CurrentStock::where('product_id', $product->id)->first();
+                if (!$currentStock) {
+                    // Insert into CurrentStock table
+                    $currentStock = new CurrentStock;
+                    $currentStock->product_id = $product->id;
+                    $currentStock->current_stock = $request->milliliter;
+                    $currentStock->save();
+                } else {
+                    // Update the current stock with mililiter
+                    $currentStock->current_stock = $request->milliliter;
+                    $currentStock->save();
+                }
             }
             DB::commit();
 
@@ -220,8 +234,10 @@ class ProductController extends Controller
 
                     // Update the current stock with mililiter
                     $currentStock = CurrentStock::where('product_id', $product->id)->first();
-                    $currentStock->current_stock = $request->milliliter;
-                    $currentStock->save();
+                    if ($currentStock) {
+                        $currentStock->current_stock = $request->milliliter;
+                        $currentStock->save();
+                    }
 
                 } else { //Jika produk bukan fragrance
                     $fragrance->delete();
