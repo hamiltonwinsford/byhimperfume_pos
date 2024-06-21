@@ -250,7 +250,7 @@ class ApiController extends Controller
         $dispenser_weight = $fragrance->bottle_weight + $fragrance->pump_weight;
         $in = $request->total_weight;
         $real_gram = $in - $dispenser_weight;
-        $real_ml = $real_gram * $fragrance->ml_to_g;
+        $real_ml = $real_gram * $fragrance->ml_to_gram;
 
         // Data untuk response
         $data = [
