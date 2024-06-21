@@ -272,7 +272,7 @@ class ApiController extends Controller
         $current->current_stock += $real_ml;
         $current->save();
 
-        return response()->json(['status' => 200, 'message' => 'Success', 'data' => $data]);
+        return response()->json(['status' => 200, 'message' => 'success', 'data' => $data]);
     }
 
     public function addStockOpname(Request $request)
