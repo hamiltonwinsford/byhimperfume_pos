@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Product;
+use App\Models\Fragrance;
 use App\Models\Category;
 use App\Models\Bottle;
 use App\Models\OtherProduct;
@@ -18,6 +20,7 @@ use App\Models\TransactionItem;
 use App\Models\FirstStock;
 use App\Models\Opname;
 use App\Models\StockCard;
+use App\Models\Restock;
 use App\Models\Promotion;
 use App\Models\PromotionBundle;
 use Illuminate\Support\Facades\Log;
@@ -218,6 +221,35 @@ class ApiController extends Controller
         } catch (\Exception $e) {
             return returnAPI(500, 'An error occurred while fetching the current stock', ['error' => $e->getMessage()]);
         }
+    }
+
+    public function restock(Request $request)
+    {
+        $fragrance = Fragrance::where('product_id', $request->product_id)->first();
+        $current = CurrentStock::where('product_id', $request->product_id)->first();
+
+        $dispenser_weight = $fragrance->bottle_weight + $fragrance->pump_weight;
+        $in = $request->total_weight;
+        $real_gram = $in - $dispenser_weight;
+        $real_ml = $real_gram * $fragrance->ml_to_g;
+
+        $data = array(
+            'in'    => $in,
+            'real_g' => $real_gram,
+            'real_ml' => $real_ml,
+            'restock_date' => date('Y-m-d'),
+        );
+
+        $us = new Restock;
+        $us->product_id = $request->product_id;
+        $us->fragrance_id = $fragrance->branch_id;
+        $us->mililiters = $real_ml;
+        $us->gram = $real_gram;
+        $us->save();
+
+        $current->save();
+
+        return returnAPI(200, 'Success', $data);
     }
 
     public function addStockOpname(Request $request)

@@ -34,6 +34,7 @@ Route::get('/product-by-category', [ApiController::class, 'productByCategory'])-
 
 Route::get('/get-current-stock-by-branch', [ApiController::class, 'getCurrentStockByBranch']);
 Route::post('/add-stock-opname', [ApiController::class, 'addStockOpname'])->name('add-stock-opname');
+Route::post('/restock', [ApiController::class, 'restock'])->name('restock');
 
 Route::get('/get-promotion', [ApiController::class, 'getPromotion'])->name('get-promotion');
 Route::get('/get-promotion-bundle', [ApiController::class, 'getPromotionBundle'])->name('get-promotion-bundle');
