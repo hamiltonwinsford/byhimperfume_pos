@@ -249,12 +249,13 @@ class ApiController extends Controller
         // Hitung berat dispenser
         $dispenser_weight = $fragrance->bottle_weight + $fragrance->pump_weight;
         $in = $request->total_weight;
-        $real_gram = $in - ($dispenser_weight + $current->current_stock);
+        $real_gram = $in - ($dispenser_weight + $current->current_stock_gram);
         $real_ml = $real_gram * $fragrance->ml_to_gram;
 
         // Data untuk response
         $data = [
             'in' => $in,
+            'dispenser_weight' => $dispenser_weight,
             'real_g' => $real_gram,
             'real_ml' => $real_ml,
             'restock_date' => date('Y-m-d'),
