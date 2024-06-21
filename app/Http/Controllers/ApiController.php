@@ -279,7 +279,7 @@ class ApiController extends Controller
         $current->save();
 
         $data['current_stock_after'] = $current->current_stock;
-        $data['current_stock_gram_after'] = $current->current_stock;
+        $data['current_stock_gram_after'] = $current->current_stock_gram;
 
         return response()->json(['status' => 200, 'message' => 'success', 'data' => $data]);
     }
