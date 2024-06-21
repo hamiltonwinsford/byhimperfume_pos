@@ -225,31 +225,54 @@ class ApiController extends Controller
 
     public function restock(Request $request)
     {
-        $fragrances = Fragrance::where('product_id', $request->product_id)->first();
-        $current = CurrentStock::where('product_id', $request->product_id)->first();
+        // Validasi request
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'total_weight' => 'required|numeric',
+        ]);
 
-        $dispenser_weight = $fragrances->bottle_weight + $fragrances->pump_weight;
+        // Ambil data fragrance berdasarkan product_id
+        $fragrance = Fragrance::where('product_id', $request->product_id)->first();
+        if (!$fragrance) {
+            return response()->json(['message' => 'Fragrance not found'], 404);
+        }
+
+        // Ambil data current stock berdasarkan product_id
+        $current = CurrentStock::where('product_id', $request->product_id)->first();
+        if (!$current) {
+            // Jika tidak ada current stock, buat entri baru
+            $current = new CurrentStock();
+            $current->product_id = $request->product_id;
+            $current->current_stock = 0; // Atur nilai awal quantity
+        }
+
+        // Hitung berat dispenser
+        $dispenser_weight = $fragrance->bottle_weight + $fragrance->pump_weight;
         $in = $request->total_weight;
         $real_gram = $in - $dispenser_weight;
-        $real_ml = $real_gram * $fragrances->ml_to_g;
+        $real_ml = $real_gram * $fragrance->ml_to_g;
 
-        $data = array(
-            'in'    => $in,
+        // Data untuk response
+        $data = [
+            'in' => $in,
             'real_g' => $real_gram,
             'real_ml' => $real_ml,
             'restock_date' => date('Y-m-d'),
-        );
+        ];
 
+        // Buat entri restock baru
         $us = new Restock;
         $us->product_id = $request->product_id;
-        $us->fragrances_id = $fragrances->branch_id;
+        $us->fragrances_id = $fragrance->id;
         $us->mililiters = $real_ml;
         $us->gram = $real_gram;
         $us->save();
 
+        // Update atau buat entri current stock
+        $current->current_stock += $real_ml;
         $current->save();
 
-        return returnAPI(200, 'Success', $data);
+        return response()->json(['status' => 200, 'message' => 'Success', 'data' => $data]);
     }
 
     public function addStockOpname(Request $request)

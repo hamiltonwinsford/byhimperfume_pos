@@ -12,19 +12,12 @@ class Fragrance extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'name',
-        'total_weight',
-        'gram_to_ml',
-        'ml_to_gram',
-        'gram',
-        'mililiter',
-        'pump_weight',
-        'bottle_weight',
-        'product_id'
+        'product_id', 'name', 'gram_to_ml', 'ml_to_gram', 'gram', 'mililiter',
+        'pump_weight', 'bottle_weight', 'total_weight', 'created_at', 'updated_at'
     ];
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(Product::class);
     }
 }
