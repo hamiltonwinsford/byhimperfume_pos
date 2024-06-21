@@ -256,6 +256,7 @@ class ApiController extends Controller
         $data = [
             'in' => $in,
             'dispenser_weight' => $dispenser_weight,
+            'current_stock_gram' => $current->current_stock_gram,
             'real_g' => $real_gram,
             'real_ml' => $real_ml,
             'restock_date' => date('Y-m-d'),
