@@ -255,6 +255,8 @@ class ApiController extends Controller
         // Data untuk response
         $data = [
             'in' => $in,
+            'ml_to_gram' => $fragrance->ml_to_gram,
+            'gram_to_ml' => $fragrance->gram_to_ml,
             'dispenser_weight' => $dispenser_weight,
             'current_stock_gram' => $current->current_stock_gram,
             'real_g' => $real_gram,
