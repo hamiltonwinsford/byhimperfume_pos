@@ -258,7 +258,8 @@ class ApiController extends Controller
             'ml_to_gram' => $fragrance->ml_to_gram,
             'gram_to_ml' => $fragrance->gram_to_ml,
             'dispenser_weight' => $dispenser_weight,
-            'current_stock_gram' => $current->current_stock_gram,
+            'current_stock_before_add' => $current->current_stock,
+            'current_stock_gram_before_add' => $current->current_stock_gram,
             'real_g' => $real_gram,
             'real_ml' => $real_ml,
             'restock_date' => date('Y-m-d'),
@@ -276,6 +277,9 @@ class ApiController extends Controller
         $current->current_stock += $real_ml;
         $current->current_stock_gram += $real_gram;
         $current->save();
+
+        $data['current_stock_after'] = $current->current_stock;
+        $data['current_stock_gram_after'] = $current->current_stock;
 
         return response()->json(['status' => 200, 'message' => 'success', 'data' => $data]);
     }
