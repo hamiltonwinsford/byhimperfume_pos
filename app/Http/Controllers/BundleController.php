@@ -13,7 +13,7 @@ class BundleController extends Controller
     public function index()
     {
         $bundles = Bundle::with('items.product', 'items.bottle')->get();
-        return view('pages.bundles.index', compact('data'));
+        return view('pages.bundles.index', compact('bundles'));
     }
 
     public function create()
