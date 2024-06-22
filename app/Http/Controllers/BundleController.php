@@ -13,14 +13,14 @@ class BundleController extends Controller
     public function index()
     {
         $bundles = Bundle::with('items.product', 'items.bottle')->get();
-        return view('bundles.index', compact('bundles'));
+        return view('pages.bundles.index', compact('bundles'));
     }
 
     public function create()
     {
         $products = Product::all();
         $bottles = Bottle::all();
-        return view('bundles.create', compact('products', 'bottles'));
+        return view('pages.bundles.create', compact('products', 'bottles'));
     }
 
     public function store(Request $request)
@@ -56,7 +56,7 @@ class BundleController extends Controller
         }
 
         //return response()->json(['message' => 'Bundle created successfully', 'bundle' => $bundle], 201);
-        return redirect()->route('bundles.index')->with('success', 'Bundle created successfully');
+        return redirect()->route('pages.bundles.index')->with('success', 'Bundle created successfully');
     }
 
     public function show(Bundle $bundle)
