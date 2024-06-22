@@ -11,7 +11,7 @@
 <div class="main-content">
     <section class="section">
         <div class="section-header">
-            <h1>Promotions</h1>
+            <h1>Bundle</h1>
             <div class="section-header-button">
                 <a href="{{ route('bundles.create') }}" class="btn btn-primary">Add New</a>
             </div>

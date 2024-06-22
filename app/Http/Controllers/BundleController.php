@@ -55,7 +55,6 @@ class BundleController extends Controller
             $currentStock->save();
         }
 
-        //return response()->json(['message' => 'Bundle created successfully', 'bundle' => $bundle], 201);
         return redirect()->route('pages.bundles.index')->with('success', 'Bundle created successfully');
     }
 
