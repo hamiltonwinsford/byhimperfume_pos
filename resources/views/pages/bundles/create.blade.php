@@ -3,8 +3,8 @@
 @section('title', 'Create Bundle')
 
 @push('style')
-<!-- CSS Libraries -->
-<link rel="stylesheet" href="{{ asset('library/selectric/public/selectric.css') }}">
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
 
 @section('main')
@@ -29,7 +29,7 @@
                         @csrf
                         <div class="form-group">
                             <label for="branch">Select Branch</label>
-                            <select name="branch_id" id="branch" class="form-control selectric" required>
+                            <select name="branch_id" id="branch" class="form-control select2" required>
                                 <option value="">Select Branch</option>
                                 @foreach ($branches as $branch)
                                     <option value="{{ $branch->id }}">{{ $branch->name }}</option>
@@ -51,13 +51,13 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <label>Product</label>
-                                            <select name="items[0][product_id]" class="form-control selectric product-select" required>
+                                            <select name="items[0][product_id]" class="form-control select2 product-select" required>
                                                 <option value="">Select Product</option>
                                             </select>
                                         </div>
                                         <div class="col-md-4">
                                             <label>Bottle Size (ml)</label>
-                                            <select name="items[0][bottle_id]" class="form-control selectric">
+                                            <select name="items[0][bottle_id]" class="form-control select2">
                                                 @foreach ($bottles as $bottle)
                                                     <option value="{{ $bottle->id }}">{{ $bottle->size }} ml</option>
                                                 @endforeach
@@ -86,13 +86,12 @@
 @endsection
 
 @push('scripts')
-<!-- JS Libraries -->
-<script src="{{ asset('library/selectric/public/jquery.selectric.min.js') }}"></script>
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-<!-- Page Specific JS File -->
 <script>
     $(document).ready(function() {
-        $('.selectric').selectric();
+        $('.select2').select2();
 
         let itemIndex = 1;
 
@@ -103,25 +102,17 @@
                     url: `/bundles/get-products-by-branch/${branchId}`,
                     method: 'GET',
                     success: function(data) {
-                        $('.product-select').empty(); // Clear all product selects
-                        $('.product-select').append('<option value="">Select Product</option>');
-
-                        // Tambahkan option produk berdasarkan data dari server
-                        $.each(data, function(key, product) {
-                            $('.product-select').append(`<option value="${product.id}">${product.name}</option>`);
+                        $('.product-select').each(function() {
+                            $(this).empty();
+                            $(this).append('<option value="">Select Product</option>');
+                            $.each(data, function(key, product) {
+                                $(this).append(`<option value="${product.id}">${product.name}</option>`);
+                            }.bind(this));
+                            $(this).trigger('change'); // Trigger change event to update Select2
                         });
-                        $('.selectric').selectric('refresh'); // Refresh selectric
-                    },
-                    error: function(error) {
-                        console.error("Error fetching products:", error);
-                        // Handle error yang mungkin terjadi saat mengambil produk
                     }
                 });
-            } else {
-                // Kosongkan dropdown produk jika cabang tidak dipilih
-                $('.product-select').empty();
-                $('.product-select').append('<option value="">Select Product</option>');
-    }
+            }
         });
 
         $('#add-item').click(function() {
@@ -130,13 +121,13 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label>Product</label>
-                            <select name="items[${itemIndex}][product_id]" class="form-control selectric product-select" required>
+                            <select name="items[${itemIndex}][product_id]" class="form-control select2 product-select" required>
                                 <option value="">Select Product</option>
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label>Bottle Size (ml)</label>
-                            <select name="items[${itemIndex}][bottle_id]" class="form-control selectric">
+                            <select name="items[${itemIndex}][bottle_id]" class="form-control select2">
                                 @foreach ($bottles as $bottle)
                                     <option value="{{ $bottle->id }}">{{ $bottle->size }} ml</option>
                                 @endforeach
@@ -153,7 +144,7 @@
                     </div>
                 </div>`;
             $('#bundle-items').append(newItem);
-            $('.selectric').selectric('refresh');
+            $('.select2').select2();
             itemIndex++;
         });
     });
