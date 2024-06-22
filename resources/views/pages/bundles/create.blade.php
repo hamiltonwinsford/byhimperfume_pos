@@ -103,10 +103,12 @@
                     url: `/bundles/get-products-by-branch/${branchId}`,
                     method: 'GET',
                     success: function(data) {
-                        $('.product-select').empty();
-                        $('.product-select').append('<option value="">Select Product</option>');
-                        $.each(data, function(key, product) {
-                            $('.product-select').append(`<option value="${product.id}">${product.name}</option>`);
+                        $('.product-select').each(function() {
+                            $(this).empty();
+                            $(this).append('<option value="">Select Product</option>');
+                            $.each(data, function(key, product) {
+                                $(this).append(`<option value="${product.id}">${product.name}</option>`);
+                            }.bind(this));
                         });
                         $('.selectric').selectric('refresh');
                     }
