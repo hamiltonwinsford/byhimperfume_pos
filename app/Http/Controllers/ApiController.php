@@ -271,6 +271,7 @@ class ApiController extends Controller
         $us->fragrances_id = $fragrance->id;
         $us->mililiters = $real_ml;
         $us->gram = $real_gram;
+        $us->restock_date = date('Y-m-d H:i:s');
         $us->save();
 
         // Update atau buat entri current stock
