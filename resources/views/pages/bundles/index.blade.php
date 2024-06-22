@@ -61,7 +61,7 @@
                                         <th>End Date</th>
                                         <th>Action</th>
                                     </tr>
-                                    @foreach ($data as $value)
+                                    @foreach ($bundles as $value)
                                     <tr>
 
                                         <td>{{ $value->name }}</td>
@@ -90,7 +90,7 @@
                                 </table>
                             </div>
                             <div class="float-right">
-                                {{ $data->withQueryString()->links() }}
+                                {{ $bundles->withQueryString()->links() }}
                             </div>
                         </div>
                     </div>
