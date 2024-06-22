@@ -13,7 +13,7 @@
         <div class="section-header">
             <h1>Promotions</h1>
             <div class="section-header-button">
-                <a href="{{ route('bundle.create') }}" class="btn btn-primary">Add New</a>
+                <a href="{{ route('bundle.index') }}" class="btn btn-primary">Add New</a>
             </div>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
@@ -71,12 +71,12 @@
                                         <td>{{ $value->to_date }}</td>
                                         <td>
                                             <div class="d-flex justify-content-center">
-                                                <a href='{{ route('promotionBundle.edit', $value->id) }}' class="btn btn-sm btn-info btn-icon">
+                                                <a href='{{ route('bundles.edit', $value->id) }}' class="btn btn-sm btn-info btn-icon">
                                                     <i class="fas fa-edit"></i>
                                                     Edit
                                                 </a>
 
-                                                <form action="{{ route('promotionBundle.destroy', $value->id) }}" method="POST" class="ml-2">
+                                                <form action="{{ route('bundles.destroy', $value->id) }}" method="POST" class="ml-2">
                                                     <input type="hidden" name="_method" value="DELETE" />
                                                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                                     <button class="btn btn-sm btn-danger btn-icon confirm-delete">
