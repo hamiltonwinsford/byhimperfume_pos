@@ -39,8 +39,9 @@
                                     <thead>
                                         <tr>
                                             <th>Product</th>
-                                            <th>Stock In</th>
-                                            <th>Stock Opname Date</th>
+                                            <th>Stock In (ml)</th>
+                                            <th>Stock In (gram)</th>
+                                            <th>Restock Date</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -48,8 +49,9 @@
                                         <tr>
 
                                             <td>{{ $value->name }}</td>
-                                            <td>{{ $value->stock_in }}</td>
-                                            <td>{{ $value->stock_opname_date }}</td>
+                                            <td>{{ $value->mililiters }}</td>
+                                            <td>{{ $value->gram }}</td>
+                                            <td>{{ $value->restock_date }}</td>
                                         </tr>
                                         @endforeach
                                     </tbody>
