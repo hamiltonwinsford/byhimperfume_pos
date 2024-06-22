@@ -35,8 +35,3 @@ class StockController extends Controller
         return view('pages.stock.detail', compact('data','out'));
     }
 }
-
-// $data = StockCard::join('products','products.id','product_id')
-//              ->select('stock_cards.*','products.name')
-//              ->where('product_id', $id)
-//              ->get();
