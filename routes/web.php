@@ -17,6 +17,7 @@ use App\Http\Controllers\FirstStockController;
 use App\Http\Controllers\OpnameController;
 use App\Http\Controllers\PromotionBundleController;
 use App\Http\Controllers\StockCardController;
+use App\Http\Controllers\BundleController;
 use App\Models\Customer;
 
 /*
@@ -61,6 +62,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('promotionBundle', PromotionBundleController::class);
     Route::resource('first_stock', FirstStockController::class);
     Route::resource('opname', OpnameController::class);
+    Route::resource('bundles', BundleController::class);
 
 
     // Route::get('/users', function () {

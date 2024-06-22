@@ -16,6 +16,7 @@ class BundleItem extends Model
         'product_id',
         'bottle_id',
         'quantity',
+        'discount_percent',
     ];
 
     public function bundle()

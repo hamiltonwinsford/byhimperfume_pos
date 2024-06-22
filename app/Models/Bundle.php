@@ -14,7 +14,7 @@ class Bundle extends Model
     protected $fillable = [
         'name',
         'description',
-        'discount_percent',
+        'price',
     ];
 
     public function items()
