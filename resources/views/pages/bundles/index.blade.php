@@ -89,9 +89,6 @@
                                     @endforeach
                                 </table>
                             </div>
-                            <div class="float-right">
-                                {{ $bundles->withQueryString()->links() }}
-                            </div>
                         </div>
                     </div>
                 </div>
