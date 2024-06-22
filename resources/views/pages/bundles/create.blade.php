@@ -105,13 +105,23 @@
                     success: function(data) {
                         $('.product-select').empty(); // Clear all product selects
                         $('.product-select').append('<option value="">Select Product</option>');
+
+                        // Tambahkan option produk berdasarkan data dari server
                         $.each(data, function(key, product) {
                             $('.product-select').append(`<option value="${product.id}">${product.name}</option>`);
                         });
                         $('.selectric').selectric('refresh'); // Refresh selectric
+                    },
+                    error: function(error) {
+                        console.error("Error fetching products:", error);
+                        // Handle error yang mungkin terjadi saat mengambil produk
                     }
                 });
-            }
+            } else {
+                // Kosongkan dropdown produk jika cabang tidak dipilih
+                $('.product-select').empty();
+                $('.product-select').append('<option value="">Select Product</option>');
+    }
         });
 
         $('#add-item').click(function() {

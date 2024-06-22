@@ -27,6 +27,11 @@ class BundleController extends Controller
 
     public function getProductsByBranch($branchId)
     {
+        $branch = Branch::find($branchId);
+        if (!$branch) {
+            return response()->json(['error' => 'Branch not found'], 404);
+        }
+
         $products = Product::where('branch_id', $branchId)->get();
         return response()->json($products);
     }
