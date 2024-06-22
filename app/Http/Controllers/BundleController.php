@@ -5,6 +5,7 @@ use App\Models\Bundle;
 use App\Models\BundleItem;
 use App\Models\Product;
 use App\Models\Bottle;
+use App\Models\Branch;
 use App\Models\CurrentStock;
 use Illuminate\Http\Request;
 
@@ -19,8 +20,15 @@ class BundleController extends Controller
     public function create()
     {
         $products = Product::all();
+        $branches = Branch::all();
         $bottles = Bottle::all();
-        return view('pages.bundles.create', compact('products', 'bottles'));
+        return view('pages.bundles.create', compact('branches', 'bottles'));
+    }
+
+    public function getProductsByBranch($branchId)
+    {
+        $products = Product::where('branch_id', $branchId)->get();
+        return response()->json($products);
     }
 
     public function store(Request $request)

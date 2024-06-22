@@ -45,6 +45,8 @@ Route::middleware(['auth'])->group(function () {
         return view('chart');
     });
     Route::get('/detail-stock/{id}', [StockController::class, 'detail']);
+    Route::get('/bundles/get-products-by-branch/{branchId}', [BundleController::class, 'getProductsByBranch']);
+
 
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
