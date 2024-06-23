@@ -8,6 +8,7 @@ use App\Models\Bottle;
 use App\Models\Branch;
 use App\Models\CurrentStock;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BundleController extends Controller
 {
@@ -60,7 +61,11 @@ class BundleController extends Controller
 
         foreach ($items as $item) {
             $bottle = Bottle::find($item['bottle_id']);
-            dd($bottle->harga_ml);
+            // Tambahkan logging untuk memeriksa nilai dari bottle_id
+            if (!$bottle) {
+                Log::error("Bottle not found with id: " . $item['bottle_id']);
+                return redirect()->back()->withErrors(['error' => 'Bottle not found with id: ' . $item['bottle_id']]);
+            }
             $discountedPrice = $bottle->harga_ml * ((100 - $item['discount_percent']) / 100);
             $totalPrice += $discountedPrice;
         }
