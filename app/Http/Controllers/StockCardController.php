@@ -28,7 +28,7 @@ class StockCardController extends Controller
             $data = Product::where('branch_id', $request->branch_id)->get();
         }
         $branches = Branch::all();
-        return view('pages.stockCard.index', compact('products','branches'));
+        return view('pages.stockCard.index', compact('data','branches'));
     }
 
     // public function detail($id)
