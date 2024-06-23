@@ -60,6 +60,7 @@ class BundleController extends Controller
 
         foreach ($items as $item) {
             $bottle = Bottle::find($item['bottle_id']);
+            dd($bottle);
             $discountedPrice = $bottle->harga_ml * ((100 - $item['discount_percent']) / 100);
             $totalPrice += $discountedPrice;
         }
