@@ -59,7 +59,7 @@
                                             <label>Bottle Size (ml)</label>
                                             <select name="items[0][bottle_id]" class="form-control select2">
                                                 @foreach ($bottles as $bottle)
-                                                    <option value="{{ $bottle->id }}">{{ $bottle->size }} ml</option>
+                                                    <option value="{{ $bottle->id }}">{{ $bottle->bottle_size }} ml</option>
                                                 @endforeach
                                             </select>
                                         </div>
