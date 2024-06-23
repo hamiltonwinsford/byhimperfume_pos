@@ -76,7 +76,7 @@ class BundleController extends Controller
             $bundleItem->product_id = $item['product_id'];
             $bundleItem->bottle_id = $item['bottle_id'];
             $bundleItem->quantity = $item['quantity'];
-            $bundleItem->discount_percent = $item['discount_percent'];
+            $bundleItem->discount_percent = $item['discount'];
             $bundleItem->save();
 
             $currentStock = CurrentStock::where('product_id', $item['product_id'])->first();
