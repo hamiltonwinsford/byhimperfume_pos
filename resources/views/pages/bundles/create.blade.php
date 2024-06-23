@@ -107,6 +107,7 @@
 
     let itemIndex = 1;
     let productData = [];
+    let variantData = [];
 
     $('#branch').change(function() {
         let branchId = $(this).val();
@@ -134,10 +135,12 @@
         url: `/bundles/get-variants`,
         method: 'GET',
         success: function(data) {
+            console.log(data); // Debug response dari server
+            variantData = data; // Simpan data produk dalam variabel global
             $('.variant-select').each(function() {
                 $(this).empty();
                 $(this).append('<option value="" selected disabled>Select Variant</option>');
-                $.each(data, function(key, variant) {
+                $.each(variantData, function(key, variant) {
                     $(this).append(`<option value="${variant}">${variant}</option>`);
                 }.bind(this));
                 $(this).trigger('change'); // Trigger change event to update Select2
