@@ -106,6 +106,7 @@
     $('.select2').select2();
 
     let itemIndex = 1;
+    let productData = [];
 
     $('#branch').change(function() {
         let branchId = $(this).val();
@@ -114,11 +115,13 @@
                 url: `/bundles/get-products-by-branch/${branchId}`,
                 method: 'GET',
                 success: function(data) {
+                    console.log(data); // Debug response dari server
+                    productData = data; // Simpan data produk dalam variabel global
                     $('.product-select').each(function() {
                         $(this).empty();
                         $(this).append('<option value="">Select Product</option>');
-                        $.each(data, function(key, product) {
-                            $(this).append(`<option value="${product.id}">${product.name}</option>`);
+                        $.each(productData, function(key, product) {
+                            $(this).append(`<option value="${product.id}">${product.bottle_name}</option>`);
                         }.bind(this));
                         $(this).trigger('change'); // Trigger change event to update Select2
                     });
@@ -218,6 +221,13 @@
             </div>`;
         $('#bundle-items').append(newItem);
         $('.select2').select2();
+
+        $('.product-select').last().empty();
+        $('.product-select').last().append('<option value="">Select Product</option>');
+        $.each(productData, function(key, product) {
+            $('.product-select').last().append(`<option value="${product.id}">${product.bottle_name}</option>`);
+        });
+
         itemIndex++;
     });
 });
