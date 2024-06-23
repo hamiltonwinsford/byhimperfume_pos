@@ -39,10 +39,10 @@ class BundleController extends Controller
     public function getVariants()
     {
         // Mengambil varian unik dari botol
-        $name = 'Bottle';
-        $data = Bottle::where('bottle_name', 'like', "%$name%")->get();
+        $bottleSizes = Bottle::where('variant', 'edt')->pluck('bottle_size');
 
-        return response()->json($data);
+        return response()->json($bottleSizes);
+        //return response()->json($data);
     }
 
     public function getBottleSizesByVariant($variant)
