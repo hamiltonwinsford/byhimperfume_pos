@@ -171,21 +171,21 @@ class ProductController extends Controller
             $product->fill($request->only(['name', 'description', 'price', 'category_id', 'status', 'is_favorite', 'branch_id']));
 
 
-            // if ($product->category->fragrances_status == Category::STATUS_FRAGRANCE) {
-            //     $product->stock = 1;
-            // } else {
-            //     $validator = Validator::make($request->all(), [
-            //         'stock' => 'required|numeric',
-            //     ]);
+            if ($product->category->fragrances_status == Category::STATUS_FRAGRANCE) {
+                $product->stock = 1;
+            } else {
+                $validator = Validator::make($request->all(), [
+                    'stock' => 'required|numeric',
+                ]);
 
-            //     if ($validator->fails()) {
-            //         return redirect()->back()
-            //             ->withErrors($validator)
-            //             ->withInput();
-            //     }
+                if ($validator->fails()) {
+                    return redirect()->back()
+                        ->withErrors($validator)
+                        ->withInput();
+                }
 
-            //     $product->stock = $request->stock;
-            // }
+                $product->stock = $request->stock;
+            }
 
             if ($request->hasFile('image')) {
                 $s_file = $request->file('image');
