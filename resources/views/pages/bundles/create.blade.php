@@ -30,7 +30,7 @@
                         <div class="form-group">
                             <label for="branch">Select Branch</label>
                             <select name="branch_id" id="branch" class="form-control select2" required>
-                                <option value="">Select Branch</option>
+                                <option value="" selected disabled>Select Branch</option>
                                 @foreach ($branches as $branch)
                                     <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                                 @endforeach
@@ -52,19 +52,19 @@
                                         <div class="col-md-4">
                                             <label>Product</label>
                                             <select name="items[0][product_id]" class="form-control select2 product-select" required>
-                                                <option value="">Select Product</option>
+                                                <option value="" selected disabled>Select Product</option>
                                             </select>
                                         </div>
                                         <div class="col-md-4">
                                             <label>Variant</label>
                                             <select name="items[0][variant_id]" class="form-control select2 variant-select" required>
-                                                <option value="">Select Variant</option>
+                                                <option value="" selected disabled>Select Variant</option>
                                             </select>
                                         </div>
                                         <div class="col-md-4">
                                             <label>Bottle Size (ml)</label>
                                             <select name="items[0][bottle_size]" class="form-control select2 bottle-size-select" required>
-                                                <option value="">Select Bottle Size</option>
+                                                <option value="" selected disabled>Select Bottle Size</option>
                                             </select>
                                         </div>
                                         <div class="col-md-2">
@@ -133,7 +133,7 @@
         success: function(data) {
             $('.variant-select').each(function() {
                 $(this).empty();
-                $(this).append('<option value="">Select Variant</option>');
+                $(this).append('<option value="" selected disabled>Select Variant</option>');
                 $.each(data, function(key, variant) {
                     $(this).append(`<option value="${variant}">${variant}</option>`);
                 }.bind(this));
@@ -151,9 +151,9 @@
                 method: 'GET',
                 success: function(data) {
                     bottleSizeSelect.empty();
-                    bottleSizeSelect.append('<option value="">Select Bottle Size</option>');
+                    bottleSizeSelect.append('<option value="" selected disabled>Select Bottle Size</option>');
                     $.each(data, function(key, bottle) {
-                        bottleSizeSelect.append(`<option value="${bottle.id}" data-harga="${bottle.harga_ml}">${bottle.bottle_size} ml</option>`);
+                        bottleSizeSelect.append(`<option value="${bottle.bottle_size}" data-harga="${bottle.harga_ml}">${bottle.bottle_size} ml</option>`);
                     });
                     bottleSizeSelect.trigger('change');
                 }
