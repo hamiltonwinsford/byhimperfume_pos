@@ -150,6 +150,7 @@
                 url: `/bundles/get-bottle-sizes-by-variant/${variant}`,
                 method: 'GET',
                 success: function(data) {
+                    console.log(data); // Tambahkan ini untuk debug response dari server
                     bottleSizeSelect.empty();
                     bottleSizeSelect.append('<option value="" selected disabled>Select Bottle Size</option>');
                     $.each(data, function(key, bottle) {

@@ -46,7 +46,7 @@ class BundleController extends Controller
     {
         $bottles = Bottle::where('variant', $variant)->get();
         $bottles_size= $bottles->pluck('bottle_size');
-        return response()->json($bottles_size);
+        return response()->json($bottles);
     }
 
     public function store(Request $request)
