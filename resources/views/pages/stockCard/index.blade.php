@@ -33,7 +33,7 @@
 
 
                             <div class="col-6">
-                                <form method="get" action="{{ route('stockCard.index') }}">
+                                <form method="get" action="{{ route('stockcard.index') }}">
                                     @csrf
                                         <select class="form-control selectric" name="branch_id" required>
                                             <option value="" selected disabled>-- Select Branch --</option>
