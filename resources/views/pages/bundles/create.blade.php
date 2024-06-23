@@ -231,6 +231,13 @@
             $('.product-select').last().append(`<option value="${product.id}">${product.name}</option>`);
         });
 
+        // Isi dropdown varian pada item baru
+        $('.variant-select').last().empty();
+        $('.variant-select').last().append('<option value="">Select Variant</option>');
+        $.each(variantData, function(key, variant) {
+            $('.variant-select').last().append(`<option value="${variant}">${variant}</option>`);
+        });
+
         itemIndex++;
     });
 });
