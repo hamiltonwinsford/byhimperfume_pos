@@ -63,7 +63,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <label>Bottle Size (ml)</label>
-                                            <select name="items[0][bottle_size]" class="form-control select2 bottle-size-select" required>
+                                            <select name="items[0][bottle_id]" class="form-control select2 bottle-size-select" required>
                                                 <option value="" selected disabled>Select Bottle Size</option>
                                             </select>
                                         </div>

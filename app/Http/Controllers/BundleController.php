@@ -59,13 +59,10 @@ class BundleController extends Controller
         $totalPrice = 0;
 
         foreach ($items as $item) {
-            $product = Product::find($item['product_id']);
-            $discountedPrice = $product->price * ((100 - $item['discount_percent']) / 100);
-            $totalPrice += $discountedPrice * $item['quantity'];
+            $bottle = Bottle::find($item['bottle_id']);
+            $discountedPrice = $bottle->harga_ml * ((100 - $item['discount_percent']) / 100);
+            $totalPrice += $discountedPrice;
         }
-
-        $bundle->price = $totalPrice;
-        $bundle->save();
 
         foreach ($items as $item) {
             $bundleItem = new BundleItem();
@@ -80,6 +77,9 @@ class BundleController extends Controller
             $currentStock->current_stock -= $item['bottle_size'] * $item['quantity'];
             $currentStock->save();
         }
+
+        $bundle->price = $totalPrice;
+        $bundle->save();
 
         return redirect()->route('pages.bundles.index')->with('success', 'Bundle created successfully');
     }
