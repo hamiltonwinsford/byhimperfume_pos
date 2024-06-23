@@ -21,14 +21,16 @@ class StockCardController extends Controller
     // index
     public function index(Request $request)
     {
-        if(empty($request->branch_id)){
-            $data = Product::get();
-
-        }else{
-            $data = Product::where('branch_id', $request->branch_id)->get();
+        if (empty($request->branch_id)) {
+            $data = StockCard::with('product', 'branch', 'fragrance')->get();
+        } else {
+            $data = StockCard::with('product', 'branch', 'fragrance')
+                            ->where('branch_id', $request->branch_id)
+                            ->get();
         }
+
         $branches = Branch::all();
-        return view('pages.stockCard.index', compact('data','branches'));
+        return view('pages.stockCard.index', compact('data', 'branches'));
     }
 
     // public function detail($id)
