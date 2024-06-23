@@ -121,7 +121,7 @@
                         $(this).empty();
                         $(this).append('<option value="">Select Product</option>');
                         $.each(productData, function(key, product) {
-                            $(this).append(`<option value="${product.id}">${product.bottle_name}</option>`);
+                            $(this).append(`<option value="${product.id}">${product.name}</option>`);
                         }.bind(this));
                         $(this).trigger('change'); // Trigger change event to update Select2
                     });
