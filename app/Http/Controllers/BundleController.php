@@ -39,7 +39,7 @@ class BundleController extends Controller
     public function getVariants()
     {
         // Mengambil varian unik dari botol
-        $variants = Bottle::select('variant')->distinct()->get();
+        $variants = Bottle::select('variant')->get();
         return response()->json($variants);
     }
 
