@@ -53,32 +53,42 @@
 
                         <div class="card-body">
                             <div class="clearfix mb-3"></div>
-                            <div class="table-responsive">
-                                <table id="myTable-1" class="table-striped table">
+                            <div class="table-responsive mt-4">
+                                <table class="table table-striped">
                                     <thead>
                                         <tr>
                                             <th>Product</th>
-                                            <th>Fragrance Name</th>
-                                            <th>Stock Awal</th>
-                                            <th>Stock In</th>
-                                            <th>Current Stock</th>
+                                            <th>Branch</th>
+                                            <th>Fragrance</th>
+                                            <th>Opening Stock (g)</th>
+                                            <th>Restock (g)</th>
+                                            <th>Sales (ml)</th>
+                                            <th>Calc (g)</th>
+                                            <th>Calc (ml)</th>
+                                            <th>Real (g)</th>
+                                            <th>Real (ml)</th>
+                                            <th>Difference (g)</th>
+                                            <th>Difference (ml)</th>
                                             <th>Stock Opname Date</th>
-                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($data as $value)
-                                        <tr>
-                                            <td>{{ $value->name }}</td>
-                                            <td>{{ $value->fragrance_name }}</td>
-                                            <td>{{ $value->opening_stock }}</td>
-                                            <td>{{ $value->restock_gram }}</td>
-                                            <td>{{ $value->current_stock }}</td>
-                                            <td>{{ $value->stock_opname_date }}</td>
-                                            <td>
-                                                <a href="{{ URL::to('detail-stock/'.$value->product_id) }}" class="btn btn-primary">Detail</a>
-                                            </td>
-                                        </tr>
+                                        @foreach ($data as $stockCard)
+                                            <tr>
+                                                <td>{{ $stockCard->product->name }}</td>
+                                                <td>{{ $stockCard->branch->name }}</td>
+                                                <td>{{ $stockCard->fragrance->name ?? 'N/A' }}</td>
+                                                <td>{{ $stockCard->opening_stock_gram }}</td>
+                                                <td>{{ $stockCard->restock_gram }}</td>
+                                                <td>{{ $stockCard->sales_ml }}</td>
+                                                <td>{{ $stockCard->calc_g }}</td>
+                                                <td>{{ $stockCard->calc_ml }}</td>
+                                                <td>{{ $stockCard->real_g }}</td>
+                                                <td>{{ $stockCard->real_ml }}</td>
+                                                <td>{{ $stockCard->difference_g }}</td>
+                                                <td>{{ $stockCard->difference_ml }}</td>
+                                                <td>{{ $stockCard->stock_opname_date }}</td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
