@@ -160,7 +160,7 @@
                     bottleSizeSelect.empty();
                     bottleSizeSelect.append('<option value="" selected disabled>Select Bottle Size</option>');
                     $.each(data, function(key, bottle) {
-                        bottleSizeSelect.append(`<option value="${bottle.bottle_size}" data-harga="${bottle.harga_ml}">${bottle.bottle_size} ml</option>`);
+                        bottleSizeSelect.append(`<option value="${bottle.id}" data-harga="${bottle.harga_ml}">${bottle.bottle_size} ml</option>`);
                     });
                     bottleSizeSelect.trigger('change');
                 }
