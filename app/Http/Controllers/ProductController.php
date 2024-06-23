@@ -236,6 +236,7 @@ class ProductController extends Controller
                     $currentStock = CurrentStock::where('product_id', $product->id)->first();
                     if ($currentStock) {
                         $currentStock->current_stock = $request->milliliter;
+                        $currentStock->current_stock_gram = $request->gram;
                         $currentStock->save();
                     }
 
