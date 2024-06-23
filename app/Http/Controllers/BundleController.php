@@ -103,7 +103,7 @@ class BundleController extends Controller
         $bundle->price = $totalPrice;
         $bundle->save();
 
-        return redirect()->route('pages.bundles.index')->with('success', 'Bundle created successfully');
+        return redirect()->route('bundles.index')->with('success', 'Bundle created successfully');
     }
 
     public function show(Bundle $bundle)
