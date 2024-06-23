@@ -26,6 +26,7 @@ class StockController extends Controller
     public function detail($id)
     {
         $data = Restock::join('products', 'products.id', '=', 'restocks.product_id')
+            ->where('product_id', $id)
             ->select('products.name', 'restocks.mililiters', 'restocks.gram', 'restocks.restock_date')
             ->get();
 
