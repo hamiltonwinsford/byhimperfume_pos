@@ -225,7 +225,7 @@
         $('.product-select').last().empty();
         $('.product-select').last().append('<option value="">Select Product</option>');
         $.each(productData, function(key, product) {
-            $('.product-select').last().append(`<option value="${product.id}">${product.bottle_name}</option>`);
+            $('.product-select').last().append(`<option value="${product.id}">${product.name}</option>`);
         });
 
         itemIndex++;
