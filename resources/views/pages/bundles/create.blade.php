@@ -135,7 +135,7 @@
                 $(this).empty();
                 $(this).append('<option value="">Select Variant</option>');
                 $.each(data, function(key, variant) {
-                    $(this).append(`<option value="${variant.variant}">${variant.variant}</option>`);
+                    $(this).append(`<option value="${variant}">${variant}</option>`);
                 }.bind(this));
                 $(this).trigger('change'); // Trigger change event to update Select2
             });
