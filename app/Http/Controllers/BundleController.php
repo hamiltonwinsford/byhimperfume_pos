@@ -36,6 +36,23 @@ class BundleController extends Controller
         return response()->json($products);
     }
 
+    public function getVariantsByProduct($productId)
+    {
+        $product = Product::find($productId);
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+
+        $variants = Bottle::where('product_id', $productId)->select('variant')->distinct()->get();
+        return response()->json($variants);
+    }
+
+    public function getBottleSizesByVariant($variant)
+    {
+        $bottles = Bottle::where('variant', $variant)->get();
+        return response()->json($bottles);
+    }
+
     public function store(Request $request)
     {
         $bundle = new Bundle();

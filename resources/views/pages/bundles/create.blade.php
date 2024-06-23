@@ -56,11 +56,15 @@
                                             </select>
                                         </div>
                                         <div class="col-md-4">
+                                            <label>Variant</label>
+                                            <select name="items[0][variant_id]" class="form-control select2 variant-select" required>
+                                                <option value="">Select Variant</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
                                             <label>Bottle Size (ml)</label>
-                                            <select name="items[0][bottle_id]" class="form-control select2">
-                                                @foreach ($bottles as $bottle)
-                                                    <option value="{{ $bottle->id }}">{{ $bottle->bottle_size }} ml</option>
-                                                @endforeach
+                                            <select name="items[0][bottle_size]" class="form-control select2 bottle-size-select" required>
+                                                <option value="">Select Bottle Size</option>
                                             </select>
                                         </div>
                                         <div class="col-md-2">
@@ -69,7 +73,15 @@
                                         </div>
                                         <div class="col-md-2">
                                             <label>Discount (%)</label>
-                                            <input type="number" name="items[0][discount_percent]" class="form-control" required>
+                                            <input type="number" name="items[0][discount_percent]" class="form-control discount-input">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label>Harga</label>
+                                            <input type="text" name="items[0][harga]" class="form-control harga-input" readonly>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label>Harga Setelah Diskon</label>
+                                            <input type="text" name="items[0][harga_setelah_diskon]" class="form-control harga-diskon-input" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -115,9 +127,61 @@
             }
         });
 
+        $(document).on('change', '.product-select', function() {
+            let productId = $(this).val();
+            let variantSelect = $(this).closest('.bundle-item').find('.variant-select');
+            if (productId) {
+                $.ajax({
+                    url: `/bundles/get-variants-by-product/${productId}`,
+                    method: 'GET',
+                    success: function(data) {
+                        variantSelect.empty();
+                        variantSelect.append('<option value="">Select Variant</option>');
+                        $.each(data, function(key, variant) {
+                            variantSelect.append(`<option value="${variant.id}">${variant.variant}</option>`);
+                        });
+                        variantSelect.trigger('change');
+                    }
+                });
+            }
+        });
+
+        $(document).on('change', '.variant-select', function() {
+            let variantId = $(this).val();
+            let bottleSizeSelect = $(this).closest('.bundle-item').find('.bottle-size-select');
+            if (variantId) {
+                $.ajax({
+                    url: `/bundles/get-bottle-sizes-by-variant/${variantId}`,
+                    method: 'GET',
+                    success: function(data) {
+                        bottleSizeSelect.empty();
+                        bottleSizeSelect.append('<option value="">Select Bottle Size</option>');
+                        $.each(data, function(key, bottleSize) {
+                            bottleSizeSelect.append(`<option value="${bottleSize.id}" data-harga="${bottleSize.harga}">${bottleSize.bottle_size} ml</option>`);
+                        });
+                        bottleSizeSelect.trigger('change');
+                    }
+                });
+            }
+        });
+
+        $(document).on('change', '.bottle-size-select', function() {
+            let harga = $(this).find(':selected').data('harga');
+            let hargaInput = $(this).closest('.bundle-item').find('.harga-input');
+            hargaInput.val(harga);
+        });
+
+        $(document).on('input', '.discount-input', function() {
+            let discount = $(this).val();
+            let harga = $(this).closest('.bundle-item').find('.harga-input').val();
+            let hargaDiskonInput = $(this).closest('.bundle-item').find('.harga-diskon-input');
+            let hargaSetelahDiskon = harga - (harga * (discount / 100));
+            hargaDiskonInput.val(hargaSetelahDiskon);
+        });
+
         $('#add-item').click(function() {
-            let newItem = `
-                <div class="bundle-item mt-3">
+            let newItem =
+                `<div class="bundle-item mt-3">
                     <div class="row">
                         <div class="col-md-4">
                             <label>Product</label>
@@ -126,11 +190,15 @@
                             </select>
                         </div>
                         <div class="col-md-4">
+                            <label>Variant</label>
+                            <select name="items[${itemIndex}][variant_id]" class="form-control select2 variant-select" required>
+                                <option value="">Select Variant</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
                             <label>Bottle Size (ml)</label>
-                            <select name="items[${itemIndex}][bottle_id]" class="form-control select2">
-                                @foreach ($bottles as $bottle)
-                                    <option value="{{ $bottle->id }}">{{ $bottle->size }} ml</option>
-                                @endforeach
+                            <select name="items[${itemIndex}][bottle_size]" class="form-control select2 bottle-size-select" required>
+                                <option value="">Select Bottle Size</option>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -139,7 +207,15 @@
                         </div>
                         <div class="col-md-2">
                             <label>Discount (%)</label>
-                            <input type="number" name="items[${itemIndex}][discount_percent]" class="form-control" required>
+                            <input type="number" name="items[${itemIndex}][discount_percent]" class="form-control discount-input">
+                        </div>
+                        <div class="col-md-2">
+                            <label>Harga</label>
+                            <input type="text" name="items[${itemIndex}][harga]" class="form-control harga-input" readonly>
+                        </div>
+                        <div class="col-md-2">
+                            <label>Harga Setelah Diskon</label>
+                            <input type="text" name="items[${itemIndex}][harga_setelah_diskon]" class="form-control harga-diskon-input" readonly>
                         </div>
                     </div>
                 </div>`;

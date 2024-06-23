@@ -46,6 +46,8 @@ Route::middleware(['auth'])->group(function () {
     });
     Route::get('/detail-stock/{id}', [StockController::class, 'detail']);
     Route::get('/bundles/get-products-by-branch/{branchId}', [BundleController::class, 'getProductsByBranch']);
+    Route::get('/bundles/get-variants-by-product/{productId}', [BundleController::class, 'getVariantsByProduct']);
+    Route::get('/bundles/get-bottle-sizes-by-variant/{variant}', [BundleController::class, 'getBottleSizesByVariant']);
 
 
     Route::resource('users', UserController::class);
