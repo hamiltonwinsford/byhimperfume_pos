@@ -129,7 +129,7 @@ class ApiController extends Controller
         }
 
         // Mengambil data bundle dan menggabungkan produk dalam setiap bundle
-            $bundles = Bundle::with(['bundleItems.product', 'bundleItems.bottle'])
+            $bundles = Bundle::with(['items.product', 'items.bottle'])
             ->get()
             ->map(function($bundle) {
             $bundle->products = $bundle->items->map(function($item) {
