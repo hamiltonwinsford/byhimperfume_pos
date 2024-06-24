@@ -132,7 +132,7 @@ class ApiController extends Controller
             $bundles = Bundle::with(['bundleItems.product', 'bundleItems.bottle'])
             ->get()
             ->map(function($bundle) {
-            $bundle->products = $bundle->bundleItems->map(function($item) {
+            $bundle->products = $bundle->items->map(function($item) {
                 return [
                     'product_id' => $item->product->id,
                     'product_name' => $item->product->name,
