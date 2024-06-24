@@ -142,6 +142,7 @@ class ApiController extends Controller
                     'product_stock' => $item->product->stock,
                     'bundle_quantity' => $item->quantity,
                     'bundle_discount' => $item->discount,
+                    'bottle_id' => $item->bottle->id,
                     'bottle_name' => $item->bottle->bottle_name,
                     'bottle_size' => $item->bottle->bottle_size,
                     'bottle_type' => $item->bottle->bottle_type,
