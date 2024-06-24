@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\Fragrance;
 use App\Models\Category;
 use App\Models\Bottle;
+use App\Models\Bundle;
 use App\Models\OtherProduct;
 use App\Models\Cart;
 use App\Models\CurrentStock;
@@ -121,12 +122,40 @@ class ApiController extends Controller
 
     public function getProduct(Request $request)
     {
-        $branch_id = $request->get('branch_id');
-        $data   = Product::where('branch_id', $request->branch_id)->get();
-        foreach ($data as $key => $value) {
+        $products = Product::where('branch_id', $request->branch_id)->get();
+        foreach ($products as $key => $value) {
             $foto = asset('upload/image/'.$value->image);
-            $data[$key]->foto_path = $foto;
+            $products[$key]->foto_path = $foto;
         }
+
+        // Mengambil data bundle dan menggabungkan produk dalam setiap bundle
+            $bundles = Bundle::with(['bundleItems.product', 'bundleItems.bottle'])
+            ->get()
+            ->map(function($bundle) {
+            $bundle->products = $bundle->bundleItems->map(function($item) {
+                return [
+                    'product_id' => $item->product->id,
+                    'product_name' => $item->product->name,
+                    'product_description' => $item->product->description,
+                    'product_image' => asset('upload/image/'.$item->product->image),
+                    'product_price' => $item->product->price,
+                    'product_stock' => $item->product->stock,
+                    'bundle_quantity' => $item->quantity,
+                    'bundle_discount' => $item->discount,
+                    'bottle_name' => $item->bottle->bottle_name,
+                    'bottle_size' => $item->bottle->bottle_size,
+                    'bottle_type' => $item->bottle->bottle_type,
+                ];
+            });
+            return $bundle;
+            });
+
+        // Menggabungkan data produk dan bundle dalam satu array
+        $data = [
+        'products' => $products,
+        'bundles' => $bundles
+        ];
+
         return returnAPI(200, 'Success', $data);
     }
 
