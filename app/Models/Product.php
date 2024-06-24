@@ -30,9 +30,14 @@ class Product extends Model
     {
         return $this->hasOne(Fragrance::class, 'product_id');
     }
-    
+
     public function branch()
     {
-        return $this->belongsTo(Branch::class); 
+        return $this->belongsTo(Branch::class);
+    }
+
+    public function bundleItems()
+    {
+        return $this->hasMany(BundleItem::class, 'product_id');
     }
 }
