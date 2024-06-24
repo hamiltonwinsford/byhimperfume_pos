@@ -44,6 +44,7 @@ Route::get('/get-promotion-bundle', [ApiController::class, 'getPromotionBundle']
 Route::post('/check-harga', [ApiController::class, 'checkHarga'])->name('check-harga');
 Route::get('/get-cart', [ApiController::class, 'getCart'])->name('get-cart');
 Route::post('/add-to-cart', [ApiController::class, 'addToCart'])->name('add-to-cart');
+Route::post('/bundle-to-cart', [ApiController::class, 'bundleToCart'])->name('bundle-to-cart');
 Route::post('/update-cart', [ApiController::class, 'updateCart'])->name('update-cart');
 Route::get('/delete-cart', [ApiController::class, 'deleteCart'])->name('delete-cart');
 Route::post('/checkout', [ApiController::class, 'checkout'])->name('checkout');

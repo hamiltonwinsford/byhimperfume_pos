@@ -394,7 +394,7 @@ class ApiController extends Controller
             'product_id' => $cart->product_id,
             'branch_id' => $cart->branch_id,
             'user_id' => $cart->user_id,
-            'harga_ml' => $bottle->harga_ml,
+            'price' => $bottle->harga_ml,
             'variant'=> $bottle->variant,
             'bottle_id' => $bottle->id,
             'updated_at' => $cart->updated_at,
@@ -403,6 +403,53 @@ class ApiController extends Controller
         ];
 
         return returnAPI(200, 'Success', $data);
+    }
+
+    public function bundleToCart(Request $request)
+    {
+        // Pastikan data yang diterima dalam format yang benar
+        if (!isset($request->items) || !is_array($request->items)) {
+            return returnAPI(400, 'Invalid data format', null);
+        }
+
+        $cartItems = [];
+
+        foreach ($request->items as $item) {
+            $bottle = Bottle::where('id', $item['bottle_id'])->first();
+
+            // Cek apakah bottle ditemukan
+            if (!$bottle) {
+                return returnAPI(404, 'Bottle not found for product_id: ' . $item['product_id'], null);
+            }
+
+            $cart = new Cart;
+            $cart->product_id = $item['product_id'];
+            $cart->branch_id = $request->branch_id;
+            $cart->user_id = $request->user_id;
+            $cart->bottle_id = $bottle->id;
+            $cart->discount = $item['discount'];
+
+            // Hitung harga setelah diskon
+            $harga = $bottle->harga_ml;
+            $cart->price_after_discount = $harga - ($harga * ($item['discount'] / 100));
+
+            $cart->save();
+
+            $cartItems[] = [
+                'id' => $cart->id,
+                'product_id' => $cart->product_id,
+                'branch_id' => $cart->branch_id,
+                'user_id' => $cart->user_id,
+                'discount'=> $cart->discount,
+                'bottle_id' => $bottle->id,
+                'price' => $cart->price_after_discount,
+                'variant' => $bottle->variant,
+                'updated_at' => $cart->updated_at,
+                'created_at' => $cart->created_at,
+            ];
+        }
+
+        return returnAPI(200, 'Success', $cartItems);
     }
 
     public function updateCart(Request $request)
