@@ -17,16 +17,19 @@
                 <a href="{{ route('branches.index') }}" class="nav-link">Branch</a>
             </li>
             <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
-                <a href="{{ route('categories.index') }}" class="nav-link">Category</a>
+                <a href="{{ route('users.index') }}" class="nav-link">Users</a>
             </li>
             <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
-                <a href="{{ route('bottle.index') }}" class="nav-link">Bottle</a>
+                <a href="{{ route('categories.index') }}" class="nav-link">Category</a>
             </li>
             <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
                 <a href="{{ route('products.index') }}" class="nav-link">Products</a>
             </li>
             <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
-                <a href="{{ route('other_product.index') }}" class="nav-link">Other Products</a>
+                <a href="{{ route('bottle.index') }}" class="nav-link">Bottle</a>
+            </li>
+            <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
+                <a href="{{ URL::to('report') }}" class="nav-link">Report</a>
             </li>
             <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
                 <a href="{{ route('stock.index') }}" class="nav-link">Stock</a>
@@ -35,29 +38,29 @@
                 <a href="{{ route('stockcard.index') }}" class="nav-link">Stock Card</a>
             </li>
             <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
-                <a href="{{ route('first_stock.index') }}" class="nav-link">First stock</a>
-            </li>
-            <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
-                <a href="{{ route('opname.index') }}" class="nav-link">Opname</a>
-            </li>
-            <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
-                <a href="{{ route('users.index') }}" class="nav-link">Users</a>
-            </li>
-            <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
-                <a href="{{ route('supplier.index') }}" class="nav-link">Supplier</a>
+                <a href="{{ route('bundles.index') }}" class="nav-link">Customers</a>
             </li>
             <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
                 <a href="{{ route('customers.index') }}" class="nav-link">Customers</a>
             </li>
-            <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
+            {{-- <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
                 <a href="{{ route('promotions.index') }}" class="nav-link">Promotions</a>
             </li>
             <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
                 <a href="{{ route('promotionBundle.index') }}" class="nav-link">Promotions Bundle</a>
             </li>
             <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
-                <a href="{{ URL::to('report') }}" class="nav-link">Report</a>
+                <a href="{{ route('first_stock.index') }}" class="nav-link">First stock</a>
             </li>
+            <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
+                <a href="{{ route('opname.index') }}" class="nav-link">Opname</a>
+            </li>
+            <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
+                <a href="{{ route('other_product.index') }}" class="nav-link">Other Products</a>
+            </li>
+            <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
+                <a href="{{ route('supplier.index') }}" class="nav-link">Supplier</a>
+            </li>--}}
         </ul>
     </aside>
 
