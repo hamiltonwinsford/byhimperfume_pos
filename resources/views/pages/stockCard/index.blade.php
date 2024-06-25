@@ -92,7 +92,7 @@
                                                 <td>{{ $stockCard->stock_opname_end }}</td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <a href='{{ route('stockcard.edit', $stockcard->id) }}' class="btn btn-sm btn-info btn-icon">
+                                                        <a href='{{ route('stockcard.opname', $stockcard->id) }}' class="btn btn-sm btn-info btn-icon">
                                                             <i class="fas fa-edit"></i> Edit
                                                         </a>
                                                     </div>

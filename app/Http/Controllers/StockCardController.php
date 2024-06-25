@@ -4,21 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\StockCard;
 use App\Models\Product;
+use App\Models\Fragrance;
+use App\Models\CurrentStock;
+use App\Models\TransactionItem;
 use App\Models\Branch;
 use Illuminate\Http\Request;
 
 class StockCardController extends Controller
 {
-    //index
-    // public function index()
-    // {
-    //     $data = StockCard::join('products','products.id','product_id')
-    //         ->select('stock_cards.*','products.name')
-    //         ->get();
-    //     return view('pages.stockCard.index', compact('data'));
-    // }
-
-    // index
     public function index(Request $request)
     {
         if (empty($request->branch_id)) {
@@ -33,5 +26,10 @@ class StockCardController extends Controller
         return view('pages.stockCard.index', compact('data', 'branches'));
     }
 
-    
+    // index
+    public function opname(Request $request)
+    {
+
+        return view('pages.stockCard.opname', compact('data', 'branches'));
+    }
 }
