@@ -38,7 +38,7 @@
                 <a href="{{ route('stockcard.index') }}" class="nav-link">Stock Card</a>
             </li>
             <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
-                <a href="{{ route('bundles.index') }}" class="nav-link">Customers</a>
+                <a href="{{ route('bundles.index') }}" class="nav-link">Bundles</a>
             </li>
             <li class='{{ Request::is('dashboard-general-dashboard') ? 'active' : '' }}'>
                 <a href="{{ route('customers.index') }}" class="nav-link">Customers</a>
