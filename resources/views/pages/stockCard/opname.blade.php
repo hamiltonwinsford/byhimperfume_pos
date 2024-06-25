@@ -48,6 +48,11 @@
                                     <input type="text" class="form-control datepicker" name="stock_opname_end" value="{{ $stockCard->stock_opname_end }}">
                                 </div>
                                 <button type="submit" class="btn btn-primary">Update</button>
+                                <div class="form-group">
+                                    <label>Real Stock (gram)</label>
+                                    <input type="number" class="form-control" name="real_stock_gram" value="{{ $stockCard->real_stock_gram }}">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update</button>
                             </form>
                         </div>
                     </div>

@@ -94,7 +94,7 @@
                                                 <td>
                                                     <div class="d-flex justify-content-center">
                                                         <a href='{{ route('stockcard.opname', $stockCard->id) }}' class="btn btn-sm btn-info btn-icon">
-                                                            <i class="fas fa-edit"></i> Edit
+                                                            <i class="fas fa-edit"></i> Opname
                                                         </a>
                                                     </div>
                                                 </td>

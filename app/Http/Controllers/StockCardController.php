@@ -37,6 +37,7 @@ class StockCardController extends Controller
     public function update(Request $request, $id)
     {
         $stockCard = StockCard::findOrFail($id);
+        $stockCard->opening_stock_gram = $request->opening_stock_gram;
         $stockCard->stock_opname_start = $request->stock_opname_start;
         $stockCard->stock_opname_end = $request->stock_opname_end;
         $stockCard->save();
