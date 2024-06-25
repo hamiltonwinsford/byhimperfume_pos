@@ -362,12 +362,13 @@ class ApiController extends Controller
 
     public function getCart(Request $request)
     {
-        $cart = Cart::join('products', 'cart.product_id', 'products.id')
-            ->select('cart.*', 'products.name', 'products.price','products.id as prod_id', 'harga_ml', 'variant')
-            ->leftJoin('bottle', 'bottle.id', '=', 'cart.bottle_id')
-            ->where('user_id', $request->user_id)
+        $cart = Cart::where('user_id', $request->user_id)
             ->get()->all();
-
+            // $cart = Cart::join('products', 'cart.product_id', 'products.id')
+            // ->select('cart.*', 'products.name', 'products.price','products.id as prod_id', 'harga_ml', 'variant')
+            // ->leftJoin('bottle', 'bottle.id', '=', 'cart.bottle_id')
+            // ->where('user_id', $request->user_id)
+            // ->get()->all();
         return returnAPI(200, 'Success', $cart);
     }
 
