@@ -510,10 +510,15 @@ class ApiController extends Controller
                 $dt->product_id = $value->product_id;
                 $dt->price = $cekPrduct->price*$bottle->bottle_size;
                 $dt->subtotal = $bottle->harga_ml;
+                $dt->bottle_id = $bottle->bottle_id;
 
+                if(!empty($request->discount_amount)){
+                    $dt->subtotal = $dt->subtotal - ($request->discount_amount/100);
+                }
 
-                $tot_price += $bottle->harga_ml;
+                $tot_price += $dt->subtotal;
                 $currentStock = CurrentStock::where('product_id', $value->product_id)->first();
+
                 if($bottle->variant === "edt"){
                     $dt->quantity = $bottle->bottle_size * 0.7;
                 }
@@ -523,9 +528,10 @@ class ApiController extends Controller
                 elseif($bottle->variant === "perfume"){
                     $dt->quantity = $bottle->bottle_size * 0.3;
                 }
-                if($bottle->variant === "full_perfume"){
+                elseif($bottle->variant === "full_perfume"){
                     $dt->quantity = $bottle->bottle_size;
                 }
+                
                 $dt->save();
                 $currentStock->current_stock = $currentStock->current_stock - $dt->quantity;
                 $currentStock->save();
