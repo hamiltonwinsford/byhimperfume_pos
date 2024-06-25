@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class CurrentStock extends Model
 {
-    /**
-	 * The attributes that aren't mass assignable.
-	 *
-	 * @var array
-	 */
-    protected $guarded = ['id'];
-    protected $primaryKey = 'id';
-    protected $table   = "current_stock";
+    // Mass assignable attributes to allow filling the model
+    protected $fillable = ['product_id', 'current_stock', 'current_stock_gram'];
+
+    // Define the relationship with the Product model
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

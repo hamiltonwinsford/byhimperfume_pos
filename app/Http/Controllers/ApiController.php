@@ -508,26 +508,26 @@ class ApiController extends Controller
                 $dt = new TransactionItem;
                 $dt->transaction_id = $tr->id;
                 $dt->product_id = $value->product_id;
-                $dt->quantity = $bottle->bottle_size;
                 $dt->price = $cekPrduct->price*$bottle->bottle_size;
                 $dt->subtotal = $bottle->harga_ml;
-                $dt->save();
+
 
                 $tot_price += $bottle->harga_ml;
                 $currentStock = CurrentStock::where('product_id', $value->product_id)->first();
                 if($bottle->variant === "edt"){
-                    $qty = $bottle->bottle_size * 0.7;
+                    $dt->quantity = $bottle->bottle_size * 0.7;
                 }
                 elseif($bottle->variant === "edp"){
-                    $qty = $bottle->bottle_size * 0.5;
+                    $dt->quantity = $bottle->bottle_size * 0.5;
                 }
                 elseif($bottle->variant === "perfume"){
-                    $qty = $bottle->bottle_size * 0.3;
+                    $dt->quantity = $bottle->bottle_size * 0.3;
                 }
                 if($bottle->variant === "full_perfume"){
-                    $qty = $bottle->bottle_size;
+                    $dt->quantity = $bottle->bottle_size;
                 }
-                $currentStock->current_stock = $currentStock->current_stock - $qty;
+                $dt->save();
+                $currentStock->current_stock = $currentStock->current_stock - $dt->quantity;
                 $currentStock->save();
             }
 

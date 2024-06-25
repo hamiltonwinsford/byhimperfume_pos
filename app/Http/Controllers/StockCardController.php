@@ -37,12 +37,39 @@ class StockCardController extends Controller
     public function update(Request $request, $id)
     {
         $stockCard = StockCard::findOrFail($id);
-        $stockCard->opening_stock_gram = $request->opening_stock_gram;
-        $stockCard->stock_opname_start = $request->stock_opname_start;
-        $stockCard->stock_opname_end = $request->stock_opname_end;
+
+        // Update stock opname dates
+        $stockCard->stock_opname_date = $request->stock_opname_date;
+
+        // Retrieve the previous stock opname to get the real_g value
+        $previousStockOpname = StockCard::where('product_id', $stockCard->product_id)
+                                        ->where('branch_id', $stockCard->branch_id)
+                                        ->where('id', '<', $id)
+                                        ->orderBy('id', 'desc')
+                                        ->first();
+
+        // Set opening stock gram to the real stock gram of the previous opname, or 0 if none exists
+        $stockCard->opening_stock_gram = $previousStockOpname ? $previousStockOpname->real_g : 0;
+
+        // Retrieve transaction items within the opname date range
+        $transactionItems = TransactionItem::where('product_id', $stockCard->product_id)
+                                            ->whereBetween('created_at', [$previousStockOpname, $request->stock_opname_date])
+                                            ->get();
+
+        // Retrieve fragrance data
+        $fragrance = Fragrance::where('product_id', $stockCard->product_id)->first();
+
+        // Calculate sales (ml)
+        $sales_ml = $transactionItems->sum('quantity'); // Assuming quantity is in ml
+        $stockCard->sales_ml = $sales_ml;
+
+        // Save real stock gram if provided
+        if ($request->has('real_stock_gram')) {
+            $stockCard->real_g = $request->real_stock_gram;
+        }
+
         $stockCard->save();
 
         return redirect()->route('stockcard.index')->with('success', 'Stock opname updated successfully.');
     }
-
 }

@@ -69,8 +69,7 @@
                                             <th>Real (ml)</th>
                                             <th>Difference (g)</th>
                                             <th>Difference (ml)</th>
-                                            <th>Opname Start</th>
-                                            <th>Opname End</th>
+                                            <th>Opname Date</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -89,8 +88,7 @@
                                                 <td>{{ $stockCard->real_ml }}</td>
                                                 <td>{{ $stockCard->difference_g }}</td>
                                                 <td>{{ $stockCard->difference_ml }}</td>
-                                                <td>{{ $stockCard->stock_opname_start }}</td>
-                                                <td>{{ $stockCard->stock_opname_end }}</td>
+                                                <td>{{ $stockCard->stock_opname_date }}</td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
                                                         <a href='{{ route('stockcard.opname', $stockCard->id) }}' class="btn btn-sm btn-info btn-icon">
