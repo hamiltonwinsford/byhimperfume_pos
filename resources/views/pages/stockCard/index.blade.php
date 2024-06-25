@@ -69,7 +69,8 @@
                                             <th>Real (ml)</th>
                                             <th>Difference (g)</th>
                                             <th>Difference (ml)</th>
-                                            <th>Stock Opname Date</th>
+                                            <th>Opname Start</th>
+                                            <th>Opname End</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
