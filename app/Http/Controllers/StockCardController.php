@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 
 class StockCardController extends Controller
 {
+    // index
     public function index(Request $request)
     {
         if (empty($request->branch_id)) {
@@ -26,10 +27,21 @@ class StockCardController extends Controller
         return view('pages.stockCard.index', compact('data', 'branches'));
     }
 
-    // index
-    public function opname(Request $request)
-    {
 
-        return view('pages.stockCard.opname', compact('data', 'branches'));
+    public function opname($id)
+    {
+        $stockCard = StockCard::with('product', 'branch', 'fragrance')->findOrFail($id);
+        return view('pages.stockCard.opname', compact('stockCard'));
     }
+
+    public function update(Request $request, $id)
+    {
+        $stockCard = StockCard::findOrFail($id);
+        $stockCard->stock_opname_start = $request->stock_opname_start;
+        $stockCard->stock_opname_end = $request->stock_opname_end;
+        $stockCard->save();
+
+        return redirect()->route('stockcard.index')->with('success', 'Stock opname updated successfully.');
+    }
+
 }

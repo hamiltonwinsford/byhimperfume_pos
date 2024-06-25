@@ -48,6 +48,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/bundles/get-products-by-branch/{branchId}', [BundleController::class, 'getProductsByBranch']);
     Route::get('/bundles/get-variants', [BundleController::class, 'getVariants']);
     Route::get('/bundles/get-bottle-sizes-by-variant/{variant}', [BundleController::class, 'getBottleSizesByVariant']);
+    Route::get('stockcard/opname/{id}', [StockCardController::class, 'opname'])->name('stockcard.opname');
+    Route::put('stockcard/{id}', [StockCardController::class, 'update'])->name('stockcard.update');
+
+
 
 
     Route::resource('users', UserController::class);

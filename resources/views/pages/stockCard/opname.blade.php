@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Stock')
+@section('title', 'Stock Opname')
 
 @push('style')
 <!-- CSS Libraries -->
@@ -12,11 +12,10 @@
 <div class="main-content">
     <section class="section">
         <div class="section-header">
-            <h1>Opname Stock</h1>
+            <h1>Stock Opname</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('stock.index') }}">Stock</a></div>
-                <div class="breadcrumb-item">All Stock</div>
+                <div class="breadcrumb-item"><a href="{{ route('stockcard.index') }}">Stock</a></div>
             </div>
         </div>
         <div class="section-body">
@@ -30,31 +29,26 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Opname Stock</h4>
+                            <h4>Stock Opname</h4>
                         </div>
                         <div class="card-body">
-                            <div class="clearfix mb-3"></div>
-
-                            <div class="table-responsive">
-                                <table id="myTable" class="table-striped table">
-                                    <thead>
-                                        <tr>
-                                            <th>Product</th>
-                                            <th>Opname Date Start</th>
-                                            <th>Opname Date End</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($data as $value)
-                                        <tr>
-                                            <td>{{ $value->name }}</td>
-                                            <td><input type="text" class="datepicker" name="opname_date_start[{{ $value->id }}]" value="{{ $value->opname_date_start }}"></td>
-                                            <td><input type="text" class="datepicker" name="opname_date_end[{{ $value->id }}]" value="{{ $value->opname_date_end }}"></td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                            <form method="post" action="{{ route('stockcard.update', $stockCard->id) }}">
+                                @csrf
+                                @method('PUT')
+                                <div class="form-group">
+                                    <label>Product</label>
+                                    <input type="text" class="form-control" value="{{ $stockCard->product->name }}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Opname Date Start</label>
+                                    <input type="text" class="form-control datepicker" name="stock_opname_start" value="{{ $stockCard->stock_opname_start }}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Opname Date End</label>
+                                    <input type="text" class="form-control datepicker" name="stock_opname_end" value="{{ $stockCard->stock_opname_end }}">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -70,8 +64,6 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <!-- Page Specific JS File -->
-<script src="{{ asset('js/page/features-posts.js') }}"></script>
-
 <script>
     $(document).ready(function() {
         $(".datepicker").datepicker({
