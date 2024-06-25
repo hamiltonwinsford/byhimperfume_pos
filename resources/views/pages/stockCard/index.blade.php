@@ -70,6 +70,7 @@
                                             <th>Difference (g)</th>
                                             <th>Difference (ml)</th>
                                             <th>Stock Opname Date</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -87,7 +88,15 @@
                                                 <td>{{ $stockCard->real_ml }}</td>
                                                 <td>{{ $stockCard->difference_g }}</td>
                                                 <td>{{ $stockCard->difference_ml }}</td>
-                                                <td>{{ $stockCard->stock_opname_date }}</td>
+                                                <td>{{ $stockCard->stock_opname_start }}</td>
+                                                <td>{{ $stockCard->stock_opname_end }}</td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <a href='{{ route('stockcard.edit', $stockcard->id) }}' class="btn btn-sm btn-info btn-icon">
+                                                            <i class="fas fa-edit"></i> Edit
+                                                        </a>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>

@@ -33,15 +33,5 @@ class StockCardController extends Controller
         return view('pages.stockCard.index', compact('data', 'branches'));
     }
 
-    // public function detail($id)
-    // {
-    //     $data = StockCard::join('products','products.id','product_id')
-    //         ->select('stock_cards.*','products.name')
-    //         ->where('product_id', $id)
-    //         ->get();
-    //     $out = TransactionItem::join('transactions','transactions.id','transaction_id')
-    //         ->join('products','products.id','product_id')
-    //         ->where('product_id', $id)->select('transaction_items.*','transactions.transaction_date','products.name')->get();
-    //     return view('pages.stock.detail', compact('data','out'));
-    // }
+    
 }

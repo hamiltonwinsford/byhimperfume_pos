@@ -105,6 +105,15 @@ class ProductController extends Controller
                 $stockCard->branch_id = $request->branch_id;
                 $stockCard->fragrance_id = $fragrance->id;
                 $stockCard->opening_stock_gram = $request->gram;
+                $stockCard->restock_gram = 0;
+                $stockCard->sales_ml = 0;
+                $stockCard->calc_g = ($stockCard->opening_stock_gram + $stockCard->restock_gram) - ($stockCard->sales_ml * $fragrance->ml_to_gram);
+                $stockCard->calc_ml = $stockCard->calc_g * $fragrance->gram_to_ml;
+                $stockCard->real_g = $fragrance->gram;
+                $stockCard->real_ml = $fragrance->mililiter;
+                $stockCard->difference_g = $stockCard->real_g - $stockCard->calc_g;
+                $stockCard->difference_ml = $stockCard->real_ml - $stockCard->calc_ml;
+
                 $stockCard->save();
 
                 // Check if product already exists in current_stock
