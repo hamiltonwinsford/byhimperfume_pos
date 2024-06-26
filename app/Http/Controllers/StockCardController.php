@@ -59,7 +59,7 @@ class StockCardController extends Controller
         $newStockCard->stock_opname_date = $request->stock_opname_date;
 
         // Retrieve the previous stock opname to get the real_g value
-        $previousStockOpname = $stockCard->real_g;
+        $previousStockOpname = $stockCard;
         if ($previousStockOpname) {
             $previousStockOpnameDate = $previousStockOpname->stock_opname_date;
         } else {
