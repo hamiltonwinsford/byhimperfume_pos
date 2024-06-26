@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Opname Date</label>
-                                    <input type="text" class="form-control datepicker" name="stock_opname_date" value="{{ now()->format('Y-m-d') }}" readonly>
+                                    <input type="text" class="form-control" name="stock_opname_date" value="{{ now()->format('Y-m-d') }}" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label>Real Stock (gram)</label>
@@ -69,10 +69,6 @@
         // Set the opname date to today's date and make it readonly
         let today = new Date().toISOString().split('T')[0];
         $('input[name="stock_opname_date"]').val(today).attr('readonly', true);
-
-        $(".datepicker").datepicker({
-            dateFormat: "yy-mm-dd"
-        });
     });
 </script>
 @endpush
