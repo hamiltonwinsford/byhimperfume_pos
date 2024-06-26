@@ -38,7 +38,7 @@ class StockCard extends Model
 
     public function fragrance()
     {
-        return $this->belongsTo(Fragrance::class);
+        return $this->belongsTo(Fragrance::class, 'product_id');
     }
 
     // Accessors/Mutators (optional, for data formatting or conversion)

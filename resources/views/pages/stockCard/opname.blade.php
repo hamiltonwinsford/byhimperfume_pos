@@ -35,6 +35,7 @@
                             <form method="post" action="{{ route('stockcard.update', $stockCard->id) }}">
                                 @csrf
                                 @method('PUT')
+                                <input type="hidden" name="product_id" value="{{ $stockCard->product->id }}">
                                 <div class="form-group">
                                     <label>Product</label>
                                     <input type="text" class="form-control" value="{{ $stockCard->product->name }}" readonly>
