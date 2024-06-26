@@ -38,6 +38,7 @@ class StockCardController extends Controller
     public function update(Request $request, $id)
     {
         $stockCard = StockCard::findOrFail($id);
+        $productId = $request->product_id;
         // Retrieve fragrance data
         // Ambil data fragrance berdasarkan product_id
         $fragrance = Fragrance::where('product_id', $request->product_id)->first();
@@ -76,6 +77,7 @@ class StockCardController extends Controller
                                             ->get();
         // Debugging: Dump the query and data
         dd([
+            'product_id' => $productId,
             'previousStockOpnameDate' => $previousStockOpnameDate,
             'stock_opname_date' => $request->stock_opname_date,
             'sql_query' => TransactionItem::where('product_id', $request->product_id)
