@@ -480,84 +480,88 @@ class ApiController extends Controller
     }
 
     public function checkout(Request $request)
-{
-    try {
-        $cekCart = Cart::where('user_id', $request->user_id)->get();
-        $branch = Branch::join('users','users.branch_id','branches.id')
-                        ->select('branches.*')
-                        ->where('users.id', $request->user_id)
-                        ->first();
+    {
 
-        $discount = $request->discount ?? 0;
+        try {
+            $cekCart = Cart::where('user_id', $request->user_id)->get()->all();
+            $branch = Branch::join('users','users.branch_id','branches.id')->select('branches.*')->where('users.id', $request->user_id)->first();
 
-        $tr = new Transaction;
-        $tr->user_id = $request->user_id;
-        $tr->transaction_number = "INV/".date('Ymd')."/".rand(000,999);
-        $tr->transaction_date = date('Y-m-d');
-        $tr->branch_id = $branch->id;
-        $tr->discount = $discount;
-        $tr->save();
-
-        $tot_price = 0;
-
-        foreach($cekCart as $key => $value) {
-            $cekPrduct = Product::where('id', $value->product_id)->first();
-            $bottle = Bottle::where('id', $value->bottle_id)->first();
-
-            $dt = new TransactionItem;
-            $dt->transaction_id = $tr->id;
-            $dt->product_id = $value->product_id;
-            $dt->price = $cekPrduct->price * $bottle->bottle_size;
-            $dt->subtotal = $bottle->harga_ml;
-            $dt->bottle_id = $bottle->id;
-
-            $tot_price += $dt->subtotal;
-
-            if ($bottle->variant === "edt") {
-                $dt->quantity = $bottle->bottle_size * 0.7;
-            } elseif ($bottle->variant === "edp") {
-                $dt->quantity = $bottle->bottle_size * 0.5;
-            } elseif ($bottle->variant === "perfume") {
-                $dt->quantity = $bottle->bottle_size * 0.3;
-            } elseif ($bottle->variant === "full_perfume") {
-                $dt->quantity = $bottle->bottle_size;
+            if(!empty($request->discount)){
+                $discount = $request->discount;
+            } else {
+                $discount = 0;
             }
 
+            $tr = new Transaction;
+            $tr->user_id = $request->user_id;
+            $tr->transaction_number = "INV/".date('Ymd')."/".rand(000,999);
+            $tr->transaction_date = date('Y-m-d');
+            $tr->branch_id = $branch->id;
+            $tr->discount = $discount;
+            $tr->save();
+
+            foreach($cekCart as $key => $value){
+
+                $cekPrduct = Product::where('id', $value->product_id)->first();
+                $bottle = Bottle::where('id', $value->bottle_id)->first();
+                $fragrances = Fragrance::where('product_id', $value->product_id)->get();
+
+                $dt = new TransactionItem;
+                $dt->transaction_id = $tr->id;
+                $dt->product_id = $value->product_id;
+                $dt->price = $cekPrduct->price*$bottle->bottle_size;
+                $dt->subtotal = $bottle->harga_ml;
+                $dt->bottle_id = $bottle->bottle_id;
+
+                // if(!empty($request -> discount_amount)){
+                //     $dt->subtotal = $dt->subtotal - ($request->discount_amount/100);
+                // }
+
+                $tr->total_amount = $tr->total_amount + $dt -> subtotal;
+                $currentStock = CurrentStock::where('product_id', $value->product_id)->first();
+
+                if($bottle->variant === "edt"){
+                    $dt->quantity = $bottle->bottle_size * 0.7;
+                }
+                elseif($bottle->variant === "edp"){
+                    $dt->quantity = $bottle->bottle_size * 0.5;
+                }
+                elseif($bottle->variant === "perfume"){
+                    $dt->quantity = $bottle->bottle_size * 0.3;
+                }
+                elseif($bottle->variant === "full_perfume"){
+                    $dt->quantity = $bottle->bottle_size;
+                }
+                $currentStock->current_stock = $currentStock->current_stock - $dt->quantity;
+                $currentStock->current_stock_gram = $currentStock->current_stock;
+                $currentStock->save();
+            }
             $dt->save();
+            //$tot_price = $tot_price-($tot_price*($discount/100));
 
-            $currentStock = CurrentStock::where('product_id', $value->product_id)->first();
-            $currentStock->current_stock -= $dt->quantity;
-            $currentStock->current_stock_gram = $currentStock->current_stock;
-            $currentStock->save();
+            $cekCus = Customer::where('phone_number', $request->phone_number)->first();
+            if(empty($cekCus)){
+                $cus = new Customer;
+                $cus->name = $request->name_customer;
+                $cus->phone_number = $request->phone_number;
+                $cus->save();
+                $customer_id = $cus->id;
+            } else {
+                $customer_id = $cekCus->id;
+            }
+
+            $cekTr = Transaction::where('id', $tr->id)->first();
+            $cekTr -> customer_id = $customer_id;
+            $cekTr -> save();
+
+            Cart::where('user_id', $request->user_id)->delete();
+
+            return returnAPI(200, 'Success', $cekTr);
+        } catch (Exception $e) {
+            Log::error('Error in checkout: ' . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
-
-        $tot_price = $tot_price - ($tot_price * ($discount / 100));
-
-        $cekCus = Customer::where('phone_number', $request->phone_number)->first();
-        if (empty($cekCus)) {
-            $cus = new Customer;
-            $cus->name = $request->name_customer;
-            $cus->phone_number = $request->phone_number;
-            $cus->save();
-            $customer_id = $cus->id;
-        } else {
-            $customer_id = $cekCus->id;
-        }
-
-        $cekTr = Transaction::where('id', $tr->id)->first();
-        $cekTr->total_amount = $tot_price;
-        $cekTr->customer_id = $customer_id;
-        $cekTr->save();
-
-        Cart::where('user_id', $request->user_id)->delete();
-
-        return returnAPI(200, 'Success', $cekTr);
-    } catch (Exception $e) {
-        Log::error('Error in checkout: ' . $e->getMessage());
-        return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
     }
-}
-
 
     public function getHistoryTransactions(Request $request)
     {
