@@ -500,7 +500,6 @@ class ApiController extends Controller
             $tr->discount = $discount;
             $tr->save();
 
-            $tot_price = 0;
             foreach($cekCart as $key => $value){
 
                 $cekPrduct = Product::where('id', $value->product_id)->first();
@@ -518,7 +517,7 @@ class ApiController extends Controller
                 //     $dt->subtotal = $dt->subtotal - ($request->discount_amount/100);
                 // }
 
-                $tot_price = $tot_price + $dt -> subtotal;
+                $tr->total_amount = $tr->total_amount + $dt -> subtotal;
                 $currentStock = CurrentStock::where('product_id', $value->product_id)->first();
 
                 if($bottle->variant === "edt"){
@@ -554,7 +553,6 @@ class ApiController extends Controller
             }
 
             $cekTr = Transaction::where('id', $tr->id)->first();
-            $cekTr -> total_amount = $tot_price;
             $cekTr -> customer_id = $customer_id;
             $cekTr -> save();
 
