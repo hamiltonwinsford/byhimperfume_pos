@@ -509,6 +509,10 @@ class ApiController extends Controller
 
                 $cekPrduct = Product::where('id', $value->product_id)->first();
                 $fragrance = Fragrance::where('id', $value->product_id)->first();
+                if (!$fragrance || !isset($fragrance->ml_to_gram)) {
+                    throw new \Exception('Fragrance atau ml_to_gram tidak ditemukan untuk product id: ' . $value->product_id);
+                }
+                
                 $bottle = Bottle::where('id', $value->bottle_id)->first();
 
                 $dt = new TransactionItem;
@@ -540,11 +544,22 @@ class ApiController extends Controller
 
                 $dt->save();
                 $currentStock->current_stock = $currentStock->current_stock - $dt->quantity;
-                //$currentStock->current_stock_gram = $currentStock->current_stock * $fragrance->ml_to_gram;
+                // Debugging
+                Log::info("Current stock before update: " . $currentStock->current_stock);
+                Log::info("Fragrance ml_to_gram: " . $fragrance->ml_to_gram);
+
+                // Periksa apakah current_stock dan ml_to_gram terdefinisi sebelum melakukan perkalian
+                if (isset($currentStock->current_stock) && isset($fragrance->ml_to_gram)) {
+                    $currentStock->current_stock_gram = $currentStock->current_stock * $fragrance->ml_to_gram;
+                    Log::info("Current stock gram after update: " . $currentStock->current_stock_gram);
+                } else {
+                    throw new \Exception('current_stock atau ml_to_gram adalah null untuk product id: ' . $value->product_id);
+                }
+
                 $currentStock->save();
             }
 
-            $tot_price = $tot_price-($tot_price*($discount/100));
+            $tot_price = $tot_price-($tot_price * ($discount/100));
 
             $cekCus = Customer::where('phone_number', $request->phone_number)->first();
             if(empty($cekCus)){
