@@ -78,21 +78,11 @@ class StockCardController extends Controller
         $stock_in_items = Restock::where('product_id', $productId)
         ->whereBetween(DB::raw('CAST(restock_date AS DATE)'), [$previousStockOpnameDate, $request->stock_opname_date])
         ->get();
-                                            dd([
-                                                'previousStockOpnameDate' => $previousStockOpnameDate,
-                                                'stock_opname_date' => $request->stock_opname_date,
-                                                'sql_query' => Restock::where('product_id', $productId)
-                                                    ->whereBetween(DB::raw('CAST(restock_date AS DATE)'), [$previousStockOpnameDate, $request->stock_opname_date])
-                                                    ->toSql(),
-                                                'bindings' => Restock::where('product_id', $productId)
-                                                    ->whereBetween(DB::raw('CAST(restock_date AS DATE)'), [$previousStockOpnameDate, $request->stock_opname_date])
-                                                    ->getBindings(),
-                                                'stock_in_items' => $stock_in_items
-                                            ]);
 
         // Calculate sales (ml)
         $stock_in = $stock_in_items->sum('gram');
         $sales_ml = $transactionItems->sum('quantity'); // Assuming quantity is in ml
+        dd($stock_in);
 
         $newStockCard->sales_ml = $sales_ml;
         $newStockCard->calc_g = ($newStockCard -> opening_stock_gram + $stock_in) * ($sales_ml * $ml_to_gram);
