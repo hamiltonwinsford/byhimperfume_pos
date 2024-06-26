@@ -80,12 +80,19 @@ class StockCardController extends Controller
                                             })
                                             ->get();
 
-        dd('stock in items:', $stock_in_items);
+        dd([
+            'product_id' => $productId,
+            'previousStockOpnameDate' => $previousStockOpnameDate,
+            'stock_opname_date' => $request->stock_opname_date,
+            'stock_in_items_sql_query' => $stock_in_items->toSql(),
+            'stock_in_items_bindings' => $stock_in_items->getBindings(),
+            'stock_in_items' => $stock_in_items,
+        ]);
 
         // Calculate sales (ml)
         $stock_in = $stock_in_items->sum('gram');
         $sales_ml = $transactionItems->sum('quantity'); // Assuming quantity is in ml
-        dd('stock in:', $stock_in, 'sales ml:', $sales_ml);
+
         $newStockCard->sales_ml = $sales_ml;
         $newStockCard->calc_g = ($newStockCard -> opening_stock_gram + $stock_in) * ($sales_ml * $ml_to_gram);
         $newStockCard->calc_ml = $newStockCard -> calc_g * $gram_to_ml;
