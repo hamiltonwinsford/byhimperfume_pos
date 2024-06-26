@@ -367,6 +367,8 @@ class ApiController extends Controller
             ->leftJoin('bottle', 'bottle.id', '=', 'cart.bottle_id')
             ->where('user_id', $request->user_id)
             ->get()->all();
+
+            
         return returnAPI(200, 'Success', $cart);
     }
 
@@ -387,13 +389,6 @@ class ApiController extends Controller
         $cart->branch_id    = $request->branch_id;
         $cart->user_id      = $request->user_id;
         $cart->bottle_id    = $bottle->id;
-        if(!$cart->discount){
-            $cart -> discount = 0;
-        }
-        // Hitung harga setelah diskon
-        $harga = $bottle->harga_ml;
-        $cart->price_after_discount = $harga - ($harga * ($cart -> discount/ 100));
-
         $cart->save();
 
         $data = [
@@ -405,7 +400,6 @@ class ApiController extends Controller
             'bottle_id' => $bottle->id,
             'updated_at' => $cart->updated_at,
             'created_at' => $cart->created_at,
-            'discount' => $cart->discount,
             'id' => $cart->id
         ];
 
@@ -487,110 +481,90 @@ class ApiController extends Controller
 
     public function checkout(Request $request)
     {
+
         try {
-            // Ambil data user dan cabang
-            $user = User::find($request->user_id);
-            $branch = Branch::where('id', $request->branch_id)->first();
-            $cart = Cart::where('user_id', $request->user_id)->get()->all();
+            $cekCart = Cart::where('user_id', $request->user_id)->get()->all();
+            $branch = Branch::join('users','users.branch_id','branches.id')->select('branches.*')->where('users.id', $request->user_id)->first();
 
-            if (!$user || !$branch) {
-                return response()->json(['status' => 'error', 'message' => 'User atau branch tidak ditemukan'], 404);
+            if(!empty($request->discount)){
+                $discount = $request->discount;
+            } else {
+                $discount = 0;
             }
 
-            // Ambil atau buat customer
-            $customer = Customer::firstOrCreate(
-                ['phone_number' => $request->phone_number],
-                ['name' => $request->name_customer]
-            );
+            $tr = new Transaction;
+            $tr->user_id = $request->user_id;
+            $tr->transaction_number = "INV/".date('Ymd')."/".rand(000,999);
+            $tr->transaction_date = date('Y-m-d');
+            $tr->branch_id = $branch->id;
+            $tr->discount = $discount;
+            $tr->save();
 
-            // Buat transaksi baru
-            $transaction = new Transaction();
-            $transaction->user_id = $user->id;
-            $transaction->transaction_number = "INV/" . date('Ymd') . "/" . rand(000, 999);
-            $transaction->transaction_date = date('Y-m-d');
-            $transaction->branch_id = $branch->id;
-            $transaction->discount = $request->discount;
-            $transaction->customer_id = $customer->id;
-            $transaction->save();
+            $tot_price = 0;
+            foreach($cekCart as $key => $value){
 
-            $total_price = 0;
+                $cekPrduct = Product::where('id', $value->product_id)->first();
+                $bottle = Bottle::where('id', $value->bottle_id)->first();
 
-            foreach ($cart as $item) {
-                $product = Product::find($item['product_id']);
-                $fragrance = Fragrance::where('product_id', $item['product_id'])->first();
-                $bottle = Bottle::find($item['bottle_id']);
+                $dt = new TransactionItem;
+                $dt->transaction_id = $tr->id;
+                $dt->product_id = $value->product_id;
+                $dt->price = $cekPrduct->price*$bottle->bottle_size;
+                $dt->subtotal = $bottle->harga_ml;
+                $dt->bottle_id = $bottle->bottle_id;
 
-                // Tambahkan log untuk memastikan data fragrance diambil
-                Log::info('Product ID: ' . $item['product_id']);
-                Log::info('Fragrance Data: ' . json_encode($fragrance));
-
-                if (!$product) {
-                    return response()->json(['status' => 'error', 'message' => 'Product tidak ditemukan untuk product_id: ' . $item['product_id']], 404);
+                if(!empty($request -> discount_amount)){
+                    $dt->subtotal = $dt->subtotal - ($request->discount_amount/100);
                 }
 
-                if (!$fragrance) {
-                    return response()->json(['status' => 'error', 'message' => 'Fragrance tidak ditemukan untuk product_id: ' . $item['product_id']], 404);
+                $tot_price += $dt -> subtotal;
+                $currentStock = CurrentStock::where('product_id', $value->product_id)->first();
+
+                if($bottle->variant === "edt"){
+                    $dt->quantity = $bottle->bottle_size * 0.7;
+                }
+                elseif($bottle->variant === "edp"){
+                    $dt->quantity = $bottle->bottle_size * 0.5;
+                }
+                elseif($bottle->variant === "perfume"){
+                    $dt->quantity = $bottle->bottle_size * 0.3;
+                }
+                elseif($bottle->variant === "full_perfume"){
+                    $dt->quantity = $bottle->bottle_size;
                 }
 
-                if (!isset($fragrance->ml_to_gram)) {
-                    return response()->json(['status' => 'error', 'message' => 'ml_to_gram tidak ditemukan untuk product_id: ' . $item['product_id']], 404);
-                }
-
-                if (!$bottle) {
-                    return response()->json(['status' => 'error', 'message' => 'Bottle tidak ditemukan untuk bottle_id: ' . $item['bottle_id']], 404);
-                }
-
-                $transactionItem = new TransactionItem();
-                $transactionItem->transaction_id = $transaction->id;
-                $transactionItem->product_id = $product->id;
-                $transactionItem->price = $product->price * $bottle->bottle_size;
-                $transactionItem->subtotal = $transactionItem->price * $item['quantity'];
-                $transactionItem->bottle_id = $bottle->id;
-
-                $total_price += $transactionItem->subtotal;
-
-                if ($bottle->variant === "edt") {
-                    $transactionItem->quantity = $bottle->bottle_size * 0.7 * $item['quantity'];
-                } elseif ($bottle->variant === "edp") {
-                    $transactionItem->quantity = $bottle->bottle_size * 0.5 * $item['quantity'];
-                } elseif ($bottle->variant === "perfume") {
-                    $transactionItem->quantity = $bottle->bottle_size * 0.3 * $item['quantity'];
-                } elseif ($bottle->variant === "full_perfume") {
-                    $transactionItem->quantity = $bottle->bottle_size * $item['quantity'];
-                }
-
-                $transactionItem->save();
-
-                // Perbarui stok saat ini
-                $currentStock = CurrentStock::where('product_id', $item['product_id'])->first();
-                if (!$currentStock) {
-                    return response()->json(['status' => 'error', 'message' => 'Current stock tidak ditemukan untuk product_id: ' . $item['product_id']], 404);
-                }
-
-                Log::info('Current stock before update: ' . $currentStock->current_stock);
-                Log::info('Fragrance ml_to_gram: ' . $fragrance->ml_to_gram);
-
-                $currentStock->current_stock -= $transactionItem->quantity;
-                $currentStock->current_stock_gram = $currentStock->current_stock * $fragrance->ml_to_gram;
+                $dt->save();
+                $currentStock->current_stock = $currentStock->current_stock - $dt->quantity;
+                $currentStock->current_stock_gram = $currentStock->current_stock;
                 $currentStock->save();
-
-                Log::info('Current stock after update: ' . $currentStock->current_stock);
-                Log::info('Current stock gram after update: ' . $currentStock->current_stock_gram);
             }
 
-            $transaction->total_amount = $total_price - ($total_price * ($request->discount / 100));
-            $transaction->save();
+            $tot_price = $tot_price-($tot_price*($discount/100));
 
-            // Hapus keranjang
+            $cekCus = Customer::where('phone_number', $request->phone_number)->first();
+            if(empty($cekCus)){
+                $cus = new Customer;
+                $cus->name = $request->name_customer;
+                $cus->phone_number = $request->phone_number;
+                $cus->save();
+                $customer_id = $cus->id;
+            } else {
+                $customer_id = $cekCus->id;
+            }
+
+            $cekTr = Transaction::where('id', $tr->id)->first();
+            $cekTr -> total_amount = $tot_price;
+            $cekTr -> customer_id = $customer_id;
+            $cekTr -> save();
+
             Cart::where('user_id', $request->user_id)->delete();
 
-            return response()->json(['code' => 200, 'status' => 'success', 'message' => 'Success', 'data' => $transaction], 200);
-        } catch (\Exception $e) {
+            return returnAPI(200, 'Success', $tr);
+        } catch (Exception $e) {
             Log::error('Error in checkout: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
-
 
     public function getHistoryTransactions(Request $request)
     {
