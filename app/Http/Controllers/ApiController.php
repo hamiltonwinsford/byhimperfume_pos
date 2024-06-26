@@ -540,7 +540,7 @@ class ApiController extends Controller
 
                 $dt->save();
                 $currentStock->current_stock = $currentStock->current_stock - $dt->quantity;
-                $currentStock->current_stock_gram = $currentStock->current_stock * $fragrance->ml_to_gram;
+                //$currentStock->current_stock_gram = $currentStock->current_stock * $fragrance->ml_to_gram;
                 $currentStock->save();
             }
 
