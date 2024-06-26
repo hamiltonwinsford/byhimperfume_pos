@@ -531,9 +531,10 @@ class ApiController extends Controller
                 elseif($bottle->variant === "full_perfume"){
                     $dt->quantity = $bottle->bottle_size;
                 }
-                
+
                 $dt->save();
                 $currentStock->current_stock = $currentStock->current_stock - $dt->quantity;
+                $currentStock->current_stock_gram = $currentStock->current_stock;
                 $currentStock->save();
             }
 

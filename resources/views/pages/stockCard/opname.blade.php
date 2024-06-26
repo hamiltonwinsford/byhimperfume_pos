@@ -42,7 +42,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Opname Date</label>
-                                    <input type="text" class="form-control" name="stock_opname_date" value="{{ now()->format('Y-m-d') }}" readonly>
+                                    <input type="text" class="form-control" name="stock_opname_date" value="{{ now()->format('Y-m-d H:i:s') }}" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label>Real Stock (gram)</label>

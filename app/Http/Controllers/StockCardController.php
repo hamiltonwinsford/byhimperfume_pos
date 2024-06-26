@@ -62,7 +62,7 @@ class StockCardController extends Controller
 
         // Retrieve the previous stock opname to get the real_g value
         $previousStockOpname = $stockCard;
-        $previousStockOpnameDate = $previousStockOpname->stock_opname_date;
+        $previousStockOpnameDate = $previousStockOpname->created_at;
 
         // Set opening stock gram to the real stock gram of the previous opname, or 0 if none exists
         $newStockCard->opening_stock_gram = $previousStockOpname ? $previousStockOpname->real_g : 0;
@@ -76,13 +76,14 @@ class StockCardController extends Controller
                                             ->get();
 
         $stock_in_items = Restock::where('product_id', $productId)
-        ->whereBetween(DB::raw('CAST(restock_date AS DATE)'), [$previousStockOpnameDate, $request->stock_opname_date])
-        ->get();
+                                ->whereBetween(DB::raw('CAST(restock_date AS DATE)'), [$previousStockOpnameDate, $request->stock_opname_date])
+                                ->get();
 
         // Calculate sales (ml)
         $stock_in = $stock_in_items->sum('gram');
         $sales_ml = $transactionItems->sum('quantity'); // Assuming quantity is in ml
 
+        $newStockCard->restock_gram = $stock_in;
         $newStockCard->sales_ml = $sales_ml;
         $newStockCard->calc_g = ($newStockCard -> opening_stock_gram + $stock_in) - ($sales_ml * $ml_to_gram);
         $newStockCard->calc_ml = $newStockCard -> calc_g * $gram_to_ml;
