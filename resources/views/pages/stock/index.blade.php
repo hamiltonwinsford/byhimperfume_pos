@@ -38,6 +38,7 @@
                                     <thead>
                                         <tr>
                                             <th>Product</th>
+                                            <th>Branch</th>
                                             <th>Current Stock</th>
                                             <th>Action</th>
                                         </tr>
@@ -46,6 +47,7 @@
                                         @foreach ($data as $value)
                                         <tr>
                                             <td>{{ $value->name }}</td>
+                                            <td>{{ $value->branch_name }}</td>
                                             <td>{{ $value->current_stock }}</td>
                                             <td>
                                                 <a href="{{ URL::to('detail-stock/'.$value->product_id) }}" class="btn btn-primary">Detail</a>

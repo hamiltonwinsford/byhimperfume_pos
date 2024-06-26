@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\StockCard;
 use App\Models\Product;
+use App\Models\Branch;
 use App\Models\CurrentStock;
 use App\Models\TransactionItem;
 use App\Models\Restock;
@@ -16,12 +17,14 @@ class StockController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $data = CurrentStock::join('products','products.id','product_id')
-            ->select('current_stock.*','products.name')
-            ->get();
-        return view('pages.stock.index', compact('data'));
-    }
+{
+    $data = CurrentStock::join('products', 'products.id', '=', 'current_stock.product_id')
+                        ->join('branches', 'branches.id', '=', 'products.branch_id')
+                        ->select('current_stock.*', 'products.name as product_name', 'branches.name as branch_name')
+                        ->get();
+
+    return view('pages.stock.index', compact('data'));
+}
 
     public function detail($id)
     {
