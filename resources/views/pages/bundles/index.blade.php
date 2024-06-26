@@ -51,37 +51,49 @@
 
                             <div class="table-responsive">
                                 <table class="table-striped table">
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <th>Price</th>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Action</th>
-                                    </tr>
-                                    @foreach ($bundles as $bundle)
-                                    <tr>
-                                        <td>{{ $bundle->name }}</td>
-                                        <td>{{ $bundle->description }}</td>
-                                        <td>{{ $bundle->price }}</td>
-                                        <td>{{ $bundle->start_date }}</td>
-                                        <td>{{ $bundle->end_date }}</td>
-                                        <td>
-                                            <div class="d-flex justify-content-center">
-                                                <a href='{{ route('bundles.edit', $bundle->id) }}' class="btn btn-sm btn-info btn-icon">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </a>
-                                                <form action="{{ route('bundles.destroy', $bundle->id) }}" method="POST" class="ml-2">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="btn btn-sm btn-danger btn-icon confirm-delete">
-                                                        <i class="fas fa-times"></i> Delete
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforeach
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Price</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Products</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($bundles as $bundle)
+                                        <tr>
+                                            <td>{{ $bundle->name }}</td>
+                                            <td>{{ $bundle->description }}</td>
+                                            <td>{{ $bundle->price }}</td>
+                                            <td>{{ $bundle->start_date }}</td>
+                                            <td>{{ $bundle->end_date }}</td>
+                                            <td>
+                                                <ul>
+                                                    @foreach ($bundle->items as $item)
+                                                        <li>{{ $item->product->name }} ({{ $item->quantity }})</li>
+                                                    @endforeach
+                                                </ul>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-center">
+                                                    <a href='{{ route('bundles.edit', $bundle->id) }}' class="btn btn-sm btn-info btn-icon">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </a>
+                                                    <form action="{{ route('bundles.destroy', $bundle->id) }}" method="POST" class="ml-2">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-sm btn-danger btn-icon confirm-delete">
+                                                            <i class="fas fa-times"></i> Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
