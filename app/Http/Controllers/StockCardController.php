@@ -37,6 +37,7 @@ class StockCardController extends Controller
     public function update(Request $request, $id)
     {
         $stockCard = StockCard::findOrFail($id);
+        dd('product_id :', $request->product_id);
         // Retrieve fragrance data
         // Ambil data fragrance berdasarkan product_id
         $fragrance = Fragrance::where('product_id', $request->product_id)->first();
