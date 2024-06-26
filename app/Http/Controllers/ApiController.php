@@ -491,6 +491,7 @@ class ApiController extends Controller
             // Ambil data user dan cabang
             $user = User::find($request->user_id);
             $branch = Branch::where('id', $request->branch_id)->first();
+            $cart = Cart::where('user_id', $request->user_id)->get()->all();
 
             if (!$user || !$branch) {
                 return response()->json(['status' => 'error', 'message' => 'User atau branch tidak ditemukan'], 404);
@@ -514,7 +515,7 @@ class ApiController extends Controller
 
             $total_price = 0;
 
-            foreach ($request->cart_items as $item) {
+            foreach ($cart as $item) {
                 $product = Product::find($item['product_id']);
                 $fragrance = Fragrance::where('product_id', $item['product_id'])->first();
                 $bottle = Bottle::find($item['bottle_id']);
