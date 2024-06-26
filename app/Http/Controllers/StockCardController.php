@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\StockCard;
 use App\Models\Product;
+use App\Models\Restock;
 use App\Models\Fragrance;
 use App\Models\CurrentStock;
 use App\Models\TransactionItem;
@@ -58,7 +59,7 @@ class StockCardController extends Controller
         $newStockCard->stock_opname_date = $request->stock_opname_date;
 
         // Retrieve the previous stock opname to get the real_g value
-        $previousStockOpname = $stockCard->opening_stock_gram;
+        $previousStockOpname = $stockCard->real_g;
         if ($previousStockOpname) {
             $previousStockOpnameDate = $previousStockOpname->stock_opname_date;
         } else {
@@ -75,9 +76,17 @@ class StockCardController extends Controller
                                             })
                                             ->get();
 
+        $stock_in_items = Restock::where('product_id', $request->product_id)
+                                            ->when($previousStockOpnameDate, function ($query) use ($previousStockOpnameDate, $request) {
+                                                $query->whereBetween('created_at', [$previousStockOpnameDate, $request->stock_opname_date]);
+                                            })
+                                            ->get();
+
         // Calculate sales (ml)
+        $stock_in = $stock_in_items->sum('gram');
         $sales_ml = $transactionItems->sum('quantity'); // Assuming quantity is in ml
         $newStockCard->sales_ml = $sales_ml;
+        $newStockCard->calc_g = ($previousStockOpname + $stock_in) * ($sales_ml * $ml_to_gram);
 
         // Save real stock gram if provided
         if ($request->has('real_stock_gram')) {
