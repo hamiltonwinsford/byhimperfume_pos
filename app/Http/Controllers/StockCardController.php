@@ -66,7 +66,7 @@ class StockCardController extends Controller
 
         // Set opening stock gram to the real stock gram of the previous opname, or 0 if none exists
         $newStockCard->opening_stock_gram = $previousStockOpname ? $previousStockOpname->real_g : 0;
-        dd($newStockCard->opening_stock_gram);
+        //dd($newStockCard->opening_stock_gram);
 
         // Retrieve transaction items within the opname date range
         $transactionItems = TransactionItem::where('product_id', $request->product_id)
@@ -74,6 +74,7 @@ class StockCardController extends Controller
                                                 $query->whereBetween('created_at', [$previousStockOpnameDate, $request->stock_opname_date]);
                                             })
                                             ->get();
+        dd($transactionItems);
 
         $stock_in_items = Restock::where('product_id', $request->product_id)
                                             ->when($previousStockOpnameDate, function ($query) use ($previousStockOpnameDate, $request) {
