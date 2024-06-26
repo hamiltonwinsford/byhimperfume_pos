@@ -37,7 +37,6 @@ class StockCardController extends Controller
     public function update(Request $request, $id)
     {
         $stockCard = StockCard::findOrFail($id);
-        // dd('product_id :', $request->product_id);
         // Retrieve fragrance data
         // Ambil data fragrance berdasarkan product_id
         $fragrance = Fragrance::where('product_id', $request->product_id)->first();
@@ -50,18 +49,11 @@ class StockCardController extends Controller
 
         $currentStock = CurrentStock::where('product_id', $request->product_id)->first();
 
-        if ($request->has('real_stock_gram')) {
-            dd('currentStock :', $currentStock);
-        }
-        else {
-            dd('omaigat');
-        }
-
-
         $newStockCard = new StockCard();
         $newStockCard->product_id = $request->product_id;
-        $newStockCard->branch_id = $stockCard->branch_id;
-        $newStockCard->fragrance_id = $stockCard->fragrance_id;
+        $newStockCard->branch_id = $request->branch_id;
+        $newStockCard->fragrance_id = $fragrance->id;
+
         // Update stock opname dates
         $newStockCard->stock_opname_date = $request->stock_opname_date;
 
@@ -86,11 +78,13 @@ class StockCardController extends Controller
 
         // Save real stock gram if provided
         if ($request->has('real_stock_gram')) {
-            $newStockCard->real_g = $request->real_stock_gram;
-            $newStockCard->real_ml = $request->real_stock_gram * $gram_to_ml;
+            $newStockCard->real_g = $request->real_stock_gram - ($fragrance->bottle_weight - $fragrance->pump_weight);
+            $newStockCard->real_ml = $newStockCard -> real_g * $gram_to_ml;
             $currentStock->current_stock_gram = $newStockCard->real_g;
-            $currentStock->current_stock = $newStockCard->real_g * $gram_to_ml;
+            $currentStock->current_stock = $newStockCard->real_ml;
         }
+
+        dd($newStockCard, $currentStock);
 
         $newStockCard->save();
 
