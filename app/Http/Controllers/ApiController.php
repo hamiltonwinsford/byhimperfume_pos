@@ -390,6 +390,9 @@ class ApiController extends Controller
         if(!$cart->discount){
             $cart -> discount = 0;
         }
+        // Hitung harga setelah diskon
+        $harga = $bottle->harga_ml;
+        $cart->price_after_discount = $harga - ($harga * ($cart -> discount/ 100));
 
         $cart->save();
 
@@ -402,6 +405,7 @@ class ApiController extends Controller
             'bottle_id' => $bottle->id,
             'updated_at' => $cart->updated_at,
             'created_at' => $cart->created_at,
+            'discount' => $cart->discount,
             'id' => $cart->id
         ];
 
