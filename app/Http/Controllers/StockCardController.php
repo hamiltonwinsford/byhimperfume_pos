@@ -75,11 +75,9 @@ class StockCardController extends Controller
                                             })
                                             ->get();
 
-        $stock_in_items = Restock::where('product_id', $request->product_id)
-                                            ->when($previousStockOpnameDate, function ($query) use ($previousStockOpnameDate, $request) {
-                                                $query->whereBetween('created_at', [$previousStockOpnameDate, $request->stock_opname_date]);
-                                            })
-                                            ->get();
+        $$stock_in_items = Restock::where('product_id', $productId)
+        ->whereBetween(DB::raw('CAST(restock_date AS DATE)'), [$previousStockOpnameDate, $request->stock_opname_date])
+        ->get();
                                             dd([
                                                 'previousStockOpnameDate' => $previousStockOpnameDate,
                                                 'stock_opname_date' => $request->stock_opname_date,
