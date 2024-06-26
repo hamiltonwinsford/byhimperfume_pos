@@ -38,7 +38,7 @@ class StockCard extends Model
 
     public function fragrance()
     {
-        return $this->belongsTo(Fragrance::class, 'product_id');
+        return $this->hasOneThrough(Fragrance::class, Product::class, 'id', 'product_id', 'product_id', 'id');
     }
 
     // Accessors/Mutators (optional, for data formatting or conversion)
