@@ -80,6 +80,8 @@ class StockCardController extends Controller
                                             })
                                             ->get();
 
+        dd('stock in items:', $stock_in_items);
+
         // Calculate sales (ml)
         $stock_in = $stock_in_items->sum('gram');
         $sales_ml = $transactionItems->sum('quantity'); // Assuming quantity is in ml
