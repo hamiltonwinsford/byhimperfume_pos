@@ -484,6 +484,7 @@ class ApiController extends Controller
             $cekCart = Cart::where('user_id', $request->user_id)->get()->all();
             $branch = Branch::join('users','users.branch_id','branches.id')->select('branches.*')->where('users.id', $request->user_id)->first();
 
+
             if(!empty($request->discount)){
                 $discount = $request->discount;
             } else {
@@ -503,6 +504,7 @@ class ApiController extends Controller
             foreach($cekCart as $key => $value){
 
                 $cekPrduct = Product::where('id', $value->product_id)->first();
+                $fragrance = Fragrance::where('id', $value->product_id)->first();
                 $bottle = Bottle::where('id', $value->bottle_id)->first();
 
                 $dt = new TransactionItem;
@@ -534,7 +536,7 @@ class ApiController extends Controller
 
                 $dt->save();
                 $currentStock->current_stock = $currentStock->current_stock - $dt->quantity;
-                $currentStock->current_stock_gram = $currentStock->current_stock;
+                $currentStock->current_stock_gram = $currentStock->current_stock * $fragrance->ml_to_gram;
                 $currentStock->save();
             }
 
