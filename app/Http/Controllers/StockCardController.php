@@ -79,14 +79,20 @@ class StockCardController extends Controller
                                                 $query->whereBetween('created_at', [$previousStockOpnameDate, $request->stock_opname_date]);
                                             })
                                             ->get();
-
         dd([
-            'product_id' => $productId,
             'previousStockOpnameDate' => $previousStockOpnameDate,
             'stock_opname_date' => $request->stock_opname_date,
-            'stock_in_items_sql_query' => $stock_in_items->toSql(),
-            'stock_in_items_bindings' => $stock_in_items->getBindings(),
-            'stock_in_items' => $stock_in_items,
+            'sql_query' => Restock::where('product_id', $request->product_id)
+                                        ->when($previousStockOpnameDate, function ($query) use ($previousStockOpnameDate, $request) {
+                                            $query->whereBetween('created_at', [$previousStockOpnameDate, $request->stock_opname_date]);
+                                        })
+                                        ->toSql(),
+            'bindings' => Restock::where('product_id', $request->product_id)
+                                        ->when($previousStockOpnameDate, function ($query) use ($previousStockOpnameDate, $request) {
+                                            $query->whereBetween('created_at', [$previousStockOpnameDate, $request->stock_opname_date]);
+                                        })
+                                        ->getBindings(),
+            'stock_in_items' => $stock_in_items
         ]);
 
         // Calculate sales (ml)
