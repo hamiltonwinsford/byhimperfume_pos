@@ -60,11 +60,9 @@ class StockCardController extends Controller
 
         // Retrieve the previous stock opname to get the real_g value
         $previousStockOpname = $stockCard;
-        if ($previousStockOpname) {
-            $previousStockOpnameDate = $previousStockOpname->stock_opname_date;
-        } else {
-            $previousStockOpnameDate = null;
-        }
+        $previousStockOpnameDate = $previousStockOpname->stock_opname_date;
+        dd($previousStockOpnameDate);
+
 
         // Set opening stock gram to the real stock gram of the previous opname, or 0 if none exists
         $newStockCard->opening_stock_gram = $previousStockOpname ? $previousStockOpname->real_g : 0;
