@@ -87,7 +87,7 @@ class StockCardController extends Controller
         $newStockCard->difference_g = $newStockCard->real_g - $newStockCard->calc_g;
         $newStockCard->difference_ml = $newStockCard->real_ml - $newStockCard->calc_ml;
 
-        dd($newStockCard, $currentStock);
+        dd('previous stock opname:', $previousStockOpname, 'transaction item :', $transactionItems, $newStockCard, $currentStock);
 
         $newStockCard->save();
 
