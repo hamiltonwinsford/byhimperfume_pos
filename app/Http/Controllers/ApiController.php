@@ -540,7 +540,7 @@ class ApiController extends Controller
                 $currentStock->save();
             }
 
-            $tot_price = $tot_price-($tot_price*($discount/100));
+            //$tot_price = $tot_price-($tot_price*($discount/100));
 
             $cekCus = Customer::where('phone_number', $request->phone_number)->first();
             if(empty($cekCus)){
@@ -560,7 +560,7 @@ class ApiController extends Controller
 
             Cart::where('user_id', $request->user_id)->delete();
 
-            return returnAPI(200, 'Success', $tr);
+            return returnAPI(200, 'Success', $cekTr);
         } catch (Exception $e) {
             Log::error('Error in checkout: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
