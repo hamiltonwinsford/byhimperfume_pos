@@ -37,6 +37,14 @@
                             <textarea class="form-control" id="description" name="description" required>{{ $bundle->description }}</textarea>
                         </div>
                         <div class="form-group">
+                            <label for="start_date">Start Date</label>
+                            <input type="text" class="form-control datepicker" id="start_date" name="start_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="end_date">End Date</label>
+                            <input type="text" class="form-control datepicker" id="end_date" name="end_date" required>
+                        </div>
+                        <div class="form-group">
                             <label for="items">Bundle Items</label>
                             <div id="bundle-items">
                                 @foreach($bundle->items as $index => $item)
@@ -110,6 +118,9 @@
 <script>
     $(document).ready(function() {
         $('.select2').select2();
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd'
+        });
 
         let itemIndex = {{ count($bundle->items) }};
         let productData = @json($products);

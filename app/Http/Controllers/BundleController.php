@@ -55,6 +55,8 @@ class BundleController extends Controller
         $bundle = new Bundle();
         $bundle->name = $request->name;
         $bundle->description = $request->description;
+        $bundle->start_date = $request->start_date;
+        $bundle->end_date = $request->end_date;
 
         $items = $request->items; // Array of items
         $totalPrice = 0;
@@ -125,13 +127,15 @@ class BundleController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.bottle_id' => 'required|exists:bottles,id',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.discount_percent' => 'nullable|numeric|min:0|max:100',
         ]);
 
-        $bundle->update($request->only('name', 'description'));
+        $bundle->update($request->only('name', 'description', 'start_date', 'end_date'));
 
         foreach ($bundle->items as $item) {
             $item->delete();

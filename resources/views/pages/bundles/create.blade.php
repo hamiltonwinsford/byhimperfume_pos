@@ -45,6 +45,14 @@
                             <textarea class="form-control" id="description" name="description" required></textarea>
                         </div>
                         <div class="form-group">
+                            <label for="start_date">Start Date</label>
+                            <input type="text" class="form-control datepicker" id="start_date" name="start_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="end_date">End Date</label>
+                            <input type="text" class="form-control datepicker" id="end_date" name="end_date" required>
+                        </div>
+                        <div class="form-group">
                             <label for="items">Bundle Items</label>
                             <div id="bundle-items">
                                 <div class="bundle-item">
@@ -100,10 +108,15 @@
 @push('scripts')
 <!-- Select2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<!-- DatePicker JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
 <script>
     $(document).ready(function() {
     $('.select2').select2();
+    $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd'
+        });
 
     let itemIndex = 1;
     let productData = [];

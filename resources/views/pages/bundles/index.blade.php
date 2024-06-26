@@ -67,8 +67,8 @@
                                         <td>{{ $value->name }}</td>
                                         <td>{{ $value->name_product_a.' & '.$value->name_product_b }}</td>
                                         <td>{{ $value->price }}</td>
-                                        <td>{{ $value->from_date }}</td>
-                                        <td>{{ $value->to_date }}</td>
+                                        <td>{{ $value->start_date }}</td>
+                                        <td>{{ $value->end_date }}</td>
                                         <td>
                                             <div class="d-flex justify-content-center">
                                                 <a href='{{ route('bundles.edit', $value->id) }}' class="btn btn-sm btn-info btn-icon">

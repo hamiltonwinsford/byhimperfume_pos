@@ -15,6 +15,8 @@ class Bundle extends Model
         'name',
         'description',
         'price',
+        'start_date',
+        'end_date',
     ];
 
     public function items()
