@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Opname Date</label>
-                                    <input type="text" class="form-control datepicker" name="stock_opname_start" value="{{ $stockCard->stock_opname_date }}">
+                                    <input type="text" class="form-control datepicker" name="stock_opname_date" value="{{ $stockCard->stock_opname_date }}">
                                 </div>
                                 </div>
                                 <div class="form-group">
@@ -62,7 +62,7 @@
 @push('scripts')
 <!-- JS Libraies -->
 <script src="{{ asset('library/selectric/public/jquery.selectric.min.js') }}"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
 
 <!-- Page Specific JS File -->
 <script>

@@ -117,7 +117,7 @@ class BundleController extends Controller
         $products = Product::all();
         $bottles = Bottle::all();
         $bundle->load('items.product', 'items.bottle');
-        return view('bundles.edit', compact('bundle', 'products', 'bottles'));
+        return view('pages.bundles.edit', compact('bundle', 'products', 'bottles'));
     }
 
     public function update(Request $request, Bundle $bundle)
@@ -125,19 +125,49 @@ class BundleController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'discount_percent' => 'nullable|numeric|min:0|max:100',
             'items.*.product_id' => 'required|exists:products,id',
-            'items.*.bottle_id' => 'nullable|exists:bottle,id',
+            'items.*.bottle_id' => 'required|exists:bottles,id',
             'items.*.quantity' => 'required|integer|min:1',
+            'items.*.discount_percent' => 'nullable|numeric|min:0|max:100',
         ]);
 
-        $bundle->update($request->only('name', 'description', 'discount_percent'));
+        $bundle->update($request->only('name', 'description'));
 
-        $bundle->items()->delete();
-
-        foreach ($request->items as $item) {
-            $bundle->items()->create($item);
+        foreach ($bundle->items as $item) {
+            $item->delete();
         }
+
+        $totalPrice = 0;
+        foreach ($request->items as $itemData) {
+            $bottle = Bottle::find($itemData['bottle_id']);
+            $discountedPrice = $bottle->harga_ml * ((100 - $itemData['discount_percent']) / 100);
+            $totalPrice += $discountedPrice;
+
+            $bundleItem = new BundleItem();
+            $bundleItem->bundle_id = $bundle->id;
+            $bundleItem->product_id = $itemData['product_id'];
+            $bundleItem->bottle_id = $itemData['bottle_id'];
+            $bundleItem->quantity = $itemData['quantity'];
+            $bundleItem->discount = $itemData['discount_percent'];
+
+            $currentStock = CurrentStock::where('product_id', $itemData['product_id'])->first();
+            if ($bottle->variant === "edt") {
+                $qty = $bottle->bottle_size * 0.7;
+            } elseif ($bottle->variant === "edp") {
+                $qty = $bottle->bottle_size * 0.5;
+            } elseif ($bottle->variant === "perfume") {
+                $qty = $bottle->bottle_size * 0.3;
+            } elseif ($bottle->variant === "full_perfume") {
+                $qty = $bottle->bottle_size;
+            }
+            $currentStock->current_stock -= $qty * $itemData['quantity'];
+
+            $bundleItem->save();
+            $currentStock->save();
+        }
+
+        $bundle->price = $totalPrice;
+        $bundle->save();
 
         return redirect()->route('bundles.index')->with('success', 'Bundle updated successfully');
     }
