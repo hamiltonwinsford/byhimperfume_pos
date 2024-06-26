@@ -58,12 +58,7 @@ class StockCardController extends Controller
         $newStockCard->stock_opname_date = $request->stock_opname_date;
 
         // Retrieve the previous stock opname to get the real_g value
-        $previousStockOpname = StockCard::where('product_id', $request->product_id)
-                                        ->where('branch_id', $stockCard->branch_id)
-                                        ->where('id', '<', $id)
-                                        ->orderBy('id', 'desc')
-                                        ->first();
-
+        $previousStockOpname = $stockCard->opening_stock_gram;
         if ($previousStockOpname) {
             $previousStockOpnameDate = $previousStockOpname->stock_opname_date;
         } else {
