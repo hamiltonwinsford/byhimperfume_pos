@@ -46,7 +46,7 @@
                                     <tbody>
                                         @foreach ($data as $value)
                                         <tr>
-                                            <td>{{ $value->name }}</td>
+                                            <td>{{ $value->product_name }}</td>
                                             <td>{{ $value->branch_name }}</td>
                                             <td>{{ $value->current_stock }}</td>
                                             <td>
