@@ -387,6 +387,10 @@ class ApiController extends Controller
         $cart->branch_id    = $request->branch_id;
         $cart->user_id      = $request->user_id;
         $cart->bottle_id    = $bottle->id;
+        if(!$cart->discount){
+            $cart -> discount = 0;
+        }
+
         $cart->save();
 
         $data = [
