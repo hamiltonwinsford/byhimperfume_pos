@@ -10,6 +10,7 @@ use App\Models\CurrentStock;
 use App\Models\TransactionItem;
 use App\Models\Branch;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StockCardController extends Controller
 {
@@ -79,21 +80,17 @@ class StockCardController extends Controller
                                                 $query->whereBetween('created_at', [$previousStockOpnameDate, $request->stock_opname_date]);
                                             })
                                             ->get();
-        dd([
-            'previousStockOpnameDate' => $previousStockOpnameDate,
-            'stock_opname_date' => $request->stock_opname_date,
-            'sql_query' => Restock::where('product_id', $request->product_id)
-                                        ->when($previousStockOpnameDate, function ($query) use ($previousStockOpnameDate, $request) {
-                                            $query->whereBetween('created_at', [$previousStockOpnameDate, $request->stock_opname_date]);
-                                        })
-                                        ->toSql(),
-            'bindings' => Restock::where('product_id', $request->product_id)
-                                        ->when($previousStockOpnameDate, function ($query) use ($previousStockOpnameDate, $request) {
-                                            $query->whereBetween('created_at', [$previousStockOpnameDate, $request->stock_opname_date]);
-                                        })
-                                        ->getBindings(),
-            'stock_in_items' => $stock_in_items
-        ]);
+                                            dd([
+                                                'previousStockOpnameDate' => $previousStockOpnameDate,
+                                                'stock_opname_date' => $request->stock_opname_date,
+                                                'sql_query' => Restock::where('product_id', $productId)
+                                                    ->whereBetween(DB::raw('CAST(restock_date AS DATE)'), [$previousStockOpnameDate, $request->stock_opname_date])
+                                                    ->toSql(),
+                                                'bindings' => Restock::where('product_id', $productId)
+                                                    ->whereBetween(DB::raw('CAST(restock_date AS DATE)'), [$previousStockOpnameDate, $request->stock_opname_date])
+                                                    ->getBindings(),
+                                                'stock_in_items' => $stock_in_items
+                                            ]);
 
         // Calculate sales (ml)
         $stock_in = $stock_in_items->sum('gram');
