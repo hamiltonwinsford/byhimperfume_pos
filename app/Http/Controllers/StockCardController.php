@@ -51,25 +51,33 @@ class StockCardController extends Controller
 
         $newStockCard = new StockCard();
         $newStockCard->product_id = $request->product_id;
-        $newStockCard->branch_id = $request->branch_id;
+        $newStockCard->branch_id = $stockCard->branch_id;
         $newStockCard->fragrance_id = $fragrance->id;
 
         // Update stock opname dates
         $newStockCard->stock_opname_date = $request->stock_opname_date;
 
         // Retrieve the previous stock opname to get the real_g value
-        $previousStockOpname = StockCard::where('product_id', $stockCard->product_id)
+        $previousStockOpname = StockCard::where('product_id', $request->product_id)
                                         ->where('branch_id', $stockCard->branch_id)
                                         ->where('id', '<', $id)
                                         ->orderBy('id', 'desc')
                                         ->first();
 
+        if ($previousStockOpname) {
+            $previousStockOpnameDate = $previousStockOpname->stock_opname_date;
+        } else {
+            $previousStockOpnameDate = null;
+        }
+
         // Set opening stock gram to the real stock gram of the previous opname, or 0 if none exists
         $newStockCard->opening_stock_gram = $previousStockOpname ? $previousStockOpname->real_g : 0;
 
         // Retrieve transaction items within the opname date range
-        $transactionItems = TransactionItem::where('product_id', $stockCard->product_id)
-                                            ->whereBetween('created_at', [$previousStockOpname, $request->stock_opname_date])
+        $transactionItems = TransactionItem::where('product_id', $request->product_id)
+                                            ->when($previousStockOpnameDate, function ($query) use ($previousStockOpnameDate, $request) {
+                                                $query->whereBetween('created_at', [$previousStockOpnameDate, $request->stock_opname_date]);
+                                            })
                                             ->get();
 
         // Calculate sales (ml)
