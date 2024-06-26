@@ -368,7 +368,7 @@ class ApiController extends Controller
             ->where('user_id', $request->user_id)
             ->get()->all();
 
-            
+
         return returnAPI(200, 'Success', $cart);
     }
 
@@ -505,6 +505,7 @@ class ApiController extends Controller
 
                 $cekPrduct = Product::where('id', $value->product_id)->first();
                 $bottle = Bottle::where('id', $value->bottle_id)->first();
+                $fragrances = Fragrance::where('product_id', $value->product_id)->get();
 
                 $dt = new TransactionItem;
                 $dt->transaction_id = $tr->id;
