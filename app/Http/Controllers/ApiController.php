@@ -512,6 +512,7 @@ class ApiController extends Controller
                 $dt->product_id = $value->product_id;
                 $dt->price = $cekPrduct->price*$bottle->bottle_size;
                 $dt->subtotal = $bottle->harga_ml;
+                $data ['subtotal 1'] = $dt->subtotal;
                 $dt->bottle_id = $bottle->bottle_id;
 
                 if(!empty($request -> discount_amount)){
@@ -519,6 +520,7 @@ class ApiController extends Controller
                 }
 
                 $tot_price += $dt -> subtotal;
+                $data ['tot price'] = $tot_price;
                 $currentStock = CurrentStock::where('product_id', $value->product_id)->first();
 
                 if($bottle->variant === "edt"){
@@ -538,6 +540,9 @@ class ApiController extends Controller
                 $currentStock->current_stock = $currentStock->current_stock - $dt->quantity;
                 $currentStock->current_stock_gram = $currentStock->current_stock;
                 $currentStock->save();
+                $data =
+                [
+                ];
             }
 
             $tot_price = $tot_price-($tot_price*($discount/100));
@@ -560,7 +565,7 @@ class ApiController extends Controller
 
             Cart::where('user_id', $request->user_id)->delete();
 
-            return returnAPI(200, 'Success', $tr);
+            return returnAPI(200, 'Success', $tr, $data);
         } catch (Exception $e) {
             Log::error('Error in checkout: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
