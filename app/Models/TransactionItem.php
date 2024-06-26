@@ -26,9 +26,9 @@ class TransactionItem extends Model
         return $this->belongsTo(Product::class);
     }
 
-    // Calculated subtotal (not stored in DB, computed on the fly)
-    public function getSubtotalAttribute()
-    {
-        return ($this->price - $this->discount_amount) * $this->quantity;
-    }
+    // // Calculated subtotal (not stored in DB, computed on the fly)
+    // public function getSubtotalAttribute()
+    // {
+    //     return ($this->price - $this->discount_amount) * $this->quantity;
+    // }
 }
