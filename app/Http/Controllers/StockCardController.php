@@ -37,6 +37,17 @@ class StockCardController extends Controller
     public function update(Request $request, $id)
     {
         $stockCard = StockCard::findOrFail($id);
+        // Retrieve fragrance data
+        // Ambil data fragrance berdasarkan product_id
+        $fragrance = Fragrance::where('product_id', $request->product_id)->first();
+        if (!$fragrance) {
+            return response()->json(['message' => 'Fragrance not found'], 404);
+        }
+
+        $gram_to_ml = $fragrance->gram_to_ml;
+        $ml_to_gram = $fragrance->ml_to_gram;
+
+        $currentStock = CurrentStock::where('product_id', $request->product_id)->first();
 
         // Update stock opname dates
         $stockCard->stock_opname_date = $request->stock_opname_date;
@@ -56,9 +67,6 @@ class StockCardController extends Controller
                                             ->whereBetween('created_at', [$previousStockOpname, $request->stock_opname_date])
                                             ->get();
 
-        // Retrieve fragrance data
-        $fragrance = Fragrance::where('product_id', $stockCard->product_id)->first();
-
         // Calculate sales (ml)
         $sales_ml = $transactionItems->sum('quantity'); // Assuming quantity is in ml
         $stockCard->sales_ml = $sales_ml;
@@ -66,6 +74,9 @@ class StockCardController extends Controller
         // Save real stock gram if provided
         if ($request->has('real_stock_gram')) {
             $stockCard->real_g = $request->real_stock_gram;
+            $stockCard->real_ml = $request->real_stock_gram * $gram_to_ml;
+            $currentStock->current_stock_gram = $request->real_stock_gram;
+            $currentStock->current_stock = $stockCard->real_ml;
         }
 
         $stockCard->save();

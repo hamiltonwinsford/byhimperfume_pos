@@ -52,11 +52,26 @@ class BundleController extends Controller
 
     public function store(Request $request)
     {
+        // Validasi input
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.bottle_id' => 'required|exists:bottles,id',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.discount_percent' => 'nullable|numeric|min:0|max:100',
+        ]);
+
+        // Buat bundle baru dan simpan
         $bundle = new Bundle();
         $bundle->name = $request->name;
         $bundle->description = $request->description;
         $bundle->start_date = $request->start_date;
         $bundle->end_date = $request->end_date;
+        $bundle->price = 0; // Inisialisasi harga sementara
+        $bundle->save(); // Simpan bundle terlebih dahulu
 
         $items = $request->items; // Array of items
         $totalPrice = 0;
@@ -70,12 +85,9 @@ class BundleController extends Controller
             }
             $discountedPrice = $bottle->harga_ml * ((100 - $item['discount_percent']) / 100);
             $totalPrice += $discountedPrice;
-        }
 
-        foreach ($items as $item) {
-            $bottle = Bottle::find($item['bottle_id']);
             $bundleItem = new BundleItem();
-            $bundleItem->bundle_id = $bundle->id;
+            $bundleItem->bundle_id = $bundle->id; // Menggunakan bundle_id dari bundle yang sudah disimpan
             $bundleItem->product_id = $item['product_id'];
             $bundleItem->bottle_id = $item['bottle_id'];
             $bundleItem->quantity = $item['quantity'];
@@ -102,6 +114,7 @@ class BundleController extends Controller
             $currentStock->save();
         }
 
+        // Update harga total bundle
         $bundle->price = $totalPrice;
         $bundle->save();
 
@@ -124,6 +137,7 @@ class BundleController extends Controller
 
     public function update(Request $request, Bundle $bundle)
     {
+        // Validasi input
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -135,12 +149,35 @@ class BundleController extends Controller
             'items.*.discount_percent' => 'nullable|numeric|min:0|max:100',
         ]);
 
+        // Update data bundle
         $bundle->update($request->only('name', 'description', 'start_date', 'end_date'));
 
+        // Kembalikan stok item sebelum menghapus
         foreach ($bundle->items as $item) {
-            $item->delete();
+            $currentStock = CurrentStock::where('product_id', $item->product_id)->first();
+            $bottle = Bottle::find($item->bottle_id);
+
+            if($bottle->variant === "edt"){
+                $qty = $bottle->bottle_size * 0.7;
+            }
+            elseif($bottle->variant === "edp"){
+                $qty = $bottle->bottle_size * 0.5;
+            }
+            elseif($bottle->variant === "perfume"){
+                $qty = $bottle->bottle_size * 0.3;
+            }
+            elseif($bottle->variant === "full_perfume"){
+                $qty = $bottle->bottle_size;
+            }
+
+            $currentStock->current_stock += $qty * $item->quantity;
+            $currentStock->save();
         }
 
+        // Hapus item lama
+        $bundle->items()->delete();
+
+        // Tambahkan item baru
         $totalPrice = 0;
         foreach ($request->items as $itemData) {
             $bottle = Bottle::find($itemData['bottle_id']);
@@ -170,6 +207,7 @@ class BundleController extends Controller
             $currentStock->save();
         }
 
+        // Update harga total bundle
         $bundle->price = $totalPrice;
         $bundle->save();
 
