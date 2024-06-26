@@ -28,7 +28,6 @@
                 </div>
             </div>
 
-
             <div class="row mt-4">
                 <div class="col-12">
                     <div class="card">
@@ -53,7 +52,6 @@
                             <div class="table-responsive">
                                 <table class="table-striped table">
                                     <tr>
-
                                         <th>Name</th>
                                         <th>Description</th>
                                         <th>Price</th>
@@ -61,24 +59,21 @@
                                         <th>End Date</th>
                                         <th>Action</th>
                                     </tr>
-                                    @foreach ($bundles as $value)
+                                    @foreach ($bundles as $bundle)
                                     <tr>
-
-                                        <td>{{ $value->name }}</td>
-                                        <td>{{ $value->name_product_a.' & '.$value->name_product_b }}</td>
-                                        <td>{{ $value->price }}</td>
-                                        <td>{{ $value->start_date }}</td>
-                                        <td>{{ $value->end_date }}</td>
+                                        <td>{{ $bundle->name }}</td>
+                                        <td>{{ $bundle->description }}</td>
+                                        <td>{{ $bundle->price }}</td>
+                                        <td>{{ $bundle->start_date }}</td>
+                                        <td>{{ $bundle->end_date }}</td>
                                         <td>
                                             <div class="d-flex justify-content-center">
-                                                <a href='{{ route('bundles.edit', $value->id) }}' class="btn btn-sm btn-info btn-icon">
-                                                    <i class="fas fa-edit"></i>
-                                                    Edit
+                                                <a href='{{ route('bundles.edit', $bundle->id) }}' class="btn btn-sm btn-info btn-icon">
+                                                    <i class="fas fa-edit"></i> Edit
                                                 </a>
-
-                                                <form action="{{ route('bundles.destroy', $value->id) }}" method="POST" class="ml-2">
-                                                    <input type="hidden" name="_method" value="DELETE" />
-                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                                <form action="{{ route('bundles.destroy', $bundle->id) }}" method="POST" class="ml-2">
+                                                    @csrf
+                                                    @method('DELETE')
                                                     <button class="btn btn-sm btn-danger btn-icon confirm-delete">
                                                         <i class="fas fa-times"></i> Delete
                                                     </button>
@@ -99,7 +94,7 @@
 @endsection
 
 @push('scripts')
-<!-- JS Libraies -->
+<!-- JS Libraries -->
 <script src="{{ asset('library/selectric/public/jquery.selectric.min.js') }}"></script>
 
 <!-- Page Specific JS File -->
