@@ -83,6 +83,7 @@ class StockCardController extends Controller
         // Calculate sales (ml)
         $stock_in = $stock_in_items->sum('gram');
         $sales_ml = $transactionItems->sum('quantity'); // Assuming quantity is in ml
+        dd('stock in:', $stock_in, 'sales ml:', $sales_ml);
         $newStockCard->sales_ml = $sales_ml;
         $newStockCard->calc_g = ($newStockCard -> opening_stock_gram + $stock_in) * ($sales_ml * $ml_to_gram);
         $newStockCard->calc_ml = $newStockCard -> calc_g * $gram_to_ml;
