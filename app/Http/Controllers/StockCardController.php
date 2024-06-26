@@ -75,7 +75,7 @@ class StockCardController extends Controller
                                             })
                                             ->get();
 
-        $$stock_in_items = Restock::where('product_id', $productId)
+        $stock_in_items = Restock::where('product_id', $productId)
         ->whereBetween(DB::raw('CAST(restock_date AS DATE)'), [$previousStockOpnameDate, $request->stock_opname_date])
         ->get();
                                             dd([
