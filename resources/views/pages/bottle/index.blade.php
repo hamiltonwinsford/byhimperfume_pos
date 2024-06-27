@@ -51,9 +51,9 @@
                             <div class="clearfix mb-3"></div>
 
                             <div class="table-responsive">
-                                <table class="table-striped table">
+                                <table id= "myTable" class="table-striped table">
                                     <tr>
-                                        <th>Variant/th>
+                                        <th>Variant</th>
                                         <th>Bottle Size</th>
                                         <th>Harga</th>
                                         <th>Action</th>
@@ -86,9 +86,9 @@
 
                                 </table>
                             </div>
-                            <div class="float-right">
+                            {{-- <div class="float-right">
                                 {{ $data->withQueryString()->links() }}
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>
