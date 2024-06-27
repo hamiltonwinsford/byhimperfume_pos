@@ -53,17 +53,17 @@
                             <div class="table-responsive">
                                 <table class="table-striped table">
                                     <tr>
-                                        <th>Bottle Name</th>
-                                        <th>Bottle Type</th>
+                                        <th>Variant/th>
                                         <th>Bottle Size</th>
+                                        <th>Harga</th>
                                         <th>Action</th>
                                     </tr>
                                     @foreach ($data as $value)
                                     <tr>
 
-                                        <td>{{ $value->bottle_name }}</td>
-                                        <td>{{ $value->bottle_type }}</td>
+                                        <td>{{ $value->variant }}</td>
                                         <td>{{ $value->bottle_size }}</td>
+                                        <td>{{ $value->harga_ml }}</td>
                                         <td>
                                             <div class="d-flex justify-content-center">
                                                 <a href='{{ route('bottle.edit', $value->id) }}' class="btn btn-sm btn-info btn-icon">
