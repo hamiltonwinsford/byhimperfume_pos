@@ -27,7 +27,7 @@ class StockController extends Controller
 
         // Adding currentWeightWithBottle for each item
         foreach ($data as $item) {
-            $item->currentWeightWithBottle = $item->pump_weight + $item->bottle_weight;
+            $item->currentWeightWithBottle = $item -> current_stock + $item->pump_weight + $item->bottle_weight;
         }
 
         return view('pages.stock.index', compact('data'));
