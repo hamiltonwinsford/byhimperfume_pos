@@ -40,6 +40,7 @@
                                             <th>Product</th>
                                             <th>Branch</th>
                                             <th>Current Stock</th>
+                                            <th>Current Stock with Bottle & Pump</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -49,6 +50,7 @@
                                             <td>{{ $value->product_name }}</td>
                                             <td>{{ $value->branch_name }}</td>
                                             <td>{{ $value->current_stock }}</td>
+                                            <td>{{ $value->currentWeightWithBottle }}</td>
                                             <td>
                                                 <a href="{{ URL::to('detail-stock/'.$value->product_id) }}" class="btn btn-primary">Detail</a>
                                             </td>
