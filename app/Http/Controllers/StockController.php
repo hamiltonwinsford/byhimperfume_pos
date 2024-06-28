@@ -21,10 +21,11 @@ class StockController extends Controller
     {
         $data = CurrentStock::join('products', 'products.id', '=', 'current_stock.product_id')
                             ->join('branches', 'branches.id', '=', 'products.branch_id')
-                            ->join('fragrances', 'products.id', '=', 'product_id.fragrance_id')
+                            ->join('fragrances', 'products.id', '=', 'fragrances.product_id')
                             ->select('current_stock.*', 'products.name as product_name', 'branches.name as branch_name', 'fragrances.pump_weight as pump_weight', 'fragrances.bottle_weight as bottle_weight')
                             ->get();
 
+        // Adding currentWeightWithBottle for each item
         foreach ($data as $item) {
             $item->currentWeightWithBottle = $item->pump_weight + $item->bottle_weight;
         }
