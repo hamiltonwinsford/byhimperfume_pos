@@ -36,20 +36,7 @@
                             <h4>All Bottle</h4>
                         </div>
                         <div class="card-body">
-
-                            <div class="float-right">
-                                <form method="GET" action="{{ route('bottle.index') }}">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Search" name="name">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-
                             <div class="clearfix mb-3"></div>
-
                             <div class="table-responsive">
                                 <table id= "myTable" class="table-striped table">
                                     <thead>
