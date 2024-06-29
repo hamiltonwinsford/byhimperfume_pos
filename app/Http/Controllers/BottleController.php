@@ -13,7 +13,7 @@ class BottleController extends Controller
      */
     public function index()
     {
-        $data = Bottle::paginate(10);
+        $data = Bottle::all();
         return view('pages.bottle.index', compact('data'));
     }
 

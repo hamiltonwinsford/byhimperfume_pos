@@ -16,11 +16,11 @@
 <div class="main-content">
     <section class="section">
         <div class="section-header">
-            <h1>Advanced Forms</h1>
+            <h1>Edit Bottle</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="#">Forms</a></div>
-                <div class="breadcrumb-item">Bottle</div>
+                <div class="breadcrumb-item"><a href="#">Bottle</a></div>
+                <div class="breadcrumb-item">Edit Bottle</div>
             </div>
         </div>
 
@@ -32,20 +32,17 @@
             </div>
             <h2 class="section-title">Bottle</h2>
 
-
             <div class="card">
-                <form action="{{ route('bottle.update', $data) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('bottle.update', $data->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="card-header">
-                        <h4>Input Text</h4>
+                        <h4>Edit Bottle</h4>
                     </div>
                     <div class="card-body">
                         <div class="form-group">
                             <label>Bottle Name</label>
-                            <input type="text" value="{{ $data->bottle_name }}" class="form-control @error('bottle_name')
-                                is-invalid
-                            @enderror" name="bottle_name">
+                            <input type="text" value="{{ $data->bottle_name }}" class="form-control @error('bottle_name') is-invalid @enderror" name="bottle_name">
                             @error('bottle_name')
                             <div class="invalid-feedback">
                                 {{ $message }}
@@ -54,9 +51,7 @@
                         </div>
                         <div class="form-group">
                             <label>Bottle Size</label>
-                            <input type="text" value="{{ $data->bottle_size }}" class="form-control @error('bottle_size')
-                                is-invalid
-                            @enderror" name="bottle_size">
+                            <input type="text" value="{{ $data->bottle_size }}" class="form-control @error('bottle_size') is-invalid @enderror" name="bottle_size">
                             @error('bottle_size')
                             <div class="invalid-feedback">
                                 {{ $message }}
@@ -65,51 +60,48 @@
                         </div>
                         <div class="form-group">
                             <label>Bottle Type</label>
-                            <input type="text" value="{{ $data->bottle_type }}" class="form-control @error('bottle_type')
-                                is-invalid
-                            @enderror" name="bottle_type">
-                            @error('bottle_size')
+                            <input type="text" value="{{ $data->bottle_type }}" class="form-control @error('bottle_type') is-invalid @enderror" name="bottle_type">
+                            @error('bottle_type')
                             <div class="invalid-feedback">
                                 {{ $message }}
                             </div>
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label>Bottle Type</label>
+                            <label>Variant</label>
                             <select class="form-control selectric" name="variant">
-                                <option>Action For Selected</option>
-                                <option value="edt">Eau de Toilette</option>
-                                <option value="edp">Eau de Perfume</option>
-                                <option value="perfume">Perfume</option>
-                                <option value="full_perfume">Full Perfume</option>
+                                <option value="edt" {{ $data->variant == 'edt' ? 'selected' : '' }}>Eau de Toilette</option>
+                                <option value="edp" {{ $data->variant == 'edp' ? 'selected' : '' }}>Eau de Perfume</option>
+                                <option value="perfume" {{ $data->variant == 'perfume' ? 'selected' : '' }}>Perfume</option>
+                                <option value="full_perfume" {{ $data->variant == 'full_perfume' ? 'selected' : '' }}>Full Perfume</option>
                             </select>
-                            @error('bottle_size')
+                            @error('variant')
                             <div class="invalid-feedback">
                                 {{ $message }}
                             </div>
                             @enderror
-                            <div class="form-group">
-                                <label>Price</label>
-                                <input type="number" value="{{ old('harga_ml') }}" class="form-control @error('harga_ml')
-                                    is-invalid
-                                @enderror" name="harga_ml">
-                                @error('harga_ml')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
+                        </div>
+                        <div class="form-group">
+                            <label>Price</label>
+                            <input type="number" value="{{ $data->harga_ml }}" class="form-control @error('harga_ml') is-invalid @enderror" name="harga_ml">
+                            @error('harga_ml')
+                            <div class="invalid-feedback">
+                                {{ $message }}
                             </div>
+                            @enderror
+                        </div>
                     </div>
                     <div class="card-footer text-right">
                         <button class="btn btn-primary">Submit</button>
                     </div>
                 </form>
             </div>
-
         </div>
     </section>
 </div>
 @endsection
 
 @push('scripts')
+<!-- JS Libraies -->
+<script src="{{ asset('library/selectric/public/jquery.selectric.min.js') }}"></script>
 @endpush
