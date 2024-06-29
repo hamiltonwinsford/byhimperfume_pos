@@ -52,16 +52,19 @@
 
                             <div class="table-responsive">
                                 <table id= "myTable" class="table-striped table">
+                                    <thead>
                                     <tr>
                                         <th>Variant</th>
                                         <th>Bottle Size</th>
                                         <th>Harga</th>
                                         <th>Action</th>
                                     </tr>
+                                    </thead>
+                                    <tbody>
                                     @foreach ($data as $value)
                                     <tr>
 
-                                        <td>{{ $value->variant }}</td>
+                                        <td>{{ $value->variant_text }}</td>
                                         <td>{{ $value->bottle_size }}</td>
                                         <td>{{ $value->harga_ml }}</td>
                                         <td>
@@ -82,13 +85,9 @@
                                         </td>
                                     </tr>
                                     @endforeach
-
-
+                                    </tbody>
                                 </table>
                             </div>
-                            {{-- <div class="float-right">
-                                {{ $data->withQueryString()->links() }}
-                            </div> --}}
                         </div>
                     </div>
                 </div>

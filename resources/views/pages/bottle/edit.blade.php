@@ -78,8 +78,8 @@
                             <label>Bottle Type</label>
                             <select class="form-control selectric" name="variant">
                                 <option>Action For Selected</option>
-                                <option value="edt">EDT</option>
-                                <option value="edp">EDP</option>
+                                <option value="edt">Eau de Toilette</option>
+                                <option value="edp">Eau de Perfume</option>
                                 <option value="perfume">Perfume</option>
                                 <option value="full_perfume">Full Perfume</option>
                             </select>

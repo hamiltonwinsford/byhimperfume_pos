@@ -24,4 +24,21 @@ class Bottle extends Model
     {
         return $this->hasMany(BundleItem::class, 'bottle_id');
     }
+
+    // Accessor for variant
+    public function getVariantTextAttribute()
+    {
+        switch ($this->variant) {
+            case 'edp':
+                return 'Eau de Perfume';
+            case 'edt':
+                return 'Eau de Toilette';
+            case 'perfume':
+                return 'Perfume';
+            case 'full_perfume':
+                return 'Full Perfume';
+            default:
+                return $this->variant;
+        }
+    }
 }
