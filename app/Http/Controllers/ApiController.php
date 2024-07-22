@@ -498,7 +498,7 @@ class ApiController extends Controller
         $tr->branch_id = $branch->id;
         $tr->discount = $discount;
         $tr->total_amount = 0; // Initialize total_amount to 0
-        $tr->save();
+        $tr->save(); //jj
 
         foreach($cekCart as $key => $value){
 
