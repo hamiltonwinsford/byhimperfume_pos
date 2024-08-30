@@ -132,23 +132,23 @@ class ApiController extends Controller
             $bundles = Bundle::with(['items.product', 'items.bottle'])
             ->get()
             ->map(function($bundle) {
-            $bundle->products = $bundle->items->map(function($item) {
-                return [
-                    'product_id' => $item->product->id,
-                    'product_name' => $item->product->name,
-                    'product_description' => $item->product->description,
-                    'product_image' => asset('upload/image/'.$item->product->image),
-                    'product_price' => $item->product->price,
-                    'product_stock' => $item->product->stock,
-                    'bundle_quantity' => $item->quantity,
-                    'bundle_discount' => $item->discount,
-                    'bottle_id' => $item->bottle->id,
-                    'bottle_name' => $item->bottle->bottle_name,
-                    'bottle_size' => $item->bottle->bottle_size,
-                    'bottle_type' => $item->bottle->bottle_type,
-                ];
-            });
-            return $bundle;
+                $bundle->products = $bundle->items->map(function($item) {
+                    return [
+                        'product_id' => $item->product->id,
+                        'product_name' => $item->product->name,
+                        'product_description' => $item->product->description,
+                        'product_image' => asset('upload/image/'.$item->product->image),
+                        'product_price' => $item->product->price,
+                        'product_stock' => $item->product->stock,
+                        'bundle_quantity' => $item->quantity,
+                        'bundle_discount' => $item->discount,
+                        'bottle_id' => $item->bottle->id,
+                        'bottle_name' => $item->bottle->bottle_name,
+                        'bottle_size' => $item->bottle->bottle_size,
+                        'bottle_type' => $item->bottle->bottle_type,
+                    ];
+                });
+                return $bundle;
             });
 
         // Menggabungkan data produk dan bundle dalam satu array

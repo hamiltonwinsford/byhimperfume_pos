@@ -18,6 +18,7 @@ use App\Http\Controllers\OpnameController;
 use App\Http\Controllers\PromotionBundleController;
 use App\Http\Controllers\StockCardController;
 use App\Http\Controllers\BundleController;
+use App\Http\Controllers\PermissionController; // Add this line
 use App\Models\Customer;
 
 /*
@@ -31,11 +32,16 @@ use App\Models\Customer;
 |
 */
 
-Route::get('/', function () {
-    return view('pages.auth.login');
-});
 
-Route::middleware(['auth'])->group(function () {
+Route::resource('permissions', PermissionController::class);
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    // if('role:staff'){
+    //     Route::get('/staff/dashboard', [HomeController::class, 'staffDashboard'])->name('home');
+    // }
+
+    Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/home', [HomeController::class, 'index']);
     Route::get('/report', [HomeController::class, 'report']);
     Route::get('/detail-transactions/{id}', [HomeController::class, 'detail']);
@@ -49,10 +55,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/bundles/get-variants', [BundleController::class, 'getVariants']);
     Route::get('/bundles/get-bottle-sizes-by-variant/{variant}', [BundleController::class, 'getBottleSizesByVariant']);
     Route::get('stockcard/opname/{id}', [StockCardController::class, 'opname'])->name('stockcard.opname');
-    Route::put('stockcard/{id}', [StockCardController::class, 'update'])->name('stockcard.update');
-
-
-
+    //Route::put('stockcard/{id}', [StockCardController::class, 'update'])->name('stockcard.update');
 
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
@@ -81,3 +84,52 @@ Route::middleware(['auth'])->group(function () {
     //     return view('pages.profile');
     // })->name('profile');
 });
+
+Route::middleware(['auth', 'role:staff|admin'])->group(function () {
+
+    if ('role:staff'){
+        Route::get('/staff/dashboard', [HomeController::class, 'staffDashboard'])->name('home');
+    }
+
+    Route::get('/report', [HomeController::class, 'report']);
+    Route::get('/detail-transactions/{id}', [HomeController::class, 'detail']);
+    Route::get('/weekly-transactions', [HomeController::class, 'getWeeklyTransactions']);
+    Route::get('/daily-transactions', [HomeController::class, 'getDailyTransactions']);
+    Route::get('/chart', function () {
+        return view('chart');
+    });
+    Route::get('/detail-stock/{id}', [StockController::class, 'detail']);
+    Route::get('/bundles/get-products-by-branch/{branchId}', [BundleController::class, 'getProductsByBranch']);
+    Route::get('/bundles/get-variants', [BundleController::class, 'getVariants']);
+    Route::get('/bundles/get-bottle-sizes-by-variant/{variant}', [BundleController::class, 'getBottleSizesByVariant']);
+    Route::get('stockcard/opname/{id}', [StockCardController::class, 'opname'])->name('stockcard.opname');
+    //Route::put('stockcard/{id}', [StockCardController::class, 'update'])->name('stockcard.update');
+
+    Route::resource('users', UserController::class);
+    Route::resource('products', ProductController::class);
+    Route::post('products/import', [ProductController::class, 'import'])->name('products.import');
+    Route::resource('customers', CustomerController::class);
+    Route::resource('stock', StockController::class);
+    Route::resource('stockcard', StockCardController::class);
+    Route::resource('seeds', SeedController::class);
+    Route::resource('promotions', PromotionsController::class);
+    Route::resource('promotionBundle', PromotionBundleController::class);
+    Route::resource('first_stock', FirstStockController::class);
+    Route::resource('opname', OpnameController::class);
+    Route::resource('bundles', BundleController::class);
+
+});
+
+// Route::get('admin', function () {
+//     return view('welcome');
+// })->middleware('auth', 'role:admin');
+
+// Route::middleware(['auth', 'role:admin'])->group(function () {
+//     Route::get('/admin/dashboard', [HomeController::class, 'adminDashboard'])->name('home.admin');
+// });
+
+// Route::middleware(['auth', 'role:user'])->group(function () {
+//     Route::get('/user/dashboard', [HomeController::class, 'userDashboard'])->name('home.user');
+// });
+
+//require __DIR__ . '/auth.php';

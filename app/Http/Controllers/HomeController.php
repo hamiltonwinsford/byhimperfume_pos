@@ -12,6 +12,7 @@ use App\Models\TransactionItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 
@@ -31,8 +32,20 @@ class HomeController extends Controller
         $transactions = Transaction::whereBetween('transaction_date', [$startOfWeek, $endOfWeek])->get();
         //debugCode($transactions);
 
-        $lastTransaction = Transaction::join('customers','customers.id','customer_id')->select('transactions.*','customers.name')->orderBy('created_at','desc')->limit(5)->get();
-        return view('pages.dashboard', compact('staff','customer','supplier','product','lastTransaction'));
+        $lastTransaction = Transaction::join('customers', 'customers.id', 'customer_id')
+            ->select('transactions.*', 'customers.name')
+            ->orderBy('created_at', 'desc')
+            ->limit(5)->get();
+        return view(
+            'pages.dashboard',
+            compact(
+                'staff',
+                'customer',
+                'supplier',
+                'product',
+                'lastTransaction'
+            )
+        );
     }
 
     public function getWeeklyTransactions()
@@ -42,11 +55,11 @@ class HomeController extends Controller
 
         // Mengambil data transaksi dalam bulan ini
         $transactions = Transaction::whereMonth('transaction_date', $today->month)
-                                   ->whereYear('transaction_date', $today->year)
-                                   ->get()
-                                   ->groupBy(function($date) {
-                                       return Carbon::parse($date->transaction_date)->startOfWeek(Carbon::SUNDAY)->format('Y-m-d');
-                                   });
+            ->whereYear('transaction_date', $today->year)
+            ->get()
+            ->groupBy(function ($date) {
+                return Carbon::parse($date->transaction_date)->startOfWeek(Carbon::SUNDAY)->format('Y-m-d');
+            });
         // Menyiapkan data untuk chart
         $chartData = [];
         foreach ($transactions as $week => $weekTransactions) {
@@ -67,11 +80,11 @@ class HomeController extends Controller
 
         // Mengambil data transaksi dalam bulan ini
         $transactions = Transaction::whereMonth('transaction_date', $today->month)
-                                   ->whereYear('transaction_date', $today->year)
-                                   ->get()
-                                   ->groupBy(function($date) {
-                                       return Carbon::parse($date->transaction_date)->format('Y-m-d');
-                                   });
+            ->whereYear('transaction_date', $today->year)
+            ->get()
+            ->groupBy(function ($date) {
+                return Carbon::parse($date->transaction_date)->format('Y-m-d');
+            });
 
         // Menyiapkan data untuk chart
         $chartData = [];
@@ -89,26 +102,89 @@ class HomeController extends Controller
 
     public function report(Request $request)
     {
-        $data = Transaction::join('users','users.id','user_id')
-            ->join('customers','customers.id','customer_id')
-            ->join('branches','branches.id','transactions.branch_id')
-            ->select('transactions.*', 'users.name', 'customers.name as name_customer','branches.name as name_branch')
-            ->orderBy('transactions.created_at','desc')
-            ->get();
-            //->paginate(10);
+        $user = Auth::user();
+
+        if ($user->hasRole('admin')) {
+            $data = Transaction::join('users', 'users.id', 'user_id')
+                ->join('customers', 'customers.id', 'customer_id')
+                ->join('branches', 'branches.id', 'transactions.branch_id')
+                ->select('transactions.*', 'users.name', 'customers.name as name_customer', 'branches.name as name_branch')
+                ->orderBy('transactions.created_at', 'desc')
+                ->get();
+        } elseif ($user->hasRole('staff')) {
+            $data = Transaction::join('users', 'users.id', 'user_id')
+                ->join('customers', 'customers.id', 'customer_id')
+                ->join('branches', 'branches.id', 'transactions.branch_id')
+                ->where('transactions.branch_id', $user->branch_id)
+                ->select('transactions.*', 'users.name', 'customers.name as name_customer', 'branches.name as name_branch')
+                ->orderBy('transactions.created_at', 'desc')
+                ->get();
+        }
+
+        // $data = Transaction::join('users', 'users.id', 'user_id')
+        //     ->join('customers', 'customers.id', 'customer_id')
+        //     ->join('branches', 'branches.id', 'transactions.branch_id')
+        //     ->select('transactions.*', 'users.name', 'customers.name as name_customer', 'branches.name as name_branch')
+        //     ->orderBy('transactions.created_at', 'desc')
+        //     ->get();
+        //->paginate(10);
 
         return view('pages.report', compact('data'));
     }
 
     public function detail(Request $request, $id)
     {
-        $data = Transaction::join('users','users.id','user_id')
-            ->join('customers','customers.id','customer_id')
-            ->join('branches','branches.id','transactions.branch_id')
-            ->select('transactions.*', 'users.name', 'customers.name as name_customer','branches.name as name_branch')
-            ->where('transactions.id', $id)->first();
-       $detail = TransactionItem::join('products','products.id','product_id')->select('transaction_items.*','products.name')->where('transaction_id', $id)->get();
+        $user = auth()->user();
 
-        return view('pages.detail_transaction', compact('data','detail'));
+        $query = Transaction::join('users', 'users.id', 'user_id')
+            ->join('customers', 'customers.id', 'customer_id')
+            ->join('branches', 'branches.id', 'transactions.branch_id')
+            ->select('transactions.*', 'users.name', 'customers.name as name_customer', 'branches.name as name_branch')
+            ->where('transactions.id', $id);
+
+        if ($user->hasRole('staff')) {
+            // Staff can only view details for transactions in their branch
+            $query->where('transactions.branch_id', $user->branch_id);
+        }
+
+        $data = $query->firstOrFail(); // Ensures the transaction exists and belongs to the staff's branch
+        $detail = TransactionItem::join('products', 'products.id', 'product_id')
+            ->select('transaction_items.*', 'products.name')
+            ->where('transaction_id', $id)
+            ->get();
+
+        return view('pages.detail_transaction', compact('data', 'detail'));
+        // $data = Transaction::join('users', 'users.id', 'user_id')
+        //     ->join('customers', 'customers.id', 'customer_id')
+        //     ->join('branches', 'branches.id', 'transactions.branch_id')
+        //     ->select('transactions.*', 'users.name', 'customers.name as name_customer', 'branches.name as name_branch')
+        //     ->where('transactions.id', $id)->first();
+        // $detail = TransactionItem::join('products', 'products.id', 'product_id')->select('transaction_items.*', 'products.name')->where('transaction_id', $id)->get();
+
+        // return view('pages.detail_transaction', compact('data', 'detail'));
+    }
+
+    public function staffDashboard(Request $request)
+    {
+        $user = Auth::user();
+        $branch = Branch::find($user->branch_id);
+        $products = Product::where('branch_id', $user->branch_id)->get();
+        $transactions = Transaction::where('branch_id', $user->branch_id)->get();
+        $customers = Customer::count();
+
+        $lastTransaction = Transaction::join('customers', 'customers.id', 'customer_id')
+            ->select('transactions.*', 'customers.name')
+            ->where('transactions.branch_id', $user->branch_id)
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        return view('pages.staff.dashboard', compact(
+            'branch',
+            'products',
+            'transactions',
+            'customers',
+            'lastTransaction'
+        ));
     }
 }

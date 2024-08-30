@@ -27,8 +27,6 @@
             <div class="section-body">
                 <h2 class="section-title">Users</h2>
 
-
-
                 <div class="card">
                     <form action="{{ route('users.store') }}" method="POST" id="myForm">
                         @csrf
@@ -90,6 +88,10 @@
                                         <input type="radio" name="role" value="admin" id="admin" class="selectgroup-input"
                                             checked="">
                                         <span class="selectgroup-button">Admin</span>
+                                    </label>
+                                    <label class="selectgroup-item">
+                                        <input type="radio" name="role" value="staff" id="staff" class="selectgroup-input">
+                                        <span class="selectgroup-button">Staff</span>
                                     </label>
                                     <label class="selectgroup-item">
                                         <input type="radio" name="role" value="user" id="user" class="selectgroup-input">

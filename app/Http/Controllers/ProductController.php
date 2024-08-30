@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Fragrance;
 use App\Models\StockCard;
 use App\Models\CurrentStock;
+use Auth;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
@@ -20,12 +21,21 @@ class ProductController extends Controller
     // index
     public function index(Request $request)
     {
-        if(empty($request->branch_id)){
-            $products = Product::get();
+        $user = Auth::User();
 
-        }else{
-            $products = Product::where('branch_id', $request->branch_id)->get();
+        if (Auth::user()->hasRole('admin')) {
+            if(empty($request->branch_id)){
+                $products = Product::get();
+
+            }else{
+                $products = Product::where('branch_id', $request->branch_id)->get();
+            }
         }
+
+        if (Auth::user()->hasRole('staff')) {
+            $products = Product::where('branch_id', $user->branch_id)->get();
+        }
+
         $branches = Branch::all();
         return view('pages.products.index', compact('products','branches'));
     }

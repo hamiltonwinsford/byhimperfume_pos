@@ -12,12 +12,18 @@
         <section class="section">
             <div class="section-header">
                 <h1>Product</h1>
-                <div class="section-header-button">
-                    <a href="{{ route('products.create') }}" class="btn btn-primary">Add New</a>
-                </div>
-                <div class="section-header-button">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importModal">Import</button>
-                </div>
+                @if(auth()->user()->hasRole('admin'))
+                    <div class="section-header-button">
+                        <a href="{{ route('products.create') }}" class="btn btn-primary">Add New</a>
+                    </div>
+                    <div class="section-header-button">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importModal">Import</button>
+                    </div>
+                @elseif(auth()->user()->hasRole('staff'))
+                    <div class="section-header-button">
+                        <a href="{{ route('products.create') }}" class="btn btn-primary">Add New</a>
+                    </div>
+                @endif
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
                     <div class="breadcrumb-item"><a href="#">Products</a></div>
@@ -35,24 +41,25 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="col-5">
-                                    <h4>All Posts</h4>
+                                    <h4>All Products</h4>
                                 </div>
+                                @if(auth()->user()->hasRole('admin'))
                                 <div class="col-6">
                                     <form method="get" action="{{ route('products.index') }}">
                                         @csrf
-                                            <select class="form-control selectric" name="branch_id" required>
-                                                <option value="" selected disabled>-- Select Branch --</option>
-                                                @foreach ($branches as $branch)
+                                        <select class="form-control selectric" name="branch_id" required>
+                                            <option value="" selected disabled>-- Select Branch --</option>
+                                            @foreach ($branches as $branch)
                                                 <option value="{{ $branch->id }}">{{ $branch->name }} - {{$branch->address}}</option>
-                                                @endforeach
-                                            </select>
+                                            @endforeach
+                                        </select>
                                 </div>
 
                                 <div class="col-md-1">
                                     <button type="submit" class="btn btn-primary">Filter</button>
                                 </div>
-
                                     </form>
+                                @endif
                             </div>
                             <div class="card-body">
 
@@ -73,32 +80,20 @@
                                         <tbody>
                                             @foreach ($products as $product)
                                                 <tr>
-
-                                                    <td>{{ $product->name }}
-                                                    </td>
-                                                    <td>
-                                                        {{ $product->category->name }}
-                                                    </td>
-                                                    <td>
-                                                        Rp. {{ number_format($product->price, 0, ',', '.') }}
-                                                    </td>
-                                                    <td>
-                                                        {{ $product->status == 1 ? 'Active' : 'Inactive' }}
-                                                    </td>
+                                                    <td>{{ $product->name }}</td>
+                                                    <td>{{ $product->category->name }}</td>
+                                                    <td>Rp. {{ number_format($product->price, 0, ',', '.') }}</td>
+                                                    <td>{{ $product->status == 1 ? 'Active' : 'Inactive' }}</td>
                                                     <td>{{ $product->created_at }}</td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <a href='{{ route('products.edit', $product->id) }}'
-                                                                class="btn btn-sm btn-info btn-icon">
-                                                                <i class="fas fa-edit"></i>
-                                                                Edit
+                                                            <a href='{{ route('products.edit', $product->id) }}' class="btn btn-sm btn-info btn-icon">
+                                                                <i class="fas fa-edit"></i> Edit
                                                             </a>
 
-                                                            <form action="{{ route('products.destroy', $product->id) }}"
-                                                                method="POST" class="ml-2">
-                                                                <input type="hidden" name="_method" value="DELETE" />
-                                                                <input type="hidden" name="_token"
-                                                                    value="{{ csrf_token() }}" />
+                                                            <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="ml-2">
+                                                                @method('DELETE')
+                                                                @csrf
                                                                 <button class="btn btn-sm btn-danger btn-icon confirm-delete">
                                                                     <i class="fas fa-times"></i> Delete
                                                                 </button>
@@ -106,7 +101,6 @@
                                                         </div>
                                                     </td>
                                                 </tr>
-
                                             @endforeach
                                         </tbody>
                                     </table>
@@ -119,8 +113,8 @@
         </section>
     </div>
 
-
     <!-- Import Modal -->
+    @if(auth()->user()->hasRole('admin'))
     <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -146,10 +140,11 @@
             </div>
         </div>
     </div>
+    @endif
 @endsection
 
 @push('scripts')
-    <!-- JS Libraies -->
+    <!-- JS Libraries -->
     <script src="{{ asset('library/selectric/public/jquery.selectric.min.js') }}"></script>
 
     <!-- Page Specific JS File -->

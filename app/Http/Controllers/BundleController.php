@@ -12,9 +12,36 @@ use Illuminate\Support\Facades\Log;
 
 class BundleController extends Controller
 {
+    // public function index()
+    // {
+    //     $bundles = Bundle::with('items.product', 'items.bottle')->get();
+    //     return view('pages.bundles.index', compact('bundles'));
+    // }
+
     public function index()
     {
-        $bundles = Bundle::with('items.product', 'items.bottle')->get();
+        $user = auth()->user();
+
+        // Check if the user is an admin
+        if ($user->role == 'admin') {
+            // Admins can see all bundles
+            $bundles = Bundle::with('items.product', 'items.bottle')->get();
+        } else {
+            // Non-admins can only see bundles related to their branch
+            $bundles = Bundle::whereHas('items.product', function ($query) use ($user) {
+                $query->where('branch_id', $user->branch_id);
+            })
+                ->with([
+                    'items' => function ($query) use ($user) {
+                        $query->whereHas('product', function ($query) use ($user) {
+                            $query->where('branch_id', $user->branch_id);
+                        });
+                    },
+                    'items.bottle'
+                ])
+                ->get();
+        }
+
         return view('pages.bundles.index', compact('bundles'));
     }
 
@@ -46,7 +73,7 @@ class BundleController extends Controller
     public function getBottleSizesByVariant($variant)
     {
         $bottles = Bottle::where('variant', $variant)->get();
-        $bottles_size= $bottles->pluck('bottle_size');
+        $bottles_size = $bottles->pluck('bottle_size');
         return response()->json($bottles);
     }
 
@@ -59,7 +86,7 @@ class BundleController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'items.*.product_id' => 'required|exists:products,id',
-            'items.*.bottle_id' => 'required|exists:bottles,id',
+            'items.*.bottle_id' => 'required|exists:bottle,id',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.discount_percent' => 'nullable|numeric|min:0|max:100',
         ]);
@@ -95,16 +122,13 @@ class BundleController extends Controller
 
             $currentStock = CurrentStock::where('product_id', $item['product_id'])->first();
 
-            if($bottle->variant === "edt"){
+            if ($bottle->variant === "edt") {
                 $qty = $bottle->bottle_size * 0.7;
-            }
-            elseif($bottle->variant === "edp"){
+            } elseif ($bottle->variant === "edp") {
                 $qty = $bottle->bottle_size * 0.5;
-            }
-            elseif($bottle->variant === "perfume"){
+            } elseif ($bottle->variant === "perfume") {
                 $qty = $bottle->bottle_size * 0.3;
-            }
-            elseif($bottle->variant === "full_perfume"){
+            } elseif ($bottle->variant === "full_perfume") {
                 $qty = $bottle->bottle_size;
             }
 
@@ -157,16 +181,13 @@ class BundleController extends Controller
             $currentStock = CurrentStock::where('product_id', $item->product_id)->first();
             $bottle = Bottle::find($item->bottle_id);
 
-            if($bottle->variant === "edt"){
+            if ($bottle->variant === "edt") {
                 $qty = $bottle->bottle_size * 0.7;
-            }
-            elseif($bottle->variant === "edp"){
+            } elseif ($bottle->variant === "edp") {
                 $qty = $bottle->bottle_size * 0.5;
-            }
-            elseif($bottle->variant === "perfume"){
+            } elseif ($bottle->variant === "perfume") {
                 $qty = $bottle->bottle_size * 0.3;
-            }
-            elseif($bottle->variant === "full_perfume"){
+            } elseif ($bottle->variant === "full_perfume") {
                 $qty = $bottle->bottle_size;
             }
 

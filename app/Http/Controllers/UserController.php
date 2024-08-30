@@ -41,7 +41,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
             'branch_id' => 'required',
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,staff,user',
         ]);
 
         //store the request
@@ -50,6 +50,7 @@ class UserController extends Controller
         $user->email = $request -> email;
         $user->password = Hash::make($request->password);
         $user->role = $request->role;
+        $user->assignRole($request->role);
         if(!empty($request->branch_id)){
             $user->branch_id = $request->branch_id;
         }

@@ -91,7 +91,7 @@
                         <div class="card-header">
                             <h4>New Transactions</h4>
                         </div>
-                        <div class="card-body">
+                        <div class="table-responsive card-body">
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -120,7 +120,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </section>
     </div>
 @endsection
@@ -135,11 +135,11 @@
                 .then(data => {
                     const labels = data.map(item => item.day);
                     const totals = data.map(item => item.total);
-    
+
                     const formatRupiah = (number) => {
                         return 'Rp. ' + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
-    
+
                     const ctx = document.getElementById('transactionsChart').getContext('2d');
                     const chart = new Chart(ctx, {
                         type: 'line',

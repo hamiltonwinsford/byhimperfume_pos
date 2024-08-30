@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Contracts\LoginResponse;
+use Auth;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -20,7 +22,31 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->instance(
+            LoginResponse::class,
+            new class implements LoginResponse
+            {
+                public function toResponse($request)
+                {
+                    if (Auth::user()->hasRole('admin')) {
+                        return $request->wantsJson()
+                            ? response()->json(['two_factor' => false])
+                            : redirect()->intended(config('fortify.home'));
+                    }
+
+                    if (Auth::user()->hasRole('cashier')) {
+                        return $request->wantsJson()
+                            ? response()->json(['two_factor' => false])
+                            : redirect()->intended(route('home.cashier'));
+                    }
+                    if (Auth::user()->hasRole('staff')) {
+                        return $request->wantsJson()
+                            ? response()->json(['two_factor' => false])
+                            : redirect(route('home'));
+                    }
+                }
+            }
+        );
     }
 
     /**
