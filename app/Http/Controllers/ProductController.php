@@ -189,50 +189,17 @@ class ProductController extends Controller
             DB::beginTransaction();
             $product = Product::find($id);
             $product->fill($request->only(['name', 'description', 'price', 'category_id', 'status', 'is_favorite', 'branch_id']));
-
-
-            if ($product->category->fragrances_status == Category::STATUS_FRAGRANCE) {
-                $product->stock = 1;
-            } else {
-                $validator = Validator::make($request->all(), [
-                    'stock' => 'required|numeric',
-                ]);
-
-                if ($validator->fails()) {
-                    return redirect()->back()
-                        ->withErrors($validator)
-                        ->withInput();
-                }
-
-                $product->stock = $request->stock;
-            }
-
-            if ($request->hasFile('image')) {
-                $s_file = $request->file('image');
-                $extension = $s_file->getClientOriginalExtension();
-                $l_file = $request->user_id . "_" . date('YmdHis') . '.' . $extension;
-                $s_file->move(public_path('upload/image'), $l_file);
-
-                $product->image = 'upload/image/' . $l_file;
-            }
-
             $product->save();
 
+            // Periksa apakah produk ini merupakan fragrance
             $fragrance = Fragrance::where('product_id', $id)->first();
 
-            if ($fragrance) { //Jika produk merupakan fragrance (bibit parfum)
-                if ($product->category->fragrances_status == Category::STATUS_FRAGRANCE) { //Jika produk masih fragrance
-                    $fragranceValidator = Validator::make($request->all(), [
-                        'fragrances_name' => 'required',
-                        'total_weight' => 'required',
-                    ]);
+            // Periksa apakah stock card sudah ada untuk produk ini
+            $stockCard = StockCard::where('product_id', $product->id)->where('branch_id', $request->branch_id)->first();
 
-                    if ($fragranceValidator->fails()) {
-                        return redirect()->back()
-                            ->withErrors($fragranceValidator)
-                            ->withInput();
-                    }
-
+            if ($fragrance) {
+                if ($product->category->fragrances_status == Category::STATUS_FRAGRANCE) {
+                    // Update fragrance
                     $fragrance->name = $request->fragrances_name;
                     $fragrance->gram_to_ml = $request->gram_to_ml;
                     $fragrance->ml_to_gram = $request->ml_to_gram;
@@ -241,59 +208,51 @@ class ProductController extends Controller
                     $fragrance->pump_weight = $request->pump_weight;
                     $fragrance->bottle_weight = $request->bottle_weight;
                     $fragrance->total_weight = $request->total_weight;
-                    $fragrance->product_id = $product->id;
                     $fragrance->save();
 
-                    // Insert into StockCard table
+                    // Update atau buat stock card
+                    if ($stockCard) {
+                        $stockCard->opening_stock_gram = $request->gram;
+                        $stockCard->save();
+                    } else {
+                        // Jika stock card belum ada, buat baru
+                        $stockCard = new StockCard;
+                        $stockCard->product_id = $product->id;
+                        $stockCard->branch_id = $request->branch_id;
+                        $stockCard->fragrance_id = $fragrance->id;
+                        $stockCard->opening_stock_gram = $request->gram;
+                        $stockCard->save();
+                    }
+                } else {
+                    // Jika produk bukan lagi fragrance, hapus fragrance dan stock card terkait
+                    $fragrance->delete();
+                    if ($stockCard) {
+                        $stockCard->delete();
+                    }
+                }
+            } else {
+                // Jika produk bukan fragrance, tetap perbarui stock card jika ada
+                if ($stockCard) {
+                    $stockCard->opening_stock_gram = $request->stock;
+                    $stockCard->save();
+                } else {
+                    // Jika stock card belum ada, buat baru
                     $stockCard = new StockCard;
                     $stockCard->product_id = $product->id;
                     $stockCard->branch_id = $request->branch_id;
-                    $stockCard->fragrance_id = $fragrance->id;
-                    $stockCard->opening_stock_gram = $request->gram;
+                    $stockCard->opening_stock_gram = $request->stock;
                     $stockCard->save();
-
-                    // Update the current stock with mililiter
-                    $currentStock = CurrentStock::where('product_id', $product->id)->first();
-                    if ($currentStock) {
-                        $currentStock->current_stock = $request->milliliter;
-                        $currentStock->current_stock_gram = $request->gram;
-                        $currentStock->save();
-                    }
-
-                } else { //Jika produk bukan fragrance
-                    $fragrance->delete();
                 }
-            } else { //Jika bukan produk fragrance (bibit parfum)
-
-                // $fragrance = new Fragrance();
-                // $fragrance->name = $request->fragrances_name;
-                // $fragrance->total_weight = $request->total_weight;
-                // $fragrance->gram_to_ml = $request->gram_to_ml;
-                // $fragrance->ml_to_gram = $request->ml_to_gram;
-                // $fragrance->gram = $request->gram;
-                // $fragrance->mililiter = $request->milliliter;
-                // $fragrance->pump_weight = $request->pump_weight;
-                // $fragrance->bottle_weight = $request->bottle_weight;
-                // $fragrance->product_id = $product->id;
-                // $fragrance->save();
-
-                // Insert into StockCard table
-                $stockCard = new StockCard;
-                $stockCard->product_id = $product->id;
-                //$stockCard->branch_id = $request->branch_id;
-                // $stockCard->fragrance_id = $fragrance->id;
-                $stockCard->opening_stock_gram = $request->stock;
-                $stockCard->save();
             }
 
             DB::commit();
-
             return redirect()->route('products.index')->with('success', 'Product updated successfully');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
 
     // import products
     public function importForm()
