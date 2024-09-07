@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProductExport;
 use App\Models\Branch;
 use App\Models\Category;
 use App\Models\Fragrance;
@@ -24,10 +25,10 @@ class ProductController extends Controller
         $user = Auth::User();
 
         if (Auth::user()->hasRole('admin')) {
-            if(empty($request->branch_id)){
+            if (empty($request->branch_id)) {
                 $products = Product::get();
 
-            }else{
+            } else {
                 $products = Product::where('branch_id', $request->branch_id)->get();
             }
         }
@@ -37,7 +38,7 @@ class ProductController extends Controller
         }
 
         $branches = Branch::all();
-        return view('pages.products.index', compact('products','branches'));
+        return view('pages.products.index', compact('products', 'branches'));
     }
 
     // create
@@ -75,12 +76,12 @@ class ProductController extends Controller
 
             $l_file = '';
             if (isset($request->image)) {
-                $s_file    = $request->file('image');
+                $s_file = $request->file('image');
                 $extention = $s_file->extension();
-                $l_file    = $request->user_id."_".date('YmdHis').'.'.$extention;
+                $l_file = $request->user_id . "_" . date('YmdHis') . '.' . $extention;
                 $s_file->move(public_path('upload/image'), $l_file);
 
-                $product->image     = $l_file;
+                $product->image = $l_file;
             }
 
             $product->save();
@@ -313,6 +314,25 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Error importing products: ' . $e->getMessage());
         }
     }
+
+    public function export(Request $request)
+    {
+        $user = Auth::user();
+        $branch_id = $request->input('branch_id'); // Ambil branch_id dari form
+
+        if ($user->hasRole('admin')) {
+            // Admin dapat mengekspor data berdasarkan branch yang dipilih
+            return Excel::download(new ProductExport($branch_id), 'products_branch_' . $branch_id . '.xlsx');
+        }
+
+        if ($user->hasRole('staff')) {
+            // Staff hanya dapat mengekspor produk dari cabang tempat dia bekerja
+            return Excel::download(new ProductExport($user->branch_id), 'products_branch_' . $user->branch_id . '.xlsx');
+        }
+
+        return redirect()->back()->with('error', 'You are not authorized to export products.');
+    }
+
 
     public function branch()
     {

@@ -41,7 +41,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     //     Route::get('/staff/dashboard', [HomeController::class, 'staffDashboard'])->name('home');
     // }
 
-    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/', [HomeController::class, 'index'])->name('home.admin');
     Route::get('/home', [HomeController::class, 'index']);
     Route::get('/report', [HomeController::class, 'report']);
     Route::get('/detail-transactions/{id}', [HomeController::class, 'detail']);
@@ -60,6 +60,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
     Route::post('products/import', [ProductController::class, 'import'])->name('products.import');
+    Route::post('/export', [ProductController::class, 'export'])->name('products.export');
     Route::resource('other_product', OtherProductController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('customers', CustomerController::class);
@@ -108,6 +109,7 @@ Route::middleware(['auth', 'role:staff|admin'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
     Route::post('products/import', [ProductController::class, 'import'])->name('products.import');
+    Route::post('/export', [ProductController::class, 'export'])->name('products.export');
     Route::resource('customers', CustomerController::class);
     Route::resource('stock', StockController::class);
     Route::resource('stockcard', StockCardController::class);

@@ -11,8 +11,8 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 class ProductImport implements ToCollection, WithHeadingRow
 {
     /**
-    * @param Collection $collection
-    */
+     * @param Collection $collection
+     */
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
@@ -28,11 +28,18 @@ class ProductImport implements ToCollection, WithHeadingRow
             ]);
 
             if ($validator->fails()) {
-                // Log errors or handle them as needed
                 continue;
             }
 
-            Product::create($row->toArray());
+            // Check if product already exists by Product ID
+            $product = Product::find($row['id']);  // Check if Product ID exists
+            if ($product) {
+                // If product exists, update it
+                $product->update($row->toArray());
+            } else {
+                // If product does not exist, create a new one
+                Product::create($row->toArray());
+            }
         }
     }
 }

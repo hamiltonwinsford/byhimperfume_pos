@@ -24,36 +24,47 @@
                 </div>
             </div>
 
-
-            <div class="row mt-4">
+            <!-- Filter Form - Only for Admin -->
+            @if (auth()->user()->role == 'admin')
+            <div class="row mb-4">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>All Stock</h4>
-
-
-                            <div class="col-6">
-                                <form method="get" action="{{ route('stockcard.index') }}">
-                                    @csrf
+                            <h4>Filter by Branch</h4>
+                        </div>
+                        <div class="card-body">
+                            <form method="get" action="{{ route('stockcard.index') }}">
+                                @csrf
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
                                         <select class="form-control selectric" name="branch_id" required>
                                             <option value="" selected disabled>-- Select Branch --</option>
                                             @foreach ($branches as $branch)
                                             <option value="{{ $branch->id }}">{{ $branch->name }} - {{$branch->address}}</option>
                                             @endforeach
                                         </select>
-                            </div>
+                                    </div>
 
-                            <div class="col-md-1">
-                                <button type="submit" class="btn btn-primary">Filter</button>
-                            </div>
-
+                                    <div class="form-group col-md-2">
+                                        <button type="submit" class="btn btn-primary">Filter</button>
+                                    </div>
+                                </div>
                             </form>
-
                         </div>
+                    </div>
+                </div>
+            </div>
+            @endif
 
+            <!-- Stock Table -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>All Stock</h4>
+                        </div>
                         <div class="card-body">
-                            <div class="clearfix mb-3"></div>
-                            <div class="table-responsive mt-4">
+                            <div class="table-responsive">
                                 <table id="myTable" class="table table-striped">
                                     <thead>
                                         <tr>
@@ -105,13 +116,14 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
 </div>
 @endsection
 
 @push('scripts')
-<!-- JS Libraies -->
+<!-- JS Libraries -->
 <script src="{{ asset('library/selectric/public/jquery.selectric.min.js') }}"></script>
 
 <!-- Page Specific JS File -->

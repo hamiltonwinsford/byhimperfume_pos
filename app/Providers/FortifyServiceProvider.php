@@ -28,21 +28,21 @@ class FortifyServiceProvider extends ServiceProvider
             {
                 public function toResponse($request)
                 {
+                    $user = Auth::user();
+
                     if (Auth::user()->hasRole('admin')) {
                         return $request->wantsJson()
                             ? response()->json(['two_factor' => false])
-                            : redirect()->intended(config('fortify.home'));
-                    }
-
-                    if (Auth::user()->hasRole('cashier')) {
-                        return $request->wantsJson()
-                            ? response()->json(['two_factor' => false])
-                            : redirect()->intended(route('home.cashier'));
-                    }
-                    if (Auth::user()->hasRole('staff')) {
+                            : redirect()->route('home.admin');
+                    }elseif (Auth::user()->hasRole('staff')) {
                         return $request->wantsJson()
                             ? response()->json(['two_factor' => false])
                             : redirect(route('home'));
+                    } else{
+                        Auth::logout(); // Log the user out
+                        return redirect()->route('login')->withErrors([
+                            'email' => 'Login not allowed for cashier role.'
+                        ]);
                     }
                 }
             }

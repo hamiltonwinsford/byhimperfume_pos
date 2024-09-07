@@ -9,6 +9,7 @@ use App\Models\Fragrance;
 use App\Models\CurrentStock;
 use App\Models\TransactionItem;
 use App\Models\Branch;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -17,17 +18,28 @@ class StockCardController extends Controller
     // index
     public function index(Request $request)
     {
-        if (empty($request->branch_id)) {
-            $data = StockCard::with('product', 'branch', 'fragrance')->get();
+        $user = Auth::user();
+
+        // Jika pengguna adalah admin, tampilkan semua data
+        if ($user->role == 'admin') {
+            if (empty($request->branch_id)) {
+                $data = StockCard::with('product', 'branch', 'fragrance')->get();
+            } else {
+                $data = StockCard::with('product', 'branch', 'fragrance')
+                    ->where('branch_id', $request->branch_id)
+                    ->get();
+            }
         } else {
+            // Jika bukan admin (misalnya 'staff'), tampilkan hanya berdasarkan branch_id pengguna
             $data = StockCard::with('product', 'branch', 'fragrance')
-                            ->where('branch_id', $request->branch_id)
-                            ->get();
+                ->where('branch_id', $user->branch_id)
+                ->get();
         }
 
         $branches = Branch::all();
         return view('pages.stockCard.index', compact('data', 'branches'));
     }
+
 
 
     public function opname($id)
@@ -70,14 +82,14 @@ class StockCardController extends Controller
 
         // Retrieve transaction items within the opname date range
         $transactionItems = TransactionItem::where('product_id', $request->product_id)
-                                            ->when($previousStockOpnameDate, function ($query) use ($previousStockOpnameDate, $request) {
-                                                $query->whereBetween('created_at', [$previousStockOpnameDate, $request->stock_opname_date]);
-                                            })
-                                            ->get();
+            ->when($previousStockOpnameDate, function ($query) use ($previousStockOpnameDate, $request) {
+                $query->whereBetween('created_at', [$previousStockOpnameDate, $request->stock_opname_date]);
+            })
+            ->get();
 
         $stock_in_items = Restock::where('product_id', $productId)
-                                ->whereBetween(DB::raw('CAST(restock_date AS DATE)'), [$previousStockOpnameDate, $request->stock_opname_date])
-                                ->get();
+            ->whereBetween(DB::raw('CAST(restock_date AS DATE)'), [$previousStockOpnameDate, $request->stock_opname_date])
+            ->get();
 
         // Calculate sales (ml)
         $stock_in = $stock_in_items->sum('gram');
@@ -85,13 +97,13 @@ class StockCardController extends Controller
 
         $newStockCard->restock_gram = $stock_in;
         $newStockCard->sales_ml = $sales_ml;
-        $newStockCard->calc_g = ($newStockCard -> opening_stock_gram + $stock_in) - ($sales_ml * $ml_to_gram);
-        $newStockCard->calc_ml = $newStockCard -> calc_g * $gram_to_ml;
+        $newStockCard->calc_g = ($newStockCard->opening_stock_gram + $stock_in) - ($sales_ml * $ml_to_gram);
+        $newStockCard->calc_ml = $newStockCard->calc_g * $gram_to_ml;
 
         // Save real stock gram if provided
         if ($request->has('real_stock_gram')) {
             $newStockCard->real_g = $request->real_stock_gram - ($fragrance->bottle_weight - $fragrance->pump_weight);
-            $newStockCard->real_ml = $newStockCard -> real_g * $gram_to_ml;
+            $newStockCard->real_ml = $newStockCard->real_g * $gram_to_ml;
             $currentStock->current_stock_gram = $newStockCard->real_g;
             $currentStock->current_stock = $newStockCard->real_ml;
         }

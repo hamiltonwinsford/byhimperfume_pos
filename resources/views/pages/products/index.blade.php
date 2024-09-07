@@ -12,16 +12,24 @@
         <section class="section">
             <div class="section-header">
                 <h1>Product</h1>
-                @if(auth()->user()->hasRole('admin'))
+                @if (auth()->user()->hasRole('admin'))
                     <div class="section-header-button">
                         <a href="{{ route('products.create') }}" class="btn btn-primary">Add New</a>
                     </div>
                     <div class="section-header-button">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importModal">Import</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                            data-target="#importModal">Import</button>
+                    </div>
+                    <div class="section-header-button">
+                        <button type="button" class="btn btn-success" data-toggle="modal"
+                            data-target="#exportModal">Export</button>
                     </div>
                 @elseif(auth()->user()->hasRole('staff'))
                     <div class="section-header-button">
                         <a href="{{ route('products.create') }}" class="btn btn-primary">Add New</a>
+                    </div>
+                    <div class="section-header-button">
+                        <a href="{{ route('products.export') }}" class="btn btn-success" id="export-button">Export</a>
                     </div>
                 @endif
                 <div class="section-header-breadcrumb">
@@ -43,21 +51,22 @@
                                 <div class="col-5">
                                     <h4>All Products</h4>
                                 </div>
-                                @if(auth()->user()->hasRole('admin'))
-                                <div class="col-6">
-                                    <form method="get" action="{{ route('products.index') }}">
-                                        @csrf
-                                        <select class="form-control selectric" name="branch_id" required>
-                                            <option value="" selected disabled>-- Select Branch --</option>
-                                            @foreach ($branches as $branch)
-                                                <option value="{{ $branch->id }}">{{ $branch->name }} - {{$branch->address}}</option>
-                                            @endforeach
-                                        </select>
-                                </div>
+                                @if (auth()->user()->hasRole('admin'))
+                                    <div class="col-6">
+                                        <form method="get" action="{{ route('products.index') }}">
+                                            @csrf
+                                            <select class="form-control selectric" name="branch_id" required>
+                                                <option value="" selected disabled>-- Select Branch --</option>
+                                                @foreach ($branches as $branch)
+                                                    <option value="{{ $branch->id }}">{{ $branch->name }} -
+                                                        {{ $branch->address }}</option>
+                                                @endforeach
+                                            </select>
+                                    </div>
 
-                                <div class="col-md-1">
-                                    <button type="submit" class="btn btn-primary">Filter</button>
-                                </div>
+                                    <div class="col-md-1">
+                                        <button type="submit" class="btn btn-primary">Filter</button>
+                                    </div>
                                     </form>
                                 @endif
                             </div>
@@ -73,7 +82,7 @@
                                                 <th>Category</th>
                                                 <th>Price</th>
                                                 <th>Status</th>
-                                                <th>Create At</th>
+                                                <th>Branch</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -84,17 +93,20 @@
                                                     <td>{{ $product->category->name }}</td>
                                                     <td>Rp. {{ number_format($product->price, 0, ',', '.') }}</td>
                                                     <td>{{ $product->status == 1 ? 'Active' : 'Inactive' }}</td>
-                                                    <td>{{ $product->created_at }}</td>
+                                                    <td>{{ $product->branch->name }}</td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <a href='{{ route('products.edit', $product->id) }}' class="btn btn-sm btn-info btn-icon">
+                                                            <a href='{{ route('products.edit', $product->id) }}'
+                                                                class="btn btn-sm btn-info btn-icon">
                                                                 <i class="fas fa-edit"></i> Edit
                                                             </a>
 
-                                                            <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="ml-2">
+                                                            <form action="{{ route('products.destroy', $product->id) }}"
+                                                                method="POST" class="ml-2">
                                                                 @method('DELETE')
                                                                 @csrf
-                                                                <button class="btn btn-sm btn-danger btn-icon confirm-delete">
+                                                                <button
+                                                                    class="btn btn-sm btn-danger btn-icon confirm-delete">
                                                                     <i class="fas fa-times"></i> Delete
                                                                 </button>
                                                             </form>
@@ -114,33 +126,73 @@
     </div>
 
     <!-- Import Modal -->
-    @if(auth()->user()->hasRole('admin'))
-    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="importModalLabel">Import Products</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="file">Choose Excel File</label>
-                            <input type="file" name="file" class="form-control" required>
+    @if (auth()->user()->hasRole('admin'))
+        <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="importModalLabel">Import Products</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="file">Choose Excel File</label>
+                                <input type="file" name="file" class="form-control" required>
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Import</button>
-                    </div>
-                </form>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Import</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
     @endif
+
+    <!-- Export Modal -->
+    @if (auth()->user()->hasRole('admin'))
+        <!-- Export Modal untuk Admin -->
+        <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exportModalLabel">Export Products</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('products.export') }}" method="POST">
+                        @csrf
+                        <div class="modal-body">
+                            <p>Select the branch you want to export products from:</p>
+                            <div class="form-group">
+                                <label for="branch_id">Branch</label>
+                                <select name="branch_id" class="form-control" required>
+                                    <option value="" disabled selected>-- Select Branch --</option>
+                                    @foreach ($branches as $branch)
+                                        <option value="{{ $branch->id }}">{{ $branch->name }} - {{ $branch->address }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Export</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    @endif
+
 @endsection
 
 @push('scripts')

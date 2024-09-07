@@ -248,7 +248,7 @@ class ApiController extends Controller
             }
 
             return returnAPI(200, 'Success', $data);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return returnAPI(500, 'An error occurred while fetching the current stock', ['error' => $e->getMessage()]);
         }
     }
