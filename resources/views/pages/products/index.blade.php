@@ -28,8 +28,12 @@
                     <div class="section-header-button">
                         <a href="{{ route('products.create') }}" class="btn btn-primary">Add New</a>
                     </div>
+                    <!-- Tombol ekspor untuk staff, ekspor data dari cabang tempat staff bekerja -->
                     <div class="section-header-button">
-                        <a href="{{ route('products.export') }}" class="btn btn-success" id="export-button">Export</a>
+                        <form method="POST" action="{{ route('products.export') }}">
+                            @csrf
+                            <button type="submit" class="btn btn-success">Export</button>
+                        </form>
                     </div>
                 @endif
                 <div class="section-header-breadcrumb">
@@ -177,7 +181,8 @@
                                 <select name="branch_id" class="form-control" required>
                                     <option value="" disabled selected>-- Select Branch --</option>
                                     @foreach ($branches as $branch)
-                                        <option value="{{ $branch->id }}">{{ $branch->name }} - {{ $branch->address }}</option>
+                                        <option value="{{ $branch->id }}">{{ $branch->name }} - {{ $branch->address }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
