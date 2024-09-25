@@ -482,6 +482,8 @@ class ApiController extends Controller
             $cekCart = Cart::where('user_id', $request->user_id)->get()->all();
             $branch = Branch::join('users', 'users.branch_id', 'branches.id')->select('branches.*')->where('users.id', $request->user_id)->first();
 
+            $payment_method = $request->payment_method;
+
             if (!empty($request->discount)) {
                 $discount = $request->discount;
             } else {
@@ -494,6 +496,7 @@ class ApiController extends Controller
             $tr->transaction_date = date('Y-m-d');
             $tr->branch_id = $branch->id;
             $tr->discount = $discount;
+            $tr->payment_method = $payment_method;
             $tr->total_amount = 0; // Initialize total_amount to 0
             $tr->save(); //jj
 
