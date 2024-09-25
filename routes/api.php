@@ -49,7 +49,7 @@ Route::post('/update-cart', [ApiController::class, 'updateCart'])->name('update-
 Route::get('/delete-cart', [ApiController::class, 'deleteCart'])->name('delete-cart');
 Route::post('/checkout', [ApiController::class, 'checkout'])->name('checkout');
 Route::get('/get-history-transactions', [ApiController::class, 'getHistoryTransactions'])->name('get-history-transactions');
-Route::get('last-transaction-by-branch', [ApiController::class, 'getLastTransactionByBranch']);
+Route::get('/last-transaction-by-branch', [ApiController::class, 'getLastTransactionByBranch'])->name('last-transaction-by-branch');
 
 
 
