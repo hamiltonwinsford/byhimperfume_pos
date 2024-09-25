@@ -8,4 +8,33 @@ use Illuminate\Database\Eloquent\Model;
 class Transaction extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'transaction_number',
+        'transaction_date',
+        'user_id',
+        'customer_id',
+        'branch_id',
+        'total_amount',
+        'discount',
+        'payment_method',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Relasi dengan Customer
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    // Relasi dengan Branch
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
 }
