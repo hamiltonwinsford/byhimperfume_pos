@@ -1,4 +1,4 @@
-12312@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Bottle')
 
