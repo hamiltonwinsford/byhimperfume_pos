@@ -587,8 +587,8 @@ class ApiController extends Controller
                 'branch_id' => 'required|exists:branches,id',
             ]);
 
-            // Mendapatkan transaksi terakhir dengan join untuk mengambil nama user, customer, dan branch
-            $lastTransaction = Transaction::with(['user', 'customer', 'branch'])
+            // Mendapatkan transaksi terakhir dengan join untuk mengambil nama user, customer, branch, dan items
+            $lastTransaction = Transaction::with(['user', 'customer', 'branch', 'items.product']) // Tambahkan eager loading untuk items dan product
                 ->where('branch_id', $request->branch_id)
                 ->orderBy('transaction_date', 'desc')
                 ->orderBy('created_at', 'desc')
@@ -599,7 +599,17 @@ class ApiController extends Controller
                 return returnAPI(404, 'No transactions found for the given branch');
             }
 
-            // Mengubah data menjadi format yang sesuai dengan menampilkan nama user, customer, dan branch
+            // Siapkan data items dalam transaksi
+            $items = $lastTransaction->items->map(function ($item) {
+                return [
+                    'product_name' => $item->product->name ?? 'Unknown Product',
+                    'price' => $item->price,
+                    'quantity' => $item->quantity,
+                    'subtotal' => $item->subtotal,
+                ];
+            });
+
+            // Mengubah data menjadi format yang sesuai dengan menampilkan nama user, customer, branch, dan items
             $data = [
                 'id' => $lastTransaction->id,
                 'transaction_number' => $lastTransaction->transaction_number,
@@ -612,6 +622,7 @@ class ApiController extends Controller
                 'payment_method' => $lastTransaction->payment_method,
                 'created_at' => $lastTransaction->created_at,
                 'updated_at' => $lastTransaction->updated_at,
+                'items' => $items, // Tambahkan items ke dalam response
             ];
 
             return returnAPI(200, 'Success', $data);
@@ -621,5 +632,6 @@ class ApiController extends Controller
             return returnAPI(500, 'An error occurred', ['error' => $e->getMessage()]);
         }
     }
+
 
 }

@@ -20,6 +20,12 @@ class Transaction extends Model
         'payment_method',
     ];
 
+    // Relasi dengan TransactionItem
+    public function items()
+    {
+        return $this->hasMany(TransactionItem::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
