@@ -633,6 +633,7 @@ class ApiController extends Controller
                     'quantity' => $item->quantity,
                     'subtotal' => $item->subtotal,
                     'bottle_variant' => $item->bottle->variant ?? 'Unknown Variant',  // Ambil variant dari bottle
+                    'bottle_size' => $item->bottle->bottle_size ?? 0, // Ambil bottle_size dari bottle
                     'bottle_harga_ml' => $item->bottle->harga_ml ?? 0, // Ambil harga_ml dari bottle
                 ];
             });
