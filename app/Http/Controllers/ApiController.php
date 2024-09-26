@@ -614,7 +614,7 @@ class ApiController extends Controller
             ]);
 
             // Mendapatkan transaksi terakhir dengan join untuk mengambil nama user, customer, branch, dan items
-            $lastTransaction = Transaction::with(['user', 'customer', 'branch', 'items.product']) // Tambahkan eager loading untuk items dan product
+            $lastTransaction = Transaction::with(['user', 'customer', 'branch', 'items.product', 'items.bottle']) // Tambahkan eager loading untuk bottle
                 ->where('branch_id', $request->branch_id)
                 ->orderBy('transaction_date', 'desc')
                 ->orderBy('created_at', 'desc')
@@ -625,13 +625,15 @@ class ApiController extends Controller
                 return returnAPI(404, 'No transactions found for the given branch');
             }
 
-            // Siapkan data items dalam transaksi
+            // Siapkan data items dalam transaksi, termasuk variant dan harga_ml dari tabel Bottle
             $items = $lastTransaction->items->map(function ($item) {
                 return [
                     'product_name' => $item->product->name ?? 'Unknown Product',
                     'price' => $item->price,
                     'quantity' => $item->quantity,
                     'subtotal' => $item->subtotal,
+                    'bottle_variant' => $item->bottle->variant ?? 'Unknown Variant',  // Ambil variant dari bottle
+                    'bottle_harga_ml' => $item->bottle->harga_ml ?? 0, // Ambil harga_ml dari bottle
                 ];
             });
 
@@ -658,6 +660,7 @@ class ApiController extends Controller
             return returnAPI(500, 'An error occurred', ['error' => $e->getMessage()]);
         }
     }
+
 
 
 }
