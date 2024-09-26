@@ -196,19 +196,23 @@ class ApiController extends Controller
 
     public function searchProduct(Request $request)
     {
-        // Validasi input: memastikan 'name' dan 'branch_id' ada di request
+        // Validasi input: memastikan 'branch_id' ada di request
         $request->validate([
-            'name' => 'required|string',
             'branch_id' => 'required|exists:branches,id',
         ]);
 
-        $name = $request->name;
+        $name = $request->name ?? ''; // Mengambil name atau string kosong jika tidak ada
         $branch_id = $request->branch_id;
 
-        // Cari produk berdasarkan nama dan branch_id yang cocok
-        $data = Product::where('branch_id', $branch_id)
-            ->where('name', 'like', "%$name%")
-            ->get();
+        // Jika name kosong, ambil semua produk di cabang yang sesuai
+        if (empty($name)) {
+            $data = Product::where('branch_id', $branch_id)->get();
+        } else {
+            // Cari produk berdasarkan nama dan branch_id yang cocok
+            $data = Product::where('branch_id', $branch_id)
+                ->where('name', 'like', "%$name%")
+                ->get();
+        }
 
         // Tambahkan path untuk gambar produk
         foreach ($data as $key => $value) {
@@ -218,6 +222,7 @@ class ApiController extends Controller
 
         return returnAPI(200, 'Success', $data);
     }
+
 
 
     public function searchBottle(Request $request)
