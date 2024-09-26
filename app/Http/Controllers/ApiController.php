@@ -119,7 +119,11 @@ class ApiController extends Controller
 
     public function getProduct(Request $request)
     {
-        $products = Product::where('branch_id', $request->branch_id)->get();
+
+        // Pastikan request memiliki 'branch_id'
+        $branch_id = $request->branch_id;
+
+        $products = Product::where('branch_id', $branch_id)->get();
         foreach ($products as $key => $value) {
             $foto = asset('upload/image/' . $value->image);
             $products[$key]->foto_path = $foto;
@@ -127,6 +131,10 @@ class ApiController extends Controller
 
         // Mengambil data bundle dan menggabungkan produk dalam setiap bundle
         $bundles = Bundle::with(['items.product', 'items.bottle'])
+            ->whereHas('items.product', function ($query) use ($branch_id) {
+                // Pastikan hanya bundle dengan produk yang sesuai branch_id
+                $query->where('branch_id', $branch_id);
+            })
             ->get()
             ->map(function ($bundle) {
                 $bundle->products = $bundle->items->map(function ($item) {
@@ -180,19 +188,6 @@ class ApiController extends Controller
 
         return returnAPI(200, 'Success', $data);
     }
-
-    // public function searchProduct(Request $request)
-    // {
-    //     $name = $request->name;
-
-    //     $data = Product::where('name', 'like', "%$name%")->get();
-    //     foreach ($data as $key => $value) {
-    //         $foto = asset('upload/image/' . $value->image);
-    //         $data[$key]->foto_path = $foto;
-    //     }
-
-    //     return returnAPI(200, 'Success', $data);
-    // }
 
     public function searchProduct(Request $request)
     {
