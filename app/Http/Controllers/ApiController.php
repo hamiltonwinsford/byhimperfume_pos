@@ -181,11 +181,36 @@ class ApiController extends Controller
         return returnAPI(200, 'Success', $data);
     }
 
+    // public function searchProduct(Request $request)
+    // {
+    //     $name = $request->name;
+
+    //     $data = Product::where('name', 'like', "%$name%")->get();
+    //     foreach ($data as $key => $value) {
+    //         $foto = asset('upload/image/' . $value->image);
+    //         $data[$key]->foto_path = $foto;
+    //     }
+
+    //     return returnAPI(200, 'Success', $data);
+    // }
+
     public function searchProduct(Request $request)
     {
-        $name = $request->name;
+        // Validasi input: memastikan 'name' dan 'branch_id' ada di request
+        $request->validate([
+            'name' => 'required|string',
+            'branch_id' => 'required|exists:branches,id',
+        ]);
 
-        $data = Product::where('name', 'like', "%$name%")->get();
+        $name = $request->name;
+        $branch_id = $request->branch_id;
+
+        // Cari produk berdasarkan nama dan branch_id yang cocok
+        $data = Product::where('branch_id', $branch_id)
+            ->where('name', 'like', "%$name%")
+            ->get();
+
+        // Tambahkan path untuk gambar produk
         foreach ($data as $key => $value) {
             $foto = asset('upload/image/' . $value->image);
             $data[$key]->foto_path = $foto;
@@ -193,6 +218,7 @@ class ApiController extends Controller
 
         return returnAPI(200, 'Success', $data);
     }
+
 
     public function searchBottle(Request $request)
     {
