@@ -26,6 +26,12 @@ class TransactionItem extends Model
         return $this->belongsTo(Product::class);
     }
 
+    // Relationship with Bottle
+    public function bottle()
+    {
+        return $this->belongsTo(Bottle::class, 'bottle_id');
+    }
+
     // // Calculated subtotal (not stored in DB, computed on the fly)
     // public function getSubtotalAttribute()
     // {
